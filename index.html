@@ -1,0 +1,3587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5" />
+  <meta name="theme-color" content="#2563EB" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BreakBreath" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+  <title>BreakBreath — Hourly Micro-Reminders for Breathwork & Stretches</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="breathwork, stretching, micro breaks, hourly reminders, desk exercises, mindful breathing, office wellness, remote work health, posture correction, movement reminders, productivity breaks, workplace wellness, digital wellbeing, health reminders, stress relief" />
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="BreakBreath — Hourly Micro-Reminders for Breathwork & Stretches" />
+  <meta property="og:description" content="1-minute resets, every hour—wherever you are. Micro-movements for office, home, queue, commute, and outdoors." />
+  <meta property="og:image" content="/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://breakbreath.app" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="BreakBreath — Hourly Micro-Reminders for Breathwork & Stretches" />
+  <meta name="twitter:description" content="1-minute resets, every hour—wherever you are. Micro-movements for office, home, queue, commute, and outdoors." />
+  <meta name="twitter:image" content="/og-image.svg" />
+
+  <!-- General Meta -->
+  <meta name="description" content="Hourly micro-reminders for breathwork and stretches. 1-minute resets for office, home, queue, commute, and outdoors. Improve posture, reduce stress, and boost productivity with smart movement breaks." />
+  <style>
+    :root {
+      --bg: #0B1220;
+      --card: #111827;
+      --muted: #A0A8B4;
+      --text: #E5E7EB;
+      --text-bright: #F3F4F6;
+      --primary: #2563EB;
+      --success: #22C55E;
+      --ring: rgba(37, 99, 235, 0.55);
+    }
+    * { box-sizing: border-box; }
+    *[tabindex]:focus-visible,
+    button:focus-visible,
+    a:focus-visible,
+    [role="button"]:focus-visible {
+      outline: 3px solid var(--ring);
+      outline-offset: 3px;
+      border-radius: 10px;
+    }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -200px, #0f1b34 0%, var(--bg) 55%), var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+    }
+    header {
+      padding: 20px;
+      text-align: center;
+      background: rgba(17, 24, 39, 0.8);
+      border-bottom: 1px solid #1F2937;
+      backdrop-filter: blur(12px);
+    }
+    .icon { width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px; }
+    .icon svg { width: 100%; height: 100%; }
+    main { max-width: 680px; margin: 24px auto; padding: 0 16px 100px; }
+    h1 { font-size: 28px; font-weight: 600; margin: 0 0 6px; color: var(--text-bright); letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .streak-chip {
+      font-size: 13px;
+      font-weight: 500;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(34, 197, 94, 0.15) 100%);
+      color: var(--text-bright);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    p.sub { color: var(--text); margin: 0 0 12px; font-size: 15px; }
+    .day-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .day-dot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .day-dot-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    .day-dot-circle {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    .day-dot-circle.filled {
+      background: linear-gradient(135deg, #3b82f6 0%, #22c55e 100%);
+      border-color: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+    }
+    .row { display:flex; flex-wrap: wrap; gap: 12px; margin: 16px 0 8px; justify-content: center; }
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 999px;
+      padding: 0.65rem 1rem;
+      font-weight: 600;
+      display: inline-flex;
+      gap: 0.5rem;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-size: 14px;
+    }
+    button:not(.secondary):not(.share-btn):not(.faq-question):not(.chip) {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 8px 24px var(--ring);
+    }
+    button:not(.secondary):not(.share-btn):not(.faq-question):not(.chip):hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+    #startBtn, #stickyStartBtn {
+      font-size: 16px;
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    button:not(.faq-question):not(.chip):focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
+    }
+    button.secondary {
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
+      color: var(--text);
+      background: transparent;
+    }
+    button.secondary:hover {
+      background: rgba(31, 41, 55, 0.5);
+      border-color: var(--primary);
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      padding: 20px;
+      margin: 24px 0;
+      transition: all 0.3s;
+    }
+    .card:hover,
+    .card:focus-within {
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3), 0 8px 32px rgba(37, 99, 235, 0.15), 0 4px 16px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+      border-color: rgba(37, 99, 235, 0.4);
+    }
+    .next-card {
+      position: relative;
+    }
+    .next-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 20% -14px 20%;
+      height: 36px;
+      border-radius: 36px;
+      background: radial-gradient(60% 100% at 50% 0%, rgba(37, 99, 235, 0.35), rgba(34, 197, 94, 0.18) 60%, transparent 70%);
+      filter: blur(10px);
+      animation: breathe 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes breathe {
+      0%, 100% {
+        opacity: 0.65;
+        transform: scale(0.96);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.04);
+      }
+    }
+    @keyframes confettiPulse {
+      0% {
+        transform: scale(1);
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        transform: scale(2.5);
+        opacity: 0;
+      }
+    }
+    .confetti-burst {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100px;
+      height: 100px;
+      margin: -50px 0 0 -50px;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .confetti-burst::before,
+    .confetti-burst::after {
+      content: '✨';
+      position: absolute;
+      font-size: 32px;
+      animation: confettiPulse 1s ease-out forwards;
+    }
+    .confetti-burst::before {
+      left: -20px;
+      animation-delay: 0.1s;
+    }
+    .confetti-burst::after {
+      right: -20px;
+      animation-delay: 0.2s;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .next-card::after,
+      .breath-orb,
+      .log-entry,
+      .confetti-burst,
+      .illustration-sprite {
+        animation: none;
+      }
+      .toast.show {
+        transition: none;
+      }
+      .countdown-ring circle {
+        transition: none;
+      }
+      .day-dot-circle.filled,
+      button:not(.secondary):not(.share-btn):not(.faq-question):not(.chip),
+      #startBtn,
+      #stickyStartBtn,
+      .card,
+      .card:hover,
+      .card:focus-within,
+      .toast {
+        box-shadow: none !important;
+      }
+    }
+    .countdown-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-left: auto;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      min-width: 42px;
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      width: 0%;
+      transition: width 1s linear;
+      border-radius: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .progress-bar {
+        transition: none;
+      }
+    }
+    .countdown-ring {
+      width: 24px;
+      height: 24px;
+      margin-left: auto;
+      transform: rotate(-90deg);
+    }
+    .countdown-ring circle {
+      fill: none;
+      stroke-width: 2.5;
+    }
+    .countdown-ring .ring-bg {
+      stroke: rgba(255, 255, 255, 0.1);
+    }
+    .countdown-ring .ring-progress {
+      stroke: #3b82f6;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s linear;
+    }
+    .label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+    }
+    .envs {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .chip {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s ease-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chip:hover {
+      color: var(--text-bright);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .chip[aria-pressed="true"] {
+      background: #3b82f6;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5), 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+    .chip:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+    .log {
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 0;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 12px;
+    }
+    .log-entry {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, rgba(31, 41, 55, 0.6) 0%, rgba(17, 24, 39, 0.4) 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      animation: slideIn 0.3s ease;
+      position: relative;
+      margin-bottom: 1px;
+    }
+    .log-entry.most-recent {
+      border-left: 3px solid #60a5fa;
+      padding-left: 11px;
+    }
+    .log-entry .checkmark {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: #22C55E;
+      margin-top: 2px;
+    }
+    .log-entry .content {
+      flex: 1;
+    }
+    .log-entry .timestamp {
+      font-size: 12px;
+      color: #6B7280;
+      font-weight: 500;
+      margin-bottom: 4px;
+      font-family: 'Courier New', Courier, monospace;
+      letter-spacing: 0.5px;
+    }
+    .log-entry .message {
+      font-size: 14px;
+      color: #E5E7EB;
+      line-height: 1.5;
+    }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .action-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(17, 24, 39, 0.98);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(37, 99, 235, 0.3);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      z-index: 100;
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+      flex-wrap: wrap;
+    }
+    .action-bar button {
+      font-size: 14px;
+      padding: 10px 18px;
+    }
+    small { color: var(--muted); display: block; margin-top: 8px; font-size: 13px; }
+    .suggestion {
+      font-size: 16px;
+      color: var(--text);
+      margin-top: 12px;
+      padding: 16px 18px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(34, 197, 94, 0.1) 100%);
+      border-radius: 12px;
+      border-left: 4px solid var(--success);
+      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
+      line-height: 1.6;
+      font-weight: 500;
+    }
+    .suggestion .env-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: white;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-right: 8px;
+      text-transform: capitalize;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5), 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+    .suggestion .env-badge svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    .suggestion .action-link {
+      display: inline-block;
+      margin-top: 8px;
+      color: #22C55E;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+    }
+    .why-link {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 8px;
+      color: rgba(255, 255, 255, 0.5);
+      background: transparent;
+      border: none;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .why-link:hover {
+      color: var(--primary);
+      background: rgba(37, 99, 235, 0.1);
+    }
+    .why-explanation {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(37, 99, 235, 0.08);
+      border-left: 3px solid var(--primary);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+      text-align: left;
+    }
+    .help-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      margin-left: 6px;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      border-radius: 50%;
+      color: #60a5fa;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      vertical-align: middle;
+    }
+    .help-chip:hover {
+      background: rgba(59, 130, 246, 0.3);
+      transform: scale(1.1);
+    }
+    .help-chip:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+    .howto-card {
+      position: relative;
+      margin-top: 16px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.9) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      text-align: left;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    .howto-card h3 {
+      margin: 0 0 16px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #E5E7EB;
+    }
+    .howto-timer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: rgba(37, 99, 235, 0.15);
+      border-radius: 8px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .howto-timer-display {
+      font-size: 24px;
+      font-weight: 700;
+      color: #60a5fa;
+      min-width: 60px;
+    }
+    .howto-timer button {
+      padding: 6px 12px;
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .howto-timer button:hover {
+      background: #2563eb;
+      transform: scale(1.05);
+    }
+    .howto-timer button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .howto-section {
+      margin-bottom: 16px;
+    }
+    .howto-section h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #9CA3AF;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .howto-section ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .howto-section li {
+      margin-bottom: 6px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #E5E7EB;
+    }
+    .howto-section ul {
+      margin: 0;
+      padding-left: 20px;
+      list-style: disc;
+    }
+    .howto-section p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #E5E7EB;
+    }
+    .howto-mistake {
+      padding: 10px 12px;
+      background: rgba(239, 68, 68, 0.1);
+      border-left: 3px solid #ef4444;
+      border-radius: 6px;
+    }
+    .howto-alternate {
+      padding: 10px 12px;
+      background: rgba(34, 197, 94, 0.1);
+      border-left: 3px solid #22c55e;
+      border-radius: 6px;
+    }
+    .howto-footer {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .howto-footer label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #9CA3AF;
+      cursor: pointer;
+    }
+    .howto-footer button {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #E5E7EB;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .howto-footer button:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    #dontShowAuto::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 9999px;
+      transition: transform 0.2s;
+    }
+    #dontShowAuto:checked::after {
+      transform: translateX(16px);
+    }
+    .breath-orb {
+      position: fixed;
+      inset: auto auto 12% 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(34,197,94,.35), rgba(37,99,235,.15) 60%, transparent 70%);
+      filter: blur(8px);
+      animation: inhale 6s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes inhale {
+      0%, 100% {
+        transform: translateX(-50%) scale(0.9);
+        opacity: .6;
+      }
+      50% {
+        transform: translateX(-50%) scale(1.1);
+        opacity: .95;
+      }
+    }
+    @keyframes illustrationLoop {
+      0% { opacity: 0.85; }
+      25% { opacity: 0.95; }
+      50% { opacity: 0.85; }
+      75% { opacity: 0.70; }
+      100% { opacity: 0.85; }
+    }
+    .howto-illustration {
+      animation: illustrationLoop 8s steps(4) infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .howto-illustration {
+        animation: none;
+      }
+    }
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.95) 100%);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      border-radius: 12px;
+      padding: 14px 20px;
+      color: #E5E7EB;
+      font-size: 15px;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 16px rgba(34, 197, 94, 0.3);
+      backdrop-filter: blur(16px);
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.4s ease;
+      pointer-events: none;
+      max-width: 90%;
+      text-align: center;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .install-btn {
+      display: none;
+      align-items: center;
+      background: transparent !important;
+      color: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.65rem 0.9rem;
+      font-size: 13px;
+      box-shadow: none !important;
+      transition: all 0.2s;
+    }
+    .install-btn:hover {
+      color: rgba(255, 255, 255, 0.9) !important;
+      background: rgba(255, 255, 255, 0.03) !important;
+      border-color: rgba(255, 255, 255, 0.15);
+      filter: none !important;
+      transform: none !important;
+    }
+    .install-btn.show {
+      display: inline-flex;
+    }
+    .empty-state {
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+    }
+    .share-btn {
+      width: 100%;
+      margin-top: 12px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(34, 197, 94, 0.15) 100%);
+      color: var(--text-bright);
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+      border: 1.5px solid rgba(37, 99, 235, 0.3);
+      box-shadow: 0 2px 8px var(--ring);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .share-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.3) 0%, rgba(34, 197, 94, 0.2) 100%);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+    .share-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .faq {
+      margin-top: 20px;
+    }
+    .faq-item {
+      background: rgba(17, 24, 39, 0.6);
+      border: 1px solid rgba(55, 65, 81, 0.5);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .faq-item:hover {
+      border-color: rgba(37, 99, 235, 0.4);
+    }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text-bright);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 18px 20px;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color 0.2s ease;
+      border-radius: 12px;
+    }
+    .faq-question:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+    .faq-question:hover {
+      color: var(--primary);
+    }
+    .faq-icon {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.18s ease-out;
+      flex-shrink: 0;
+      margin-left: 12px;
+    }
+    .faq-item.open .faq-icon {
+      transform: rotate(180deg);
+    }
+    .sticky-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(59, 130, 246, 0.2);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 1000;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .sticky-bar-close {
+      position: absolute;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .sticky-bar-close:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .sticky-bar.visible {
+      transform: translateY(0);
+    }
+    .sticky-bar button {
+      font-size: 13px;
+      padding: 8px 16px;
+      white-space: nowrap;
+    }
+    .sticky-bar .secondary {
+      padding: 7px 14px;
+    }
+    @media (max-width: 640px) {
+      .sticky-bar {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px;
+      }
+      .sticky-bar button {
+        flex: 1;
+        min-width: 120px;
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+      padding: 0 20px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 500px;
+      padding: 0 20px 18px 20px;
+    }
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="breath-orb"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <div id="stickyBar" class="sticky-bar" style="gap: 20px;">
+    <button id="stickyStartBtn" type="button" aria-label="Start hourly nudges">Start nudges</button>
+    <button id="stickyIcsBtn" type="button" class="secondary" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.25);" aria-label="Download calendar file for guaranteed hourly alerts">Add .ics</button>
+    <button id="stickyBarClose" type="button" class="sticky-bar-close" aria-label="Close notification bar">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <header style="position: relative; z-index: 1;">
+    <h1>
+      <span>BreakBreath</span>
+      <span id="streakChip" class="streak-chip" style="display: none;"></span>
+    </h1>
+    <p class="sub">1-minute resets, every hour—wherever you are.</p>
+    <ul class="day-dots" id="dayDots" aria-label="Weekly activity"></ul>
+    <div class="row" role="group" aria-label="Reminder actions" style="gap: 20px;">
+      <button id="startBtn" type="button" tabindex="1">Start nudges</button>
+      <div style="display: inline-flex; align-items: center; gap: 8px;">
+        <button id="icsBtn" type="button" class="secondary" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.25);" tabindex="2">Guarantee hourly alerts (add .ics)</button>
+        <button id="installBtn" type="button" class="install-btn" tabindex="3">
+          <svg style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Install app
+        </button>
+      </div>
+    </div>
+    <small>Browser notifications now; calendar file for guaranteed hourly alerts.</small>
+  </header>
+
+  <main style="position: relative; z-index: 1;">
+    <div class="card" aria-live="polite">
+      <div class="label">
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+          </svg>
+        </span>
+        Where are you now?
+      </div>
+      <div class="envs" id="envChips" role="group" aria-label="Choose environment">
+        <button class="chip" type="button" data-env="office" aria-pressed="true" title="Used to tailor silent vs. visible nudges" tabindex="4">
+          🏢 Office
+        </button>
+        <button class="chip" type="button" data-env="queue" aria-pressed="false" title="Used to tailor silent vs. visible nudges" tabindex="5">
+          🚶 Queue
+        </button>
+        <button class="chip" type="button" data-env="home" aria-pressed="false" title="Used to tailor silent vs. visible nudges" tabindex="6">
+          🏠 Home
+        </button>
+        <button class="chip" type="button" data-env="commute" aria-pressed="false" title="Used to tailor silent vs. visible nudges" tabindex="7">
+          🚗 Commute
+        </button>
+        <button class="chip" type="button" data-env="outdoors" aria-pressed="false" title="Used to tailor silent vs. visible nudges" tabindex="8">
+          🌳 Outdoors
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+          </svg>
+        </span>
+        Exercise filters
+      </div>
+      <div class="envs" role="group" aria-label="Filter exercise categories" style="margin-top: 12px;">
+        <button class="chip" type="button" data-filter="breath" aria-pressed="true" title="Breathing exercises">🫁 Breath</button>
+        <button class="chip" type="button" data-filter="eyes" aria-pressed="true" title="Eye exercises">👀 Eyes</button>
+        <button class="chip" type="button" data-filter="upper" aria-pressed="true" title="Upper body exercises">💪 Upper</button>
+        <button class="chip" type="button" data-filter="lower" aria-pressed="true" title="Lower body exercises">🦵 Lower</button>
+        <button class="chip" type="button" data-filter="posture" aria-pressed="true" title="Posture exercises">🧘 Posture</button>
+        <button class="chip" type="button" data-filter="quiet" aria-pressed="true" title="Show exercises with quiet alternatives">🤫 Quiet</button>
+      </div>
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; gap: 8px; flex-wrap: wrap;">
+        <button id="filterOnlyThis" type="button" class="chip secondary" style="font-size: 12px; padding: 4px 10px;" title="Enable only the last clicked category">Only this</button>
+        <button id="filterExcludeThis" type="button" class="chip secondary" style="font-size: 12px; padding: 4px 10px;" title="Disable only the last clicked category">Exclude this</button>
+        <button id="filterReset" type="button" class="chip secondary" style="font-size: 12px; padding: 4px 10px;" title="Reset all filters to default">Reset</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+          </svg>
+        </span>
+        Accessibility
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px; background: rgba(17, 24, 39, 0.4); border-radius: 8px; border: 1px solid rgba(55, 65, 81, 0.3); transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(37, 99, 235, 0.4)'" onmouseout="this.style.borderColor='rgba(55, 65, 81, 0.3)'">
+          <input type="checkbox" id="seatedOnlyToggle" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
+          <div style="flex: 1;">
+            <div style="font-weight: 500; color: var(--text-bright);">Show only seated & upper-body exercises</div>
+            <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">Filters out exercises that require standing or full mobility</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card next-card" aria-live="polite" aria-atomic="true">
+      <div class="label">
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+          </svg>
+        </span>
+        Next 60-sec reset
+        <span id="countdownPill" class="countdown-pill" role="timer" aria-live="polite" style="display: none;"></span>
+        <svg id="countdownRing" class="countdown-ring" viewBox="0 0 24 24" style="display: none;" aria-hidden="true">
+          <circle class="ring-bg" cx="12" cy="12" r="10" />
+          <circle class="ring-progress" cx="12" cy="12" r="10" stroke-dasharray="62.83" stroke-dashoffset="62.83" />
+        </svg>
+      </div>
+      <div id="suggestion" class="suggestion" aria-live="polite"></div>
+      <div class="progress-bar-container">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+      <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.06); text-align: center;">
+        <span id="microBenefits" style="font-size: 12px; color: #9CA3AF; font-weight: 500;">eye relief • posture • stress ↓</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
+          </svg>
+        </span>
+        Your streak & activity
+      </div>
+      <div id="log" class="log" aria-live="polite"></div>
+    </div>
+
+    <div class="card">
+      <div class="label">
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+          </svg>
+        </span>
+        Share your progress
+      </div>
+      <button id="shareBtn" type="button" class="share-btn">
+        <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+        </svg>
+        <span id="shareBtnText">Share my streak</span>
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="label">
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+          </svg>
+        </span>
+        Frequently Asked Questions
+      </div>
+      <div class="faq">
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1">
+            <span>Will I still get reminders if I close the tab?</span>
+            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+          <div class="faq-answer" id="faq-answer-1">
+            Yes! Once you enable notifications, BreakBreath will continue sending reminders even when the tab is closed. For guaranteed hourly alerts regardless of browser state, download the .ics calendar file to add recurring events to your calendar.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2">
+            <span>What environments are supported?</span>
+            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+          <div class="faq-answer" id="faq-answer-2">
+            We offer exercises for five environments: Office (desk stretches), Home (full-body movements), Queue (discrete standing exercises), Commute (seated mobility), and Outdoors (active breathing and stretches). Choose the one that matches your current situation.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3">
+            <span>Can I customize the reminder frequency?</span>
+            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+          <div class="faq-answer" id="faq-answer-3">
+            Currently, reminders are set to every 60 minutes, which research shows is optimal for breaking up sedentary time. This hourly cadence helps maintain focus while preventing the negative health effects of prolonged sitting.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4">
+            <span>Does this work on mobile devices?</span>
+            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+          <div class="faq-answer" id="faq-answer-4">
+            Yes! BreakBreath is fully responsive and works on smartphones and tablets. You can add it to your home screen for a native app-like experience with full notification support.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5">
+            <span>Is BreakBreath free to use?</span>
+            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+          <div class="faq-answer" id="faq-answer-5">
+            Yes, BreakBreath is completely free. No account required, no hidden costs, no data collection. Just open the site and start receiving helpful movement reminders.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6">
+            <span>How does BreakBreath work?</span>
+            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+          <div class="faq-answer" id="faq-answer-6">
+            BreakBreath sends you gentle reminders every hour with quick 1-minute exercises tailored to your environment (office, home, commute, etc.). No installation required—it works entirely in your browser with notifications you can enable with one click.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer style="text-align: center; padding: 40px 20px 20px; color: var(--muted); font-size: 13px; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 40px; background: rgba(11, 18, 32, 0.5);">
+    <p style="margin: 0 0 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+      <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+      </svg>
+      <span>Private. Offline-first. Works anywhere.</span>
+    </p>
+    <p style="margin: 0 0 12px; font-size: 13px; color: rgba(255, 255, 255, 0.5);">
+      <a href="#" onclick="openSafetyModal(); return false;" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='rgba(255, 255, 255, 0.7)'">Not medical advice · safety tips</a>
+    </p>
+    <p style="margin: 0 0 16px; font-size: 12px; color: rgba(255, 255, 255, 0.4);">
+      <kbd style="background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">?</kbd> help
+      <span style="margin: 0 8px;">·</span>
+      <kbd style="background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">Space</kbd> start
+      <span style="margin: 0 8px;">·</span>
+      <kbd style="background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 11px;">Esc</kbd> close
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <a href="#" onclick="openSafetyModal(); return false;" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Safety</a>
+      <a href="#accessibility" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Accessibility</a>
+      <a href="#privacy" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Privacy</a>
+      <a href="mailto:hello@breakbreath.app" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Contact</a>
+    </div>
+  </footer>
+
+  <div id="safetyModal" class="howto-overlay" style="display: none;" onclick="if(event.target === this) closeSafetyModal()">
+    <div class="howto-card" style="max-width: 520px;" role="dialog" aria-labelledby="safetyTitle" aria-modal="true">
+      <button type="button" onclick="closeSafetyModal()" aria-label="Close safety information" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 24px; line-height: 1; padding: 4px 8px; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">&times;</button>
+
+      <h3 id="safetyTitle" style="margin-top: 0;">Safety Notice</h3>
+
+      <div class="howto-section">
+        <p style="line-height: 1.6; margin: 0 0 16px;">These are gentle suggestions, not medical advice. Stop if you feel pain, dizziness, or numbness. Consult a professional if unsure.</p>
+
+        <h4>When to Stop</h4>
+        <ul style="line-height: 1.7; margin: 8px 0;">
+          <li>Sharp or persistent pain</li>
+          <li>Dizziness or lightheadedness</li>
+          <li>Numbness or tingling</li>
+          <li>Difficulty breathing</li>
+          <li>Any unusual discomfort</li>
+        </ul>
+      </div>
+
+      <div class="howto-section">
+        <h4>Inclusivity</h4>
+        <p style="line-height: 1.6; margin: 0;">Every exercise includes a quiet alternative for discreet practice. Use the settings to show only seated or upper-body options if standing exercises aren't suitable for you.</p>
+      </div>
+
+      <div class="howto-section">
+        <h4>Consult a Professional</h4>
+        <p style="line-height: 1.6; margin: 0;">If you have existing injuries, chronic conditions, or are pregnant, please consult a healthcare provider before starting any new movement practice.</p>
+      </div>
+
+      <button type="button" onclick="closeSafetyModal()" aria-label="Acknowledge safety information and close" style="margin-top: 20px; padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Got it</button>
+    </div>
+  </div>
+
+<script defer>
+const EXERCISE_LIBRARY = {
+  "eye_20_20_20": {
+    "title": "Eye Rest 20-20-20",
+    "category": "eyes",
+    "category": "eyes",
+    "env": ["office", "home", "queue", "commute"],
+    "tags": ["seated"],
+    "equipment": "None",
+    "duration": 20,
+    "steps": [
+      "Look 20 feet/6 m away for 20 seconds.",
+      "Blink slowly 5–10 times.",
+      "Roll eyes gently: 3 circles each way."
+    ],
+    "safety": ["Safety: No hard straining of the eyes."],
+    "mistake": "Common mistake: Forgetting to actually relax focus.",
+    "quiet_alt": "Close eyes and palm them for 20s if no distant view.",
+    "why": "Reduces digital eye strain. The 20-20-20 rule helps relax eye muscles and prevent computer vision syndrome.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="100" cy="80" r="30"/><circle cx="100" cy="80" r="12" fill="currentColor" opacity="0.3"/><path d="M70 80 Q65 60 80 50 M130 80 Q135 60 120 50"/><g opacity="0.5"><path d="M140 40 L160 30 M145 50 L165 45" stroke-dasharray="2 3"/></g></svg>'
+  },
+  "wrist_circles": {
+    "title": "Wrist Circles (×10 each way)",
+    "category": "upper",
+    "env": ["office", "home"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Extend arms forward, hands in fists.",
+      "Rotate wrists clockwise 10 times.",
+      "Reverse: rotate counterclockwise 10 times.",
+      "Shake out hands gently."
+    ],
+    "safety": ["Safety: Move slowly and smoothly.", "Safety: Stop if sharp pain occurs."],
+    "mistake": "Common mistake: Moving too fast—slow circles are more effective.",
+    "quiet_alt": "Rest forearms on desk while circling for quiet version.",
+    "why": "Improves wrist mobility and reduces carpal tunnel risk. Gentle rotation increases blood flow and prevents repetitive strain.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="60" y="60" width="20" height="60" rx="4"/><circle cx="70" cy="50" r="8"/><path d="M 70 42 A 15 15 0 1 1 70 58" stroke-width="1.5" opacity="0.6"/><path d="M 82 50 L 90 45" stroke-width="1.5" opacity="0.4" marker-end="url(#arrow)"/></svg>',
+    "tags": ["seated"]
+  },
+  "wrist_flexor_stretch": {
+    "title": "Wrist Flexor Stretch (30s/side)",
+    "category": "upper",
+    "env": ["office", "home", "queue"],
+    "equipment": "None",
+    "duration": 40,
+    "steps": [
+      "Extend right arm forward, palm up.",
+      "With left hand, gently pull fingers down/back.",
+      "Hold 30s; repeat palm down to stretch extensors.",
+      "Switch sides."
+    ],
+    "safety": ["Safety: Gentle tension only—no numbness/tingling."],
+    "mistake": "Common mistake: Elbow bent; keep it straight and shoulders relaxed.",
+    "quiet_alt": "Can be done seated with arm resting on desk.",
+    "why": "Reduces wrist tension from typing. Stretching both flexors and extensors prevents repetitive strain injuries.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M 40 80 L 120 80" stroke-width="3"/><path d="M 120 80 L 120 60 L 110 50" opacity="0.7"/><path d="M 130 70 L 120 60" stroke-width="1.5" opacity="0.5"/><circle cx="120" cy="80" r="6" fill="currentColor" opacity="0.3"/></svg>',
+    "tags": ["seated"]
+  },
+  "neck_left_right": {
+    "title": "Neck Turns (×5 each side)",
+    "category": "posture",
+    "env": ["office", "queue", "commute"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Sit tall, shoulders relaxed.",
+      "Slowly turn head to look left.",
+      "Hold 2 seconds.",
+      "Return to center.",
+      "Repeat to the right.",
+      "Complete 5 full rotations."
+    ],
+    "safety": ["Safety: Never force the stretch.", "Safety: Stop if dizziness occurs."],
+    "mistake": "Common mistake: Rushing—move like you're underwater.",
+    "quiet_alt": "Same movement works standing with stable footing.",
+    "why": "Relieves neck tension from screen time. Slow controlled movements reduce stiffness and headache frequency.",
+    "tags": ["seated"]
+  },
+  "neck_reset": {
+    "title": "Chin Tucks (5s × 6)",
+    "category": "posture",
+    "env": ["office", "queue", "home", "commute"],
+    "equipment": "None",
+    "duration": 40,
+    "steps": [
+      "Chin tuck: nod slightly (make a double-chin) and hold 5s × 5.",
+      "Side stretch: ear to shoulder 15s each side.",
+      "Slow half-circles front only × 3."
+    ],
+    "safety": ["Safety: No full fast circles; avoid dizziness."],
+    "mistake": "Common mistake: Tilting torso instead of moving the neck.",
+    "quiet_alt": "Chin tucks can be done very discretely anywhere.",
+    "why": "Resets forward head posture from prolonged screen time. Strengthens deep neck flexors and releases tension.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="100" cy="60" r="25"/><path d="M 100 85 Q 100 110 100 120" stroke-width="3"/><path d="M 90 95 L 110 95" stroke-width="1.5" opacity="0.4"/><path d="M 105 60 Q 115 60 120 55" opacity="0.5" stroke-dasharray="3 2"/></svg>',
+    "tags": ["seated"]
+  },
+  "shoulder_rolls": {
+    "title": "Shoulder Rolls Backward (×10)",
+    "category": "upper",
+    "env": ["office", "home", "queue"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Sit or stand tall.",
+      "Lift shoulders up toward ears.",
+      "Roll them back and down.",
+      "Complete 10 backward circles.",
+      "Shake arms loose."
+    ],
+    "safety": ["Safety: Keep movement smooth.", "Safety: Breathe throughout."],
+    "mistake": "Common mistake: Rolling forward—always roll backward to open chest.",
+    "quiet_alt": "Works seated or standing in limited space.",
+    "why": "Counteracts hunched posture. Rolling shoulders backward activates upper back muscles often weakened by desk work."
+  },
+  "shoulder_blade_squeeze": {
+    "title": "Shoulder Blade Squeeze (5s × 6)",
+    "env": ["office", "queue", "commute", "home"],
+    "equipment": "None",
+    "duration": 20,
+    "steps": [
+      "Sit upright.",
+      "Pull shoulder blades together.",
+      "Squeeze like holding pencil between them.",
+      "Hold 2 seconds.",
+      "Release and repeat 10 times."
+    ],
+    "safety": ["Safety: Keep shoulders down, not up.", "Safety: Breathe throughout."],
+    "mistake": "Common mistake: Shrugging shoulders up—squeeze back, not up.",
+    "quiet_alt": "Works while standing in tight spaces too.",
+    "why": "Counteracts slouched sitting. Squeezing shoulder blades strengthens postural muscles.",
+    "tags": ["seated"]
+  },
+  "seated_twist": {
+    "title": "Seated Spine Twist (30s/side)",
+    "env": ["office", "queue", "commute", "home"],
+    "equipment": "Chair (optional)",
+    "duration": 40,
+    "steps": [
+      "Sit tall. Feet flat.",
+      "Rotate torso to the right, hold chair back with left hand.",
+      "Inhale lengthen; exhale gently deepen.",
+      "Hold 20–30s. Switch sides."
+    ],
+    "safety": ["Safety: Move within comfort; avoid sharp pain."],
+    "mistake": "Common mistake: Leaning instead of rotating tall.",
+    "quiet_alt": "Keep hands in lap for subtle twist anywhere.",
+    "why": "Mobilizes thoracic spine. Gentle rotation reduces stiffness from prolonged sitting.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="100" cy="60" r="20"/><path d="M 100 80 L 100 130" stroke-width="3"/><path d="M 100 100 L 75 95" opacity="0.6"/><path d="M 100 100 L 125 110" opacity="0.6"/><path d="M 95 130 L 85 155 M 105 130 L 115 155" stroke-width="2.5"/><path d="M 110 60 Q 130 60 135 50" opacity="0.4" stroke-dasharray="2 3"/></svg>',
+    "tags": ["seated"]
+  },
+  "box_breathing": {
+    "title": "Box Breathing (4-4-4-4 × 6)",
+    "category": "breath",
+    "env": ["queue", "office", "commute", "home", "outdoors"],
+    "equipment": "None",
+    "duration": 40,
+    "steps": [
+      "Inhale through nose for 4 counts.",
+      "Hold breath for 4 counts.",
+      "Exhale through mouth for 4 counts.",
+      "Hold empty for 4 counts.",
+      "Repeat 5 times."
+    ],
+    "safety": ["Safety: Never strain your breath.", "Safety: Stop if lightheaded."],
+    "mistake": "Common mistake: Holding breath too long—stick to 4 counts.",
+    "quiet_alt": "Try 3-count box if 4-count feels uncomfortable.",
+    "why": "Activates parasympathetic nervous system. Equal-length breathing reduces cortisol and anxiety in under 2 minutes.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="60" y="50" width="80" height="80" rx="4" opacity="0.3"/><path d="M 60 50 L 140 50" stroke-width="2.5"><animate attributeName="stroke-dashoffset" values="0;80" dur="2s" repeatCount="indefinite"/></path><text x="100" y="90" fill="currentColor" text-anchor="middle" font-size="14" opacity="0.6">4-4-4-4</text></svg>',
+    "tags": ["seated"]
+  },
+  "nasal_breath_4_6": {
+    "title": "Nasal Breathing (4-6 × 10)",
+    "category": "breath",
+    "env": ["office", "queue", "commute", "home"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Close mouth; inhale gently through nose for 4 counts.",
+      "Exhale softly through nose for 6 counts.",
+      "Keep shoulders relaxed; belly moves first.",
+      "Repeat 8 cycles (~1 minute)."
+    ],
+    "safety": ["Safety: Stop if dizzy.", "Safety: Keep it easy—no straining."],
+    "mistake": "Common mistake: Shrugging shoulders or breathing too hard.",
+    "quiet_alt": "Same pace, smaller breaths. Count in your head.",
+    "why": "Filters and warms air naturally. Nasal breathing improves oxygen uptake and reduces anxiety.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="100" cy="70" r="25"/><path d="M 95 80 L 95 90 M 105 80 L 105 90" stroke-width="1.5"/><path d="M 100 92 Q 100 100 90 100" opacity="0.4" stroke-width="1"/><text x="70" y="120" fill="currentColor" font-size="12" opacity="0.6">4 in</text><text x="120" y="120" fill="currentColor" font-size="12" opacity="0.6">6 out</text></svg>',
+    "tags": ["seated"]
+  },
+  "breath_count_20": {
+    "title": "Breath Counting (to 20)",
+    "category": "breath",
+    "env": ["queue", "commute", "office"],
+    "equipment": "None",
+    "duration": 40,
+    "steps": [
+      "Close eyes or soften gaze.",
+      "Count '1' on first inhale.",
+      "Count '2' on first exhale.",
+      "Continue to 20.",
+      "If distracted, restart at 1."
+    ],
+    "safety": ["Safety: Breathe naturally.", "Safety: No judgment if you lose count."],
+    "mistake": "Common mistake: Forcing concentration—gently return when mind wanders.",
+    "quiet_alt": "Count with eyes open if closing feels awkward.",
+    "why": "Trains focused attention. Breath counting is a proven mindfulness exercise that improves concentration.",
+    "tags": ["seated"]
+  },
+  "micro_gratitude": {
+    "title": "Gratitude Reflection (3 things)",
+    "env": ["queue", "commute", "office", "home"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Think of something small you're grateful for today.",
+      "Name it silently or aloud.",
+      "Notice how it feels.",
+      "Repeat with 2 more items."
+    ],
+    "safety": ["Safety: No 'right' answers.", "Safety: Can be tiny things (coffee, sunlight)."],
+    "mistake": "Common mistake: Overthinking it—first thoughts are best.",
+    "quiet_alt": "If struggling: name 3 things you can see right now.",
+    "why": "Rewires negativity bias. Brief gratitude practice increases positive emotions and reduces stress hormones.",
+    "tags": ["seated"]
+  },
+  "posture_reset": {
+    "title": "Posture Reset (30s)",
+    "env": ["queue", "office", "commute", "home"],
+    "equipment": "None",
+    "duration": 20,
+    "steps": [
+      "Imagine string pulling crown of head up.",
+      "Roll shoulders back and down.",
+      "Unclench jaw, tongue off roof of mouth.",
+      "Take 3 deep breaths.",
+      "Maintain for 10 seconds."
+    ],
+    "safety": ["Safety: Don't arch back excessively.", "Safety: Keep it comfortable."],
+    "mistake": "Common mistake: Forcing stiffness—aim for relaxed alignment.",
+    "quiet_alt": "Scoot to front of chair for better seated posture.",
+    "why": "Improves mood via body-mind link. Upright posture increases confidence and reduces fatigue markers.",
+    "tags": ["seated"]
+  },
+  "face_relax": {
+    "title": "Face Relaxation (30s)",
+    "category": "upper",
+    "env": ["commute", "queue", "office"],
+    "equipment": "None",
+    "duration": 40,
+    "steps": [
+      "Let tongue drop from roof of mouth.",
+      "Unclench jaw, teeth apart.",
+      "Soften forehead and eyebrows.",
+      "Breathe naturally.",
+      "Hold for 60 seconds."
+    ],
+    "safety": ["Safety: Close mouth, but teeth don't touch.", "Safety: No forcing."],
+    "mistake": "Common mistake: Holding breath—remember to breathe.",
+    "quiet_alt": "Can be done with neutral expression in public.",
+    "why": "Releases jaw and facial tension. Conscious relaxation reduces TMJ symptoms and stress-related clenching.",
+    "tags": ["seated"]
+  },
+  "cat_cow": {
+    "title": "Cat-Cow Stretch (×10)",
+    "category": "posture",
+    "env": ["home"],
+    "equipment": "None",
+    "duration": 40,
+    "steps": [
+      "Get on hands and knees.",
+      "Inhale: drop belly, lift chest (cow).",
+      "Exhale: round spine, tuck chin (cat).",
+      "Flow smoothly between positions.",
+      "Complete 10 cycles."
+    ],
+    "safety": ["Safety: Move with breath.", "Safety: No pain in lower back."],
+    "mistake": "Common mistake: Moving neck before spine—lead with pelvis.",
+    "quiet_alt": "Seated version in chair if kneeling hurts.",
+    "why": "Mobilizes entire spine. This yoga flow improves spinal flexibility and relieves lower back pain."
+  },
+  "wall_pushups": {
+    "title": "Wall Push-Ups (×15)",
+    "category": "upper",
+    "env": ["home", "office"],
+    "equipment": "Wall",
+    "duration": 30,
+    "steps": [
+      "Stand arm's length from wall.",
+      "Place hands on wall, shoulder-width.",
+      "Lower chest to wall (inhale).",
+      "Push back to start (exhale).",
+      "Complete 15 reps."
+    ],
+    "safety": ["Safety: Keep core engaged.", "Safety: Don't lock elbows."],
+    "mistake": "Common mistake: Flaring elbows out—keep them at 45° angle.",
+    "quiet_alt": "Step feet farther from wall if too easy.",
+    "why": "Maintains upper body strength. Modified pushups build chest and arm muscles without floor work."
+  },
+  "forward_fold": {
+    "title": "Standing Forward Fold (30s)",
+    "env": ["home", "outdoors"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Stand with feet hip-width.",
+      "Hinge at hips, let arms hang.",
+      "Bend knees slightly if needed.",
+      "Relax head and neck.",
+      "Hold 30 seconds, breathe.",
+      "Roll up slowly."
+    ],
+    "safety": ["Safety: Never bounce.", "Safety: Bent knees are fine."],
+    "mistake": "Common mistake: Locking knees—always keep slight bend.",
+    "quiet_alt": "Sit on chair, fold forward over thighs if tight.",
+    "why": "Stretches posterior chain. Gentle hamstring stretch reduces lower back tension and improves circulation."
+  },
+  "calf_raises": {
+    "title": "Calf Raises (×20)",
+    "category": "lower",
+    "env": ["home", "office", "outdoors", "queue"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Stand near wall for balance.",
+      "Rise up on toes slowly.",
+      "Hold top position 1 second.",
+      "Lower with control.",
+      "Complete 20 reps."
+    ],
+    "safety": ["Safety: Use wall if balance is shaky.", "Safety: Land softly."],
+    "mistake": "Common mistake: Bouncing—use slow, controlled motion.",
+    "quiet_alt": "Hold wall with both hands if unstable.",
+    "why": "Strengthens lower legs and improves balance. Calf raises also enhance venous return from legs.",
+    "svg": '<svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="100" cy="50" rx="15" ry="20"/><path d="M 100 70 L 100 140" stroke-width="3"/><path d="M 100 140 L 95 180 M 100 140 L 105 180" stroke-width="2.5"/><circle cx="95" cy="185" r="4" fill="currentColor"/><circle cx="105" cy="185" r="4" fill="currentColor"/><path d="M 110 180 L 115 175" opacity="0.5" stroke-dasharray="2 2"/></svg>'
+  },
+  "ankle_circles": {
+    "title": "Ankle Circles (×10 each way, each foot)",
+    "category": "lower",
+    "env": ["commute", "office", "queue"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Lift right foot slightly off ground.",
+      "Rotate ankle clockwise 10 times.",
+      "Reverse counterclockwise 10 times.",
+      "Switch to left foot.",
+      "Repeat sequence."
+    ],
+    "safety": ["Safety: Move through full range.", "Safety: No pain in ankle."],
+    "mistake": "Common mistake: Tiny circles—make them as large as comfortable.",
+    "quiet_alt": "Point and flex feet instead if cramped.",
+    "why": "Prevents DVT risk from prolonged sitting. Ankle movement improves circulation in lower legs.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M 80 100 L 100 100 L 105 115" stroke-width="2.5"/><ellipse cx="110" cy="120" rx="8" ry="5"/><path d="M 110 115 A 12 12 0 1 1 110 125" stroke-width="1.5" opacity="0.6"/><path d="M 122 120 L 130 118" opacity="0.4" stroke-dasharray="2 2"/></svg>',
+    "tags": ["seated"]
+  },
+  "ankle_alphabet": {
+    "title": "Ankle Alphabet (A–Z, one foot)",
+    "category": "lower",
+    "env": ["office", "queue", "commute", "home"],
+    "equipment": "None",
+    "duration": 40,
+    "steps": [
+      "Sit with right foot lifted slightly.",
+      "Use big toe to 'draw' each letter A through Z in the air.",
+      "Move from ankle, not whole leg.",
+      "Switch to left foot and repeat."
+    ],
+    "safety": ["Safety: Keep movements controlled.", "Safety: Stop if cramping occurs."],
+    "mistake": "Common mistake: Moving entire leg—isolate the ankle joint.",
+    "quiet_alt": "Do half alphabet (A-M) for shorter version.",
+    "why": "Comprehensive ankle mobility. Writing the alphabet works ankle through full range of motion and improves proprioception.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M 80 100 L 100 100 L 105 115" stroke-width="2.5"/><ellipse cx="110" cy="120" rx="8" ry="5"/><text x="130" y="105" fill="currentColor" font-size="16" opacity="0.5">ABC</text><path d="M 128 108 Q 135 115 142 112" stroke-width="1" opacity="0.4"/></svg>',
+    "tags": ["seated"]
+  },
+  "glute_squeeze": {
+    "title": "Glute Squeeze (5s × 6)",
+    "category": "lower",
+    "env": ["office", "queue", "commute", "home"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Stand or sit with good posture.",
+      "Squeeze glutes tightly as if holding a coin.",
+      "Hold squeeze for 3 seconds.",
+      "Release and repeat.",
+      "Complete 15 reps."
+    ],
+    "safety": ["Safety: Don't arch back.", "Safety: Keep core engaged."],
+    "mistake": "Common mistake: Tilting pelvis—squeeze only, no movement.",
+    "quiet_alt": "Works perfectly while sitting in meetings or transit.",
+    "why": "Activates glutes weakened by sitting. Regular squeezes improve posture and reduce lower back pain.",
+    "svg": '<svg viewBox="0 0 200 180" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="100" cy="60" rx="18" ry="22"/><path d="M 100 82 L 100 120" stroke-width="3"/><circle cx="85" cy="135" r="12" opacity="0.4"/><circle cx="115" cy="135" r="12" opacity="0.4"/><path d="M 100 120 L 95 160 M 100 120 L 105 160" stroke-width="2.5"/></svg>'
+  },
+  "seated_hamstring_stretch": {
+    "title": "Seated Hamstring Stretch (30s/side)",
+    "env": ["office", "home", "queue"],
+    "equipment": "Chair",
+    "duration": 40,
+    "steps": [
+      "Sit at edge of chair.",
+      "Extend right leg straight, heel on floor, toes up.",
+      "Keep left foot flat, knee bent.",
+      "Hinge forward from hips, back straight.",
+      "Hold 30s. Switch sides."
+    ],
+    "safety": ["Safety: No rounding spine.", "Safety: Stop if sharp pain behind knee."],
+    "mistake": "Common mistake: Curving back—hinge from hips with flat spine.",
+    "quiet_alt": "Reduce forward lean if tight—even small stretch helps.",
+    "why": "Releases tight hamstrings from sitting. Regular stretching prevents lower back compensation and improves flexibility.",
+    "svg": '<svg viewBox="0 0 200 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="100" cy="50" r="18"/><path d="M 100 68 L 100 90" stroke-width="2.5"/><path d="M 100 90 L 130 110" stroke-width="2.5"/><path d="M 100 90 L 95 105 L 90 120" stroke-width="2"/><rect x="70" y="105" width="60" height="5" rx="2" opacity="0.3"/></svg>',
+    "tags": ["seated"]
+  },
+  "wall_pec_stretch": {
+    "title": "Wall Pec Stretch (30s/side)",
+    "category": "upper",
+    "env": ["office", "home"],
+    "equipment": "Wall or doorframe",
+    "duration": 40,
+    "steps": [
+      "Stand in doorway or at wall corner.",
+      "Place right forearm on wall, elbow at 90°.",
+      "Step right foot back slightly.",
+      "Rotate torso left until chest stretch.",
+      "Hold 30s. Switch sides."
+    ],
+    "safety": ["Safety: Gentle stretch only.", "Safety: Don't force shoulder forward."],
+    "mistake": "Common mistake: Shoulder hiking up—keep it down and back.",
+    "quiet_alt": "Clasp hands behind back and lift for doorway-free version.",
+    "why": "Opens tight chest from hunched posture. Pec stretching improves shoulder health and counteracts forward rounding.",
+    "svg": '<svg viewBox="0 0 200 180" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="20" y="40" width="8" height="100" fill="currentColor" opacity="0.2"/><circle cx="80" cy="70" r="18"/><path d="M 80 88 L 80 120" stroke-width="2.5"/><path d="M 80 100 L 45 85" stroke-width="2"/><path d="M 80 100 L 110 95" stroke-width="2" opacity="0.6"/><path d="M 80 120 L 75 150 M 80 120 L 85 150" stroke-width="2.5"/></svg>'
+  },
+  "brisk_walk": {
+    "title": "Brisk Walking (1 min)",
+    "category": "lower",
+    "env": ["outdoors", "home"],
+    "equipment": "None",
+    "duration": 40,
+    "steps": [
+      "Stand tall, arms relaxed.",
+      "Walk at faster than normal pace.",
+      "Pump arms naturally.",
+      "Keep breathing comfortable.",
+      "Continue for 60 seconds."
+    ],
+    "safety": ["Safety: Watch footing.", "Safety: Slow if breathless."],
+    "mistake": "Common mistake: Too slow—you should feel slightly breathless.",
+    "quiet_alt": "March in place with high knees if limited space.",
+    "why": "Boosts cardiovascular health. Even 1 minute of brisk walking improves blood flow and mood."
+  },
+  "quad_stretch": {
+    "title": "Standing Quad Stretch (30–40s/side)",
+    "env": ["office", "home", "queue", "outdoors"],
+    "equipment": "None",
+    "duration": 40,
+    "steps": [
+      "Stand tall. Hold a wall or chair for balance if needed.",
+      "Bend your right knee and bring your heel to your glute.",
+      "Grab your right ankle with your right hand; knees together.",
+      "Gently push your hip forward until you feel a stretch in the front thigh.",
+      "Hold 30–40s. Switch sides."
+    ],
+    "safety": [
+      "Safety: No knee pain—back off if it pinches.", "Safety: Keep spine neutral; don't yank the ankle."
+    ],
+    "mistake": "Common mistake: Knees drifting apart or back arching.",
+    "quiet_alt": "Seated quad set: tighten front thigh for 5s, relax 5s × 6.",
+    "why": "Lengthens hip flexors. Quad stretching counters sitting-induced tightness and improves gait.",
+    "svg": '<svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="100" cy="50" rx="15" ry="20"/><path d="M 100 70 L 100 120"/><path d="M 100 120 L 95 160"/><path d="M 100 120 L 115 145 Q 120 155 115 165" stroke-width="2.5"/><circle cx="115" cy="168" r="3" fill="currentColor"/><path d="M 100 85 L 85 95" opacity="0.6"/></svg>'
+  },
+  "arm_swings": {
+    "title": "Arm Swings (×20)",
+    "category": "upper",
+    "env": ["outdoors", "home"],
+    "equipment": "None",
+    "duration": 30,
+    "steps": [
+      "Stand with feet hip-width.",
+      "Swing both arms forward and up.",
+      "Let them swing back and down.",
+      "Build gentle momentum.",
+      "Complete 20 swings."
+    ],
+    "safety": ["Safety: Clear space around you.", "Safety: Control the motion."],
+    "mistake": "Common mistake: Forcing range—let momentum do the work.",
+    "quiet_alt": "One arm at a time if space limited.",
+    "why": "Warms up shoulder joints. Dynamic arm movement increases range of motion and circulation."
+  }
+};
+
+const COMPLETION_MESSAGES = {
+  "eye_20_20_20": "Nice—eyes refreshed!",
+  "wrist_circles": "Nice—wrists unlocked!",
+  "wrist_flexor_stretch": "Nice—wrists stretched!",
+  "neck_left_right": "Nice—neck loosened!",
+  "neck_reset": "Nice—posture reset!",
+  "shoulder_rolls": "Nice—shoulders released!",
+  "shoulder_blade_squeeze": "Nice—upper back activated!",
+  "seated_twist": "Nice—spine mobilized!",
+  "box_breathing": "Nice—breath centered!",
+  "nasal_breath_4_6": "Nice—nervous system calmed!",
+  "breath_count_20": "Nice—mind focused!",
+  "micro_gratitude": "Nice—moment appreciated!",
+  "posture_reset": "Nice—alignment restored!",
+  "face_relax": "Nice—tension released!",
+  "ankle_circles": "Nice—ankles unlocked!",
+  "ankle_alphabet": "Nice—ankles mobilized!",
+  "cat_cow": "Nice—spine flowing!",
+  "wall_pushups": "Nice—upper body engaged!",
+  "forward_fold": "Nice—hamstrings stretched!",
+  "calf_raises": "Nice—calves activated!",
+  "glute_squeeze": "Nice—glutes engaged!",
+  "wall_pec_stretch": "Nice—chest opened!",
+  "seated_hamstring_stretch": "Nice—hamstrings released!",
+  "brisk_walk": "Nice—circulation boosted!",
+  "quad_stretch": "Nice—quads stretched!",
+  "arm_swings": "Nice—shoulders warmed!"
+};
+
+const BANK = {
+  office: ["eye_20_20_20", "wrist_circles", "wrist_flexor_stretch", "neck_left_right", "neck_reset", "shoulder_rolls", "shoulder_blade_squeeze", "seated_twist", "glute_squeeze", "seated_hamstring_stretch", "wall_pec_stretch"],
+  queue: ["box_breathing", "breath_count_20", "micro_gratitude", "posture_reset", "face_relax", "nasal_breath_4_6", "calf_raises", "glute_squeeze", "ankle_alphabet"],
+  home: ["cat_cow", "wall_pushups", "forward_fold", "calf_raises", "quad_stretch", "arm_swings", "wall_pec_stretch", "seated_hamstring_stretch", "glute_squeeze"],
+  commute: ["nasal_breath_4_6", "shoulder_blade_squeeze", "ankle_circles", "face_relax", "seated_twist", "ankle_alphabet", "glute_squeeze"],
+  outdoors: ["brisk_walk", "quad_stretch", "arm_swings", "box_breathing", "forward_fold", "calf_raises"]
+};
+
+function validateExerciseLibrary() {
+  const requiredKeys = ['title', 'env', 'equipment', 'duration', 'steps', 'safety', 'mistake', 'quiet_alt', 'why'];
+  const warnings = [];
+
+  Object.entries(EXERCISE_LIBRARY).forEach(([key, exercise]) => {
+    const missing = [];
+
+    if (!exercise.title || typeof exercise.title !== 'string') {
+      missing.push('title');
+    }
+
+    if (!Array.isArray(exercise.steps) || exercise.steps.length === 0) {
+      missing.push('steps[]');
+    }
+
+    if (!Array.isArray(exercise.env) || exercise.env.length === 0) {
+      missing.push('env[]');
+    }
+
+    if (typeof exercise.duration !== 'number') {
+      missing.push('duration');
+    }
+
+    if (!Array.isArray(exercise.safety)) {
+      missing.push('safety[]');
+    }
+
+    if (!exercise.mistake || typeof exercise.mistake !== 'string') {
+      missing.push('mistake');
+    }
+
+    if (!exercise.quiet_alt || typeof exercise.quiet_alt !== 'string') {
+      missing.push('quiet_alt');
+    }
+
+    if (!exercise.why || typeof exercise.why !== 'string') {
+      missing.push('why');
+    }
+
+    if (!exercise.equipment || typeof exercise.equipment !== 'string') {
+      missing.push('equipment');
+    }
+
+    if (missing.length > 0) {
+      warnings.push(`Exercise "${key}" missing: ${missing.join(', ')}`);
+    }
+  });
+
+  return warnings.length === 0;
+}
+
+validateExerciseLibrary();
+
+let currentEnv = localStorage.getItem('breakbreath_env') || "office";
+let timerId = null;
+let intervalId = null;
+let streakCount = Number(localStorage.getItem('bb_streak') || 0);
+let isActive = localStorage.getItem('breakbreath_active') === 'true';
+let currentExercise = null;
+let howtoTimerInterval = null;
+let howtoTimeRemaining = 0;
+let howtoTimerEndTime = 0;
+let autoShowHowto = localStorage.getItem('bb_auto_show_howto') !== 'false';
+
+const DEFAULT_FILTERS = {
+  breath: true,
+  eyes: true,
+  upper: true,
+  lower: true,
+  posture: true,
+  quiet: true
+};
+
+function loadFilters() {
+  try {
+    const raw = localStorage.getItem('bb_filters');
+    if (!raw) return { ...DEFAULT_FILTERS, __v: 1 };
+    const parsed = JSON.parse(raw);
+    return { ...DEFAULT_FILTERS, ...parsed };
+  } catch (_) {
+    return { ...DEFAULT_FILTERS, __v: 1 };
+  }
+}
+
+function saveFilters(f) {
+  localStorage.setItem('bb_filters', JSON.stringify({ ...f, __v: 1 }));
+}
+
+let filters = loadFilters();
+
+function getWeekKey(d = new Date()) {
+  const y = d.getFullYear();
+  const oneJan = new Date(y, 0, 1);
+  const day = Math.floor((d - oneJan) / 86400000) + 1;
+  const week = Math.ceil((day + oneJan.getDay()) / 7);
+  return `${y}-W${week}`;
+}
+
+function loadWeekStreak() {
+  try {
+    const raw = localStorage.getItem('bb_streak_week');
+    if (!raw) return { weekKey: getWeekKey(), days: [false, false, false, false, false, false, false], __v: 1 };
+    const parsed = JSON.parse(raw);
+    const current = getWeekKey();
+    if (parsed.weekKey !== current) {
+      return { weekKey: current, days: [false, false, false, false, false, false, false], __v: 1 };
+    }
+    return parsed;
+  } catch (_) {
+    return { weekKey: getWeekKey(), days: [false, false, false, false, false, false, false], __v: 1 };
+  }
+}
+
+function saveWeekStreak(s) {
+  localStorage.setItem('bb_streak_week', JSON.stringify(s));
+}
+
+function markTodayComplete() {
+  const s = loadWeekStreak();
+  const today = new Date().getDay();
+  s.days[today] = true;
+  saveWeekStreak(s);
+  renderWeekDots(s);
+}
+
+function matchesFilters(exerciseKey) {
+  const ex = EXERCISE_LIBRARY[exerciseKey];
+  if (!ex) return false;
+
+  const cat = ex.category;
+  if (cat && !filters[cat]) {
+    return false;
+  }
+
+  if (!filters.quiet && !ex.quiet_alt) {
+    return false;
+  }
+
+  return true;
+}
+
+function toggleFilter(key) {
+  filters[key] = !filters[key];
+  saveFilters(filters);
+  renderFiltersUI();
+  setSuggestion();
+}
+
+function renderFiltersUI() {
+  document.querySelectorAll('[data-filter]').forEach(btn => {
+    const key = btn.getAttribute('data-filter');
+    const isActive = filters[key];
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+}
+
+function getExerciseAutoShow(exerciseKey) {
+  try {
+    const hiddenExercises = JSON.parse(localStorage.getItem('bb_hidden_exercises') || '[]');
+    return !hiddenExercises.includes(exerciseKey);
+  } catch (e) {
+    return true;
+  }
+}
+
+function setExerciseAutoShow(exerciseKey, shouldShow) {
+  try {
+    const hiddenExercises = JSON.parse(localStorage.getItem('bb_hidden_exercises') || '[]');
+    if (!shouldShow && !hiddenExercises.includes(exerciseKey)) {
+      hiddenExercises.push(exerciseKey);
+    } else if (shouldShow) {
+      const index = hiddenExercises.indexOf(exerciseKey);
+      if (index > -1) hiddenExercises.splice(index, 1);
+    }
+    localStorage.setItem('bb_hidden_exercises', JSON.stringify(hiddenExercises));
+  } catch (e) {}
+}
+
+// Daily streak tracking
+function getDailyStreak() {
+  const lastActiveDate = localStorage.getItem('bb_last_active_date');
+  const currentStreak = Number(localStorage.getItem('bb_daily_streak') || 0);
+  const today = new Date().toDateString();
+
+  if (!lastActiveDate) return 0;
+
+  const lastDate = new Date(lastActiveDate);
+  const todayDate = new Date(today);
+  const daysDiff = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+
+  if (daysDiff === 0) {
+    // Same day
+    return currentStreak;
+  } else if (daysDiff === 1) {
+    // Consecutive day
+    return currentStreak;
+  } else {
+    // Streak broken
+    return 0;
+  }
+}
+
+function updateDailyStreak() {
+  const lastActiveDate = localStorage.getItem('bb_last_active_date');
+  const today = new Date().toDateString();
+
+  if (lastActiveDate === today) {
+    // Already counted today
+    return;
+  }
+
+  const lastDate = lastActiveDate ? new Date(lastActiveDate) : null;
+  const todayDate = new Date(today);
+
+  let currentStreak = Number(localStorage.getItem('bb_daily_streak') || 0);
+
+  if (!lastDate) {
+    // First time
+    currentStreak = 1;
+  } else {
+    const daysDiff = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+
+    if (daysDiff === 1) {
+      // Consecutive day
+      currentStreak++;
+    } else if (daysDiff === 0) {
+      // Same day (shouldn't happen due to check above)
+      return;
+    } else {
+      // Streak broken, restart
+      currentStreak = 1;
+    }
+  }
+
+  localStorage.setItem('bb_daily_streak', currentStreak);
+  localStorage.setItem('bb_last_active_date', today);
+  updateDailyStreakDisplay();
+}
+
+function updateDailyStreakDisplay() {
+  const dailyStreak = getDailyStreak();
+  const chip = $("streakChip");
+
+  if (dailyStreak > 0) {
+    chip.textContent = `🔥 ${dailyStreak} day${dailyStreak !== 1 ? 's' : ''}`;
+    chip.style.display = "inline-flex";
+  } else {
+    chip.style.display = "none";
+  }
+}
+
+let dailyStreak = getDailyStreak();
+
+const $ = (id) => document.getElementById(id);
+const logEl = $("log");
+let logEntries = [];
+const sugEl = $("suggestion");
+const toastEl = $("toast");
+const countdownEl = $("countdownPill");
+const progressEl = $("progressBar");
+
+let countdownInterval = null;
+let nextResetTime = null;
+
+function getPoolIndex(env) {
+  const key = `breakbreath_poolIndex_${env}`;
+  try {
+    return Number(localStorage.getItem(key) || 0);
+  } catch (e) {
+    return 0;
+  }
+}
+
+function setPoolIndex(env, index) {
+  const key = `breakbreath_poolIndex_${env}`;
+  try {
+    localStorage.setItem(key, String(index));
+  } catch (e) {}
+}
+
+function stamp(){ return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
+
+function showToast(message, duration = 1600) {
+  const n = document.createElement('div');
+  n.className = 'fixed bottom-4 right-4 rounded-md bg-zinc-900/90 text-zinc-100 px-3 py-2 text-sm shadow-lg';
+  n.style.cssText = 'position: fixed; bottom: 16px; right: 16px; border-radius: 6px; background: rgba(24, 24, 27, 0.9); color: #F4F4F5; padding: 8px 12px; font-size: 13px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); z-index: 9999;';
+  n.textContent = message;
+  document.body.appendChild(n);
+  setTimeout(() => n.remove(), duration);
+}
+
+function getEnvIcon(env) {
+  const icons = {
+    office: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" /></svg>',
+    queue: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>',
+    home: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>',
+    commute: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>',
+    outdoors: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 21.75l.6-9m.4 9h9m0 0l.6-9m-.6 9h3.75m-13.5-9h15M5.25 3.75h13.5L21 12H3l2.25-8.25z" /></svg>'
+  };
+  return icons[env] || '';
+}
+
+function showConfettiPulse() {
+  const confetti = document.createElement('div');
+  confetti.className = 'confetti-burst';
+  document.body.appendChild(confetti);
+  setTimeout(() => {
+    confetti.remove();
+  }, 1200);
+}
+
+function getRecentExerciseCategories() {
+  const logData = loadLog();
+  const recent = logData
+    .filter(entry => entry.exerciseKey)
+    .slice(0, 3)
+    .map(entry => {
+      const exercise = EXERCISE_LIBRARY[entry.exerciseKey];
+      return exercise?.categories?.[0] || null;
+    })
+    .filter(cat => cat !== null);
+  return recent;
+}
+
+function setSuggestion(){
+  const seatedOnly = localStorage.getItem('bb_seated_only') === 'true';
+
+  let pool = BANK[currentEnv];
+
+  // Apply category filters
+  pool = pool.filter(key => matchesFilters(key));
+
+  // Filter pool if seated-only mode is enabled
+  if (seatedOnly) {
+    pool = pool.filter(key => {
+      const exercise = EXERCISE_LIBRARY[key];
+      return exercise && exercise.tags && exercise.tags.includes('seated');
+    });
+    if (pool.length === 0) {
+      // Fallback to all seated exercises if current environment has none
+      pool = Object.keys(EXERCISE_LIBRARY).filter(key => {
+        const exercise = EXERCISE_LIBRARY[key];
+        return exercise && exercise.tags && exercise.tags.includes('seated') && matchesFilters(key);
+      });
+    }
+  }
+
+  // Fallback if no exercises match filters
+  if (pool.length === 0) {
+    pool = BANK[currentEnv];
+  }
+
+  // Check if last 3 exercises are same category
+  const recentCategories = getRecentExerciseCategories();
+  if (recentCategories.length === 3 &&
+      recentCategories[0] === recentCategories[1] &&
+      recentCategories[1] === recentCategories[2]) {
+    // Auto-rotate: filter out the repeated category
+    const repeatedCategory = recentCategories[0];
+    const diversePool = pool.filter(key => {
+      const exercise = EXERCISE_LIBRARY[key];
+      const category = exercise?.categories?.[0];
+      return category !== repeatedCategory;
+    });
+
+    // Use diverse pool if available, otherwise fall back to full pool
+    if (diversePool.length > 0) {
+      pool = diversePool;
+    }
+  }
+
+  const index = getPoolIndex(currentEnv);
+  const exerciseKey = pool[index % pool.length];
+  const item = EXERCISE_LIBRARY[exerciseKey];
+
+  if (!item) {
+    console.error(`Exercise not found: ${exerciseKey}`);
+    return;
+  }
+
+  currentExercise = item;
+  currentExercise.key = exerciseKey;
+
+  // Increment for next time (round-robin)
+  setPoolIndex(currentEnv, (index + 1) % pool.length);
+
+  const duration = item.duration || 60;
+  const isBeginnerFriendly = duration <= 30 || (item.tags && item.tags.includes('seated'));
+
+  sugEl.innerHTML = `
+    <div style="font-size: 0.75em; color: var(--muted); font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Next 60-sec reset</div>
+    <div>
+      <span class="env-badge">${getEnvIcon(currentEnv)}${currentEnv}</span> ${item.title}
+      <button class="help-chip" onclick="toggleHowtoCard()" type="button" aria-expanded="false" aria-controls="howtoCard" aria-label="Show exercise instructions" tabindex="0" id="helpChipBtn">?</button>
+    </div>
+    <div style="font-size: 0.85em; color: var(--muted); margin-top: 6px;">${duration > 0 ? `0:${duration.toString().padStart(2, '0')}` : '1:00'} • ${isBeginnerFriendly ? 'Beginner-friendly' : 'All levels'}</div>
+    ${item.quiet_alt ? `<div style="font-size: 0.85em; color: #666; margin-top: 4px;"><strong>No-noise option:</strong> ${item.quiet_alt}</div>` : ''}
+    <button class="why-link" onclick="toggleWhyExplanation(event)" type="button">
+      <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+      </svg>
+      Why this works
+    </button>
+    <div class="why-explanation" style="display: none;">${item.why}</div>
+    <div id="howtoCard" class="howto-card" style="display: none; overflow: visible;" role="region" aria-labelledby="howtoTitle"></div>
+  `;
+
+  if (autoShowHowto && getExerciseAutoShow(exerciseKey)) {
+    setTimeout(() => toggleHowtoCard(true), 300);
+  }
+
+  return item.title;
+}
+
+function startCountdown() {
+  if (countdownInterval) clearInterval(countdownInterval);
+
+  nextResetTime = Date.now() + nextTopOfHour();
+  countdownEl.style.display = 'inline-flex';
+
+  const countdownRing = $('countdownRing');
+  const ringProgress = countdownRing ? countdownRing.querySelector('.ring-progress') : null;
+  const circumference = 62.83; // 2 * PI * 10
+
+  const updateCountdown = () => {
+    const remaining = Math.max(0, Math.floor((nextResetTime - Date.now()) / 1000));
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+
+    if (minutes > 0) {
+      countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+      countdownEl.textContent = `${seconds}s`;
+    }
+
+    // Update progress bar
+    const totalSeconds = 3600;
+    const elapsed = totalSeconds - remaining;
+    const progress = (elapsed / totalSeconds) * 100;
+
+    // Stepped progress for reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      // Fill in 10% steps
+      const steppedProgress = Math.floor(progress / 10) * 10;
+      progressEl.style.width = `${Math.min(100, steppedProgress)}%`;
+    } else {
+      progressEl.style.width = `${Math.min(100, progress)}%`;
+    }
+
+    // Update countdown ring (fills over 60 seconds)
+    if (countdownRing && ringProgress && remaining <= 60) {
+      countdownRing.style.display = 'block';
+      const ringElapsed = 60 - remaining;
+
+      if (prefersReducedMotion) {
+        // Stepped progress in 10-second increments for reduced motion
+        const steppedElapsed = Math.floor(ringElapsed / 10) * 10;
+        const ringProgress60 = steppedElapsed / 60;
+        const offset = circumference * (1 - ringProgress60);
+        ringProgress.style.strokeDashoffset = offset;
+      } else {
+        const ringProgress60 = ringElapsed / 60;
+        const offset = circumference * (1 - ringProgress60);
+        ringProgress.style.strokeDashoffset = offset;
+      }
+    } else if (countdownRing) {
+      countdownRing.style.display = 'none';
+    }
+
+    if (remaining <= 0) {
+      stopCountdown();
+    }
+  };
+
+  updateCountdown();
+  countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+function stopCountdown() {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+  countdownEl.style.display = 'none';
+  progressEl.style.width = '0%';
+
+  const countdownRing = $('countdownRing');
+  if (countdownRing) {
+    countdownRing.style.display = 'none';
+  }
+}
+
+function loadLog() {
+  try {
+    const stored = localStorage.getItem('breakbreath_log');
+    return stored ? JSON.parse(stored) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveLog(entries) {
+  try {
+    localStorage.setItem('breakbreath_log', JSON.stringify(entries.slice(0, 10)));
+  } catch (e) {}
+}
+
+function getCategoryEmoji(category) {
+  const emojiMap = {
+    breath: '🫁',
+    eyes: '👀',
+    upper: '💪',
+    lower: '🦵',
+    posture: '🧘'
+  };
+  return emojiMap[category] || '✓';
+}
+
+function getExerciseEmoji(exerciseKey) {
+  const exercise = EXERCISE_LIBRARY[exerciseKey];
+  if (!exercise) return '✓';
+  return getCategoryEmoji(exercise.category);
+}
+
+function appendLogEntry({ts = Date.now(), label, category, duration = 30}) {
+  const entry = { ts, label, category, duration };
+  const list = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
+  list.unshift(entry);
+  localStorage.setItem('breakbreath_log', JSON.stringify(list.slice(0, 10)));
+  renderLog();
+}
+
+function appendLog(msg, exerciseKey = null, duration = null) {
+  let category = null;
+  if (exerciseKey) {
+    const exercise = EXERCISE_LIBRARY[exerciseKey];
+    category = exercise?.category || null;
+  }
+  appendLogEntry({
+    ts: Date.now(),
+    label: msg,
+    category: category,
+    duration: duration
+  });
+}
+
+function renderLog() {
+  const logData = loadLog();
+  logEl.innerHTML = '';
+
+  if (logData.length === 0) {
+    const emptyState = document.createElement('div');
+    emptyState.className = 'empty-state';
+    emptyState.innerHTML = `
+      Your activity will appear here after your first nudge.
+      <div style="margin-top: 12px; font-size: 13px; opacity: 0.6; font-style: normal;">
+        💡 Press <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px;">Space</kbd> to start the 30s coach.
+      </div>
+    `;
+    logEl.appendChild(emptyState);
+    return;
+  }
+
+  logData.forEach((entry, index) => {
+    const el = document.createElement('div');
+    el.className = 'log-entry';
+
+    // Mark the most recent entry (first in reverse order)
+    if (index === logData.length - 1) {
+      el.classList.add('most-recent');
+    }
+
+    const timestamp = entry.ts || new Date(entry.timeISO).getTime();
+    const time = new Date(timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+    const label = entry.label || entry.title || '';
+    const category = entry.category || (entry.exerciseKey ? EXERCISE_LIBRARY[entry.exerciseKey]?.category : null);
+
+    const emoji = category ? getCategoryEmoji(category) : '✓';
+    const durationChip = entry.duration ? `<span style="display: inline-block; background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; margin-left: 6px;">${entry.duration}s</span>` : '';
+
+    el.innerHTML = `
+      <span style="font-size: 18px; flex-shrink: 0;">${emoji}</span>
+      <div class="content">
+        <div class="timestamp">${time}</div>
+        <div class="message">${label}${durationChip}</div>
+      </div>
+    `;
+    logEl.appendChild(el);
+  });
+}
+
+function renderWeekDots(weekStreak) {
+  const dayDotsEl = document.getElementById('dayDots');
+  if (!dayDotsEl) return;
+
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const s = weekStreak || loadWeekStreak();
+
+  dayDotsEl.innerHTML = days.map((day, index) => {
+    const filled = s.days[index] ? 'filled' : '';
+    return `
+      <li class="day-dot">
+        <span class="day-dot-label">${day}</span>
+        <span class="day-dot-circle ${filled}"></span>
+      </li>
+    `;
+  }).join('');
+}
+
+function renderDayDots() {
+  renderWeekDots();
+}
+
+document.querySelectorAll("[data-env]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("[data-env]").forEach(b=>b.setAttribute("aria-pressed","false"));
+    btn.setAttribute("aria-pressed","true");
+    currentEnv = btn.dataset.env;
+    localStorage.setItem('breakbreath_env', currentEnv);
+
+    const envCapitalized = currentEnv.charAt(0).toUpperCase() + currentEnv.slice(1);
+    appendLog(`Environment set to: ${envCapitalized}`);
+    showToast(`Environment set to ${envCapitalized}`);
+    setSuggestion();
+  });
+});
+
+let lastClickedFilter = null;
+
+document.querySelectorAll("[data-filter]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const key = btn.dataset.filter;
+    lastClickedFilter = key;
+    toggleFilter(key);
+  });
+});
+
+$("filterOnlyThis").addEventListener("click", () => {
+  if (!lastClickedFilter) return;
+  Object.keys(filters).forEach(key => {
+    if (key !== '__v') {
+      filters[key] = key === lastClickedFilter;
+    }
+  });
+  saveFilters(filters);
+  renderFiltersUI();
+  setSuggestion();
+  showToast(`Only ${lastClickedFilter} enabled`);
+});
+
+$("filterExcludeThis").addEventListener("click", () => {
+  if (!lastClickedFilter) return;
+  filters[lastClickedFilter] = false;
+  saveFilters(filters);
+  renderFiltersUI();
+  setSuggestion();
+  showToast(`${lastClickedFilter} excluded`);
+});
+
+$("filterReset").addEventListener("click", () => {
+  filters = { ...DEFAULT_FILTERS, __v: 1 };
+  saveFilters(filters);
+  renderFiltersUI();
+  setSuggestion();
+  showToast("Filters reset to default");
+});
+
+function nextTopOfHour() {
+  const now = new Date();
+  const next = new Date(now);
+  next.setMinutes(0, 0, 0);
+  next.setHours(next.getHours() + 1);
+  return next.getTime() - now.getTime();
+}
+
+function startNudges(){
+  if (timerId) clearTimeout(timerId);
+  if (intervalId) clearInterval(intervalId);
+
+  // Immediate suggestion
+  setSuggestion();
+  notifyNow();
+
+  // Start countdown
+  startCountdown();
+
+  // Hourly alignment: schedule to next top of hour
+  const hourMs = 3600000;
+  const delay = nextTopOfHour();
+
+  timerId = setTimeout(() => {
+    notifyNow();
+    startCountdown();
+    intervalId = setInterval(() => {
+      notifyNow();
+      startCountdown();
+    }, hourMs);
+  }, delay);
+
+  localStorage.setItem('breakbreath_active', 'true');
+  localStorage.setItem('breakbreath_lastAt', new Date().toISOString());
+  isActive = true;
+  appendLog("Hourly nudges started (aligned to top of hour).");
+  streakCount++;
+  localStorage.setItem('bb_streak', streakCount);
+
+  // Update daily streak
+  updateDailyStreak();
+
+  updateShareButton();
+  showToast(`Nice! See you at the top of the hour. You've kept a ${streakCount}-hour streak.`);
+}
+
+function stopNudges(){
+  if (timerId) clearTimeout(timerId);
+  if (intervalId) clearInterval(intervalId);
+  timerId = null;
+  intervalId = null;
+  stopCountdown();
+  localStorage.setItem('breakbreath_active', 'false');
+  isActive = false;
+  appendLog("Nudges stopped.");
+}
+
+// Sound effect for nudge notification
+function playNudgeSound() {
+  const soundEnabled = localStorage.getItem('sound_enabled') !== 'false';
+  if (!soundEnabled) return;
+
+  try {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Gentle chime: two quick tones
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.08);
+
+    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+  } catch (e) {
+    // Silently fail if audio context not supported
+  }
+}
+
+async function notifyNow(){
+  const msg = setSuggestion();
+  if ('vibrate' in navigator) {
+    navigator.vibrate([12, 0, 12]);
+  }
+
+  // Play sound
+  playNudgeSound();
+
+  const notificationsEnabled = localStorage.getItem('notifications_enabled') !== 'false';
+  if (notificationsEnabled && "Notification" in window) {
+    if (Notification.permission === "granted") {
+      new Notification("MicroMoves reminder", { body: msg });
+    } else if (Notification.permission !== "denied") {
+      const perm = await Notification.requestPermission();
+      if (perm === "granted") new Notification("MicroMoves reminder", { body: msg });
+    }
+  }
+  appendLog(`Reminder: ${msg}`);
+}
+
+function toICSDateUTC(date){
+  const pad = n => String(n).padStart(2,"0");
+  return date.getUTCFullYear() +
+    pad(date.getUTCMonth()+1) +
+    pad(date.getUTCDate()) + "T" +
+    pad(date.getUTCHours()) +
+    pad(date.getUTCMinutes()) +
+    pad(date.getUTCSeconds()) + "Z";
+}
+
+function nextTopOfHourUTC(now=new Date()){
+  const d = new Date(now.getTime());
+  d.setUTCMinutes(0,0,0);
+  d.setUTCHours(d.getUTCHours()+1);
+  return d;
+}
+
+function downloadICS(){
+  const uid = `micromoves-${Date.now()}@local`;
+  const dtstamp = toICSDateUTC(new Date());
+  const dtstart = toICSDateUTC(nextTopOfHourUTC());
+  const summary = "BreakBreath Hourly Reset";
+  const description = "1-minute reset to refresh your body and mind every hour.";
+  const ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//MicroMoves//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:${uid}
+DTSTAMP:${dtstamp}
+DTSTART:${dtstart}
+DURATION:PT5M
+RRULE:FREQ=HOURLY;INTERVAL=1;COUNT=8760
+SUMMARY:${summary}
+DESCRIPTION:${description.replace(/\n/g,"\\n")}
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Time for your 1-minute reset
+TRIGGER:-PT1M
+END:VALARM
+END:VEVENT
+END:VCALENDAR`.replace(/\n/g, "\r\n");
+
+  const blob = new Blob([ics], {type: "text/calendar;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "micromoves-hourly.ics";
+  document.body.appendChild(a);
+  a.click();
+  URL.revokeObjectURL(url);
+  a.remove();
+  appendLog("Downloaded .ics (hourly calendar reminders with alerts).");
+}
+
+$("startBtn").addEventListener("click", startNudges);
+$("icsBtn").addEventListener("click", downloadICS);
+
+function updateShareButton() {
+  const btn = $("shareBtnText");
+  const shareBtn = $("shareBtn");
+  const dailyStreak = getDailyStreak();
+
+  if (streakCount > 0 || dailyStreak > 0) {
+    btn.textContent = "Copy my streak";
+    shareBtn.disabled = false;
+    shareBtn.title = "";
+  } else {
+    btn.textContent = "Copy share link";
+    shareBtn.disabled = true;
+    shareBtn.title = "Start nudges to generate a shareable streak link.";
+  }
+}
+
+function getTopExercises() {
+  const logData = loadLog();
+  const exerciseCounts = {};
+
+  logData.forEach(entry => {
+    if (entry.exerciseKey) {
+      exerciseCounts[entry.exerciseKey] = (exerciseCounts[entry.exerciseKey] || 0) + 1;
+    }
+  });
+
+  return Object.entries(exerciseCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([key]) => {
+      const exercise = EXERCISE_LIBRARY[key];
+      return exercise ? exercise.title : key;
+    });
+}
+
+$("shareBtn").addEventListener("click", async (e) => {
+  const btn = e.currentTarget;
+  const env = localStorage.getItem('breakbreath_env') || 'office';
+  const hourlyStreak = Number(localStorage.getItem('bb_streak') || 0);
+  const dailyStreak = getDailyStreak();
+
+  if (hourlyStreak === 0 && dailyStreak === 0) {
+    showToast('Start nudges first to generate a shareable streak link.');
+    return;
+  }
+
+  // Get top exercises
+  const topExercises = getTopExercises();
+
+  // Create a snapshot with privacy-safe stats
+  const snapshot = {
+    dailyStreak: dailyStreak,
+    hourlyStreak: hourlyStreak,
+    environment: env,
+    timestamp: new Date().toISOString(),
+    appUrl: window.location.origin
+  };
+
+  // Encode the snapshot in the URL hash
+  const encoded = btoa(JSON.stringify(snapshot));
+  const shareUrl = `${window.location.origin}#streak=${encoded}`;
+
+  const envCapitalized = env.charAt(0).toUpperCase() + env.slice(1);
+  const streakText = dailyStreak > 0
+    ? `${dailyStreak} day${dailyStreak !== 1 ? 's' : ''}`
+    : `${hourlyStreak} hour${hourlyStreak !== 1 ? 's' : ''}`;
+
+  // Format friendly text block with emoji and top exercises
+  let shareText = `🔥 BreakBreath Streak: ${streakText}!\n\n`;
+  shareText += `📍 Environment: ${envCapitalized}\n`;
+
+  if (topExercises.length > 0) {
+    shareText += `\n✨ Top exercises:\n`;
+    topExercises.forEach((exercise, i) => {
+      shareText += `${i + 1}. ${exercise}\n`;
+    });
+  }
+
+  shareText += `\nJoin me: ${shareUrl}`;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: 'My BreakBreath Streak',
+        text: shareText,
+        url: shareUrl
+      });
+      showToast('Shared successfully!');
+    } else {
+      await navigator.clipboard.writeText(shareText);
+      showInlineCopiedFeedback(btn);
+      showToast('Streak copied to clipboard ✅');
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        showInlineCopiedFeedback(btn);
+        showToast('Streak copied to clipboard ✅');
+      } catch (e) {
+        showToast('Unable to copy. Please try again.');
+      }
+    }
+  }
+});
+
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function toggleHowtoCard(forceShow = false) {
+  if (!currentExercise) return;
+
+  const card = document.getElementById('howtoCard');
+  const chip = document.getElementById('helpChipBtn');
+
+  if (!card) return;
+
+  const isVisible = card.style.display !== 'none' && !forceShow;
+
+  if (isVisible) {
+    card.style.display = 'none';
+    card.removeEventListener('keydown', handleCardKeydown);
+    if (chip) {
+      chip.setAttribute('aria-expanded', 'false');
+      chip.focus();
+    }
+    if (howtoTimerInterval) {
+      clearInterval(howtoTimerInterval);
+      howtoTimerInterval = null;
+    }
+  } else {
+    renderHowtoCard();
+    card.style.display = 'block';
+    if (chip) chip.setAttribute('aria-expanded', 'true');
+
+    setTimeout(() => {
+      const heading = document.getElementById('howtoTitle');
+      if (heading) {
+        heading.setAttribute('tabindex', '-1');
+        heading.focus();
+      }
+
+      card.addEventListener('keydown', handleCardKeydown);
+    }, 50);
+  }
+}
+
+function handleCardKeydown(event) {
+  if (event.key === 'Escape') {
+    const card = document.getElementById('howtoCard');
+    if (card) {
+      card.removeEventListener('keydown', handleCardKeydown);
+    }
+    toggleHowtoCard();
+  } else if (event.key === ' ' || event.key === 'Spacebar') {
+    event.preventDefault();
+    const startBtn = document.getElementById('howtoStartBtn');
+    const resetBtn = document.getElementById('howtoResetBtn');
+    if (startBtn && startBtn.style.display !== 'none') {
+      startHowtoTimer();
+    } else if (resetBtn && resetBtn.style.display !== 'none') {
+      resetHowtoTimer();
+    }
+  } else if (event.key === '?') {
+    event.preventDefault();
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+}
+
+function renderHowtoCard() {
+  const card = document.getElementById('howtoCard');
+  if (!card || !currentExercise) return;
+
+  howtoTimeRemaining = currentExercise.duration;
+
+  card.innerHTML = `
+    <h3 id="howtoTitle">${currentExercise.title}</h3>
+
+    ${currentExercise.svg ? `<div class="howto-illustration" style="width: 120px; height: 100px; margin: 16px auto; opacity: 0.85;">${currentExercise.svg}</div>` : ''}
+
+    <div class="howto-timer">
+      <div class="howto-timer-display" id="howtoTimerDisplay" role="timer" aria-live="polite">${formatTime(howtoTimeRemaining)}</div>
+      <button id="howtoStartBtn" onclick="startHowtoTimer()" aria-label="Start exercise timer">Start</button>
+      <button id="howtoResetBtn" onclick="resetHowtoTimer()" style="display: none;" aria-label="Reset exercise timer">Reset</button>
+    </div>
+
+    <div class="howto-section">
+      <h4>Steps</h4>
+      <ol>
+        ${currentExercise.steps.map(step => `<li>${step}</li>`).join('')}
+      </ol>
+    </div>
+
+    <div class="howto-section">
+      <h4>Safety</h4>
+      <p style="line-height: 1.6; margin: 0;">Stop if painful. Move slowly.</p>
+    </div>
+
+    <div class="howto-section">
+      <div class="howto-mistake">
+        ${currentExercise.mistake}
+      </div>
+    </div>
+
+    <div class="howto-section">
+      <div class="howto-alternate">
+        <strong>No-noise option:</strong> ${currentExercise.quiet_alt}
+      </div>
+    </div>
+
+    <div style="margin-top: 16px; border-top: 1px solid rgba(39, 39, 42, 0.6);"></div>
+
+    <footer style="padding-top: 12px; display: flex; width: 100%; align-items: center; justify-content: flex-end; gap: 8px;">
+      <details style="position: relative;" data-bb-more-details>
+        <summary style="display: inline-flex; cursor: pointer; list-style: none; align-items: center; gap: 4px; border-radius: 6px; border: 1px solid rgba(63, 63, 70, 1); background: rgba(39, 39, 42, 1); padding: 12px; height: 36px; font-size: 14px; color: rgb(244, 244, 245); transition: all 0.2s;" aria-haspopup="menu" onmouseover="this.style.background='rgba(63,63,70,1)'" onmouseout="this.style.background='rgba(39,39,42,1)'" onfocus="this.style.outline='2px solid rgb(99, 102, 241)'; this.style.outlineOffset='2px';" onblur="this.style.outline='none'; this.style.outlineOffset='0';">
+          More
+          <svg aria-hidden="true" style="width: 16px; height: 16px; color: #D1D5DB;" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd"/>
+          </svg>
+        </summary>
+
+        <div role="menu" aria-label="More options" data-bb-menu-panel style="position: absolute; right: 0; z-index: 50; margin-top: 8px; width: 256px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.18); background: #111827; padding: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); transition: all 0.2s;">
+          <button
+            type="button"
+            id="copyExerciseBtn"
+            onclick="copyExercisePermalink(event)"
+            style="display: flex; width: 100%; min-height: 44px; align-items: center; justify-content: space-between; border-radius: 6px; padding: 12px; font-size: 14px; color: rgb(244, 244, 245); background: transparent; border: none; cursor: pointer; transition: all 0.2s; text-align: left;"
+            role="menuitem"
+            onmouseover="this.style.background='rgba(39,39,42,1)'"
+            onmouseout="this.style.background='transparent'"
+            onfocus="this.style.outline='2px solid rgb(99, 102, 241)'; this.style.outlineOffset='2px';"
+            onblur="this.style.outline='none'; this.style.outlineOffset='0';"
+          >
+            Copy steps
+          </button>
+
+          <button
+            type="button"
+            data-bb-open-shortcuts
+            style="display: flex; width: 100%; min-height: 44px; align-items: center; justify-content: space-between; border-radius: 6px; padding: 12px; font-size: 14px; color: rgb(244, 244, 245); background: transparent; border: none; cursor: pointer; transition: all 0.2s; text-align: left;"
+            role="menuitem"
+            onmouseover="this.style.background='rgba(39,39,42,1)'"
+            onmouseout="this.style.background='transparent'"
+            onfocus="this.style.outline='2px solid rgb(99, 102, 241)'; this.style.outlineOffset='2px';"
+            onblur="this.style.outline='none'; this.style.outlineOffset='0';"
+          >
+            Keyboard shortcuts
+            <span style="font-size: 12px; color: #9CA3AF;">?</span>
+          </button>
+
+          <label style="display: flex; width: 100%; min-height: 44px; cursor: pointer; align-items: center; justify-content: space-between; border-radius: 6px; padding: 12px; font-size: 14px; color: rgb(244, 244, 245); transition: all 0.2s;" role="menuitem" onmouseover="this.style.background='rgba(39,39,42,1)'" onmouseout="this.style.background='transparent'" onfocus="this.style.outline='2px solid rgb(99, 102, 241)'; this.style.outlineOffset='2px';" onblur="this.style.outline='none'; this.style.outlineOffset='0';">
+            <span>Don't show steps automatically</span>
+            <input id="dontShowAuto" type="checkbox" onchange="updateAutoShowPref()" style="height: 20px; width: 36px; appearance: none; border-radius: 9999px; background: #4B5563; position: relative; transition: background 0.2s; cursor: pointer;" aria-label="Toggle auto-show steps">
+          </label>
+        </div>
+      </details>
+
+      <button
+        type="button"
+        onclick="toggleHowtoCard()"
+        id="bb-close-howto"
+        style="display: inline-flex; min-width: 104px; min-height: 44px; align-items: center; justify-content: center; border-radius: 6px; background: rgb(79, 70, 229); padding: 16px; font-size: 14px; font-weight: 600; color: white; border: none; cursor: pointer; transition: all 0.2s;"
+        onmouseover="this.style.background='rgb(99, 102, 241)'"
+        onmouseout="this.style.background='rgb(79, 70, 229)'"
+        onfocus="this.style.outline='2px solid rgb(99, 102, 241)'; this.style.outlineOffset='2px';"
+        onblur="this.style.outline='none'; this.style.outlineOffset='0';">
+      >
+        Close
+      </button>
+    </footer>
+
+    <dialog id="bb-shortcuts-dialog" style="border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.18); background: #111827; padding: 16px; color: #F3F4F6; max-width: 300px;">
+      <h3 style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">Keyboard shortcuts</h3>
+      <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #D1D5DB;">
+        <li><kbd style="border-radius: 3px; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; font-family: monospace;">?</kbd> Help</li>
+        <li><kbd style="border-radius: 3px; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; font-family: monospace;">Space</kbd> Start / stop</li>
+        <li><kbd style="border-radius: 3px; background: rgba(255, 255, 255, 0.1); padding: 2px 6px; font-family: monospace;">Esc</kbd> Close</li>
+      </ul>
+      <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+        <button type="button" data-bb-close-shortcuts style="border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.18); padding: 6px 12px; font-size: 12px; color: #E5E7EB; background: transparent; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+          Close
+        </button>
+      </div>
+    </dialog>
+  `;
+
+  const checkbox = document.getElementById('dontShowAuto');
+  if (checkbox && currentExercise.key) {
+    checkbox.checked = !getExerciseAutoShow(currentExercise.key);
+    checkbox.style.background = checkbox.checked ? '#6366F1' : '#4B5563';
+  }
+}
+
+function startHowtoTimer() {
+  const startBtn = document.getElementById('howtoStartBtn');
+  const resetBtn = document.getElementById('howtoResetBtn');
+
+  if (startBtn) startBtn.style.display = 'none';
+  if (resetBtn) resetBtn.style.display = 'inline-block';
+
+  if (howtoTimerInterval) clearInterval(howtoTimerInterval);
+
+  howtoTimerEndTime = Date.now() + (howtoTimeRemaining * 1000);
+
+  const updateTimer = () => {
+    const remaining = Math.max(0, Math.ceil((howtoTimerEndTime - Date.now()) / 1000));
+    howtoTimeRemaining = remaining;
+
+    const display = document.getElementById('howtoTimerDisplay');
+    if (display) display.textContent = formatTime(remaining);
+
+    if (remaining <= 0) {
+      clearInterval(howtoTimerInterval);
+      howtoTimerInterval = null;
+      if ('vibrate' in navigator) navigator.vibrate([200, 100, 200]);
+
+      const exerciseKey = currentExercise?.key;
+      const completionMsg = exerciseKey && COMPLETION_MESSAGES[exerciseKey]
+        ? COMPLETION_MESSAGES[exerciseKey]
+        : 'Exercise complete!';
+
+      showConfettiPulse();
+      showToast(completionMsg);
+
+      if (currentExercise?.title) {
+        const exerciseKey = currentExercise.key;
+        const duration = currentExercise.duration || null;
+        appendLog(`Completed: ${currentExercise.title}`, exerciseKey, duration);
+        markTodayComplete();
+      }
+
+      resetHowtoTimer();
+    }
+  };
+
+  updateTimer();
+  howtoTimerInterval = setInterval(updateTimer, 1000);
+}
+
+function resetHowtoTimer() {
+  if (howtoTimerInterval) {
+    clearInterval(howtoTimerInterval);
+    howtoTimerInterval = null;
+  }
+
+  howtoTimerEndTime = 0;
+
+  if (currentExercise) {
+    howtoTimeRemaining = currentExercise.duration;
+    const display = document.getElementById('howtoTimerDisplay');
+    if (display) display.textContent = formatTime(howtoTimeRemaining);
+  }
+
+  const startBtn = document.getElementById('howtoStartBtn');
+  const resetBtn = document.getElementById('howtoResetBtn');
+
+  if (startBtn) startBtn.style.display = 'inline-block';
+  if (resetBtn) resetBtn.style.display = 'none';
+}
+
+function updateAutoShowPref() {
+  const checkbox = document.getElementById('dontShowAuto');
+  if (checkbox && currentExercise && currentExercise.key) {
+    const shouldShow = !checkbox.checked;
+    setExerciseAutoShow(currentExercise.key, shouldShow);
+    checkbox.style.background = checkbox.checked ? '#6366F1' : '#4B5563';
+    showToast(shouldShow
+      ? `Will auto-show steps for ${currentExercise.title}`
+      : `Won't auto-show steps for ${currentExercise.title}`
+    );
+  }
+}
+
+function toggleWhyExplanation(event) {
+  const button = event.currentTarget;
+  const explanation = button.nextElementSibling;
+
+  if (explanation.style.display === 'none') {
+    explanation.style.display = 'block';
+    button.innerHTML = `
+      <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+      </svg>
+      Hide explanation
+    `;
+
+    // Auto-scroll to keep the card header visible
+    setTimeout(() => {
+      const card = button.closest('.card');
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  } else {
+    explanation.style.display = 'none';
+    button.innerHTML = `
+      <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+      </svg>
+      Why this works
+    `;
+  }
+}
+
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+
+    // Close all FAQs and update their aria-expanded
+    document.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('open');
+      const button = i.querySelector('.faq-question');
+      if (button) button.setAttribute('aria-expanded', 'false');
+    });
+
+    // Open clicked FAQ if it was closed
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
+
+// Safety modal functions
+function openSafetyModal() {
+  const modal = document.getElementById('safetyModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    const firstButton = modal.querySelector('button');
+    if (firstButton) setTimeout(() => firstButton.focus(), 100);
+  }
+}
+
+function closeSafetyModal() {
+  const modal = document.getElementById('safetyModal');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  const card = document.getElementById('howtoCard');
+  const isCardVisible = card && card.style.display !== 'none';
+  const safetyModal = document.getElementById('safetyModal');
+  const isSafetyVisible = safetyModal && safetyModal.style.display === 'flex';
+
+  // Escape key - close modals
+  if (e.key === 'Escape') {
+    if (isSafetyVisible) {
+      closeSafetyModal();
+    } else if (isCardVisible) {
+      toggleHowtoCard();
+    }
+  }
+
+  // ? key - toggle howto card
+  if (e.key === '?' && !e.target.matches('input, textarea') && !isSafetyVisible) {
+    e.preventDefault();
+    toggleHowtoCard();
+  }
+
+  // Space - start timer (only when card is visible)
+  if (e.key === ' ' && isCardVisible && !e.target.matches('input, textarea, button') && !isSafetyVisible) {
+    e.preventDefault();
+    const startBtn = document.getElementById('howtoStartBtn');
+    const resetBtn = document.getElementById('howtoResetBtn');
+    if (startBtn && startBtn.style.display !== 'none') {
+      startHowtoTimer();
+    } else if (resetBtn && resetBtn.style.display !== 'none') {
+      resetHowtoTimer();
+    }
+  }
+
+  // Esc - close card
+  if (e.key === 'Escape' && isCardVisible) {
+    toggleHowtoCard();
+  }
+});
+
+function generateBadge(text) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 400;
+  canvas.height = 120;
+  const ctx = canvas.getContext('2d');
+
+  // Background gradient
+  const gradient = ctx.createLinearGradient(0, 0, 400, 120);
+  gradient.addColorStop(0, '#1F2937');
+  gradient.addColorStop(1, '#111827');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 400, 120);
+
+  // Border
+  ctx.strokeStyle = '#22c55e';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(0, 0, 400, 120);
+
+  // Text
+  ctx.fillStyle = '#E5E7EB';
+  ctx.font = 'bold 18px system-ui, -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  const lines = text.split('\n');
+  const lineHeight = 28;
+  const startY = 60 - ((lines.length - 1) * lineHeight) / 2;
+
+  lines.forEach((line, i) => {
+    ctx.fillText(line, 200, startY + (i * lineHeight));
+  });
+
+  // Checkmark
+  ctx.fillStyle = '#22c55e';
+  ctx.font = 'bold 32px system-ui, -apple-system, sans-serif';
+  ctx.fillText('✅', 350, 60);
+
+  return canvas.toDataURL('image/png');
+}
+
+function showInlineCopiedFeedback(button) {
+  const originalText = button.innerHTML;
+  const originalAriaLive = button.getAttribute('aria-live');
+
+  button.setAttribute('aria-live', 'polite');
+  button.innerHTML = 'Copied ✓';
+  button.style.opacity = '0.7';
+
+  setTimeout(() => {
+    button.innerHTML = originalText;
+    button.style.opacity = '1';
+    if (originalAriaLive) {
+      button.setAttribute('aria-live', originalAriaLive);
+    } else {
+      button.removeAttribute('aria-live');
+    }
+    button.focus();
+  }, 1500);
+}
+
+async function copyExercisePermalink(event) {
+  const btn = event?.currentTarget || document.getElementById('copyExerciseBtn');
+
+  if (!currentExercise || !currentExercise.key) {
+    showToast('No exercise selected');
+    return;
+  }
+
+  const exerciseKey = currentExercise.key;
+  const permalink = `${window.location.origin}/move/${exerciseKey}`;
+  const duration = currentExercise.duration || 30;
+
+  // Build exercise details text
+  let copyText = `${currentExercise.title}\n\n`;
+
+  if (currentExercise.steps && currentExercise.steps.length > 0) {
+    copyText += 'Steps:\n';
+    currentExercise.steps.forEach((step, i) => {
+      copyText += `${i + 1}. ${step}\n`;
+    });
+    copyText += '\n';
+  }
+
+  if (currentExercise.safety) {
+    copyText += `Safety: ${currentExercise.safety}\n\n`;
+  } else {
+    copyText += 'Safety: Stop if painful. Move slowly.\n\n';
+  }
+
+  copyText += `Link: ${permalink}\n\n`;
+
+  // Generate badge
+  const badgeText = `I did my ${duration}-second reset`;
+  const badgeDataUrl = generateBadge(badgeText);
+  copyText += `Badge: ${badgeDataUrl}`;
+
+  try {
+    // Try to copy both text and image to clipboard
+    if (navigator.clipboard && ClipboardItem) {
+      const response = await fetch(badgeDataUrl);
+      const blob = await response.blob();
+
+      const textBlob = new Blob([copyText], { type: 'text/plain' });
+
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          'text/plain': textBlob,
+          'image/png': blob
+        })
+      ]);
+      showInlineCopiedFeedback(btn);
+      showToast('Exercise + badge copied ✅');
+    } else {
+      await navigator.clipboard.writeText(copyText);
+      showInlineCopiedFeedback(btn);
+      showToast('Exercise copied ✅');
+    }
+    appendLog(`Copied exercise: ${currentExercise.title}`);
+  } catch (e) {
+    try {
+      await navigator.clipboard.writeText(copyText);
+      showInlineCopiedFeedback(btn);
+      showToast('Exercise copied ✅');
+    } catch (err) {
+      showToast('Could not copy exercise');
+    }
+  }
+}
+
+// Rotate micro-benefits
+const benefits = [
+  "eye relief • posture • stress ↓",
+  "better focus • energy boost • pain relief",
+  "circulation • mood lift • flexibility",
+  "tension release • mental clarity • prevention"
+];
+let benefitIndex = 0;
+const microBenefitsEl = $("microBenefits");
+
+function rotateBenefits() {
+  benefitIndex = (benefitIndex + 1) % benefits.length;
+  if (microBenefitsEl) {
+    microBenefitsEl.style.opacity = '0';
+    setTimeout(() => {
+      microBenefitsEl.textContent = benefits[benefitIndex];
+      microBenefitsEl.style.opacity = '1';
+    }, 300);
+  }
+}
+
+if (microBenefitsEl) {
+  microBenefitsEl.style.transition = 'opacity 0.3s ease';
+  setInterval(rotateBenefits, 4000);
+}
+
+// Shortcuts dialog and dropdown handling
+(function initShortcutsDialog() {
+  const dlg = document.getElementById('bb-shortcuts-dialog');
+  const openBtn = document.querySelector('[data-bb-open-shortcuts]');
+  const closeBtn = document.querySelector('[data-bb-close-shortcuts]');
+
+  if (openBtn && dlg) {
+    openBtn.addEventListener('click', (e) => {
+      dlg.showModal();
+      const details = e.target.closest('details');
+      if (details && details.hasAttribute('open')) {
+        details.removeAttribute('open');
+      }
+    });
+  }
+
+  if (closeBtn && dlg) {
+    closeBtn.addEventListener('click', () => {
+      dlg.close();
+      const moreSummary = document.querySelector('[data-bb-more-details] summary');
+      moreSummary?.focus();
+    });
+  }
+
+  if (dlg) {
+    dlg.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      dlg.close();
+      const moreSummary = document.querySelector('[data-bb-more-details] summary');
+      moreSummary?.focus();
+    });
+  }
+
+  const copyBtn = document.getElementById('copyExerciseBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', (e) => {
+      const details = e.target.closest('details');
+      const moreSummary = details?.querySelector('summary');
+      if (details && details.hasAttribute('open')) {
+        setTimeout(() => {
+          details.removeAttribute('open');
+          moreSummary?.focus();
+        }, 100);
+      }
+    });
+  }
+
+  const detailsEl = document.querySelector('[data-bb-more-details]');
+  if (detailsEl) {
+    const summary = detailsEl.querySelector('summary');
+
+    const syncExpanded = () => {
+      if (summary) {
+        summary.setAttribute('aria-expanded', detailsEl.hasAttribute('open') ? 'true' : 'false');
+      }
+    };
+
+    detailsEl.addEventListener('toggle', () => {
+      syncExpanded();
+
+      if (detailsEl.open) {
+        const panel = detailsEl.querySelector('[data-bb-menu-panel]');
+        if (panel) {
+          requestAnimationFrame(() => {
+            const rect = panel.getBoundingClientRect();
+            if (rect.bottom > window.innerHeight - 10) {
+              panel.style.position = 'absolute';
+              panel.style.bottom = '100%';
+              panel.style.top = 'auto';
+              panel.style.marginTop = '0';
+              panel.style.marginBottom = '8px';
+            } else {
+              panel.style.position = 'absolute';
+              panel.style.bottom = 'auto';
+              panel.style.top = '100%';
+              panel.style.marginTop = '8px';
+              panel.style.marginBottom = '0';
+            }
+          });
+        }
+      }
+    });
+
+    syncExpanded();
+  }
+
+  const closeMenu = () => {
+    const det = document.querySelector('[data-bb-more-details]');
+    const moreSummary = det?.querySelector('summary');
+    if (det) {
+      det.removeAttribute('open');
+      moreSummary?.focus();
+    }
+  };
+
+  document.addEventListener('click', (e) => {
+    const dd = document.querySelector('#howtoCard details[open]');
+    if (!dd) return;
+    if (!dd.contains(e.target)) {
+      const moreSummary = dd.querySelector('summary');
+      dd.removeAttribute('open');
+      moreSummary?.focus();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('#howtoCard details[open]').forEach(d => {
+        const moreSummary = d.querySelector('summary');
+        d.removeAttribute('open');
+        moreSummary?.focus();
+      });
+    }
+  });
+})();
+
+// Initialize from persisted state
+renderLog();
+renderDayDots();
+setSuggestion();
+updateShareButton();
+renderFiltersUI();
+
+// Sync sticky button state
+if (isActive) {
+  stickyStartBtn.textContent = 'Stop nudges';
+  startCountdown();
+}
+
+document.querySelectorAll("[data-env]").forEach(btn => {
+  if (btn.dataset.env === currentEnv) {
+    btn.setAttribute("aria-pressed", "true");
+  } else {
+    btn.setAttribute("aria-pressed", "false");
+  }
+});
+
+let deferredPrompt;
+const installBtn = $("installBtn");
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.classList.add('show');
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    showToast('BreakBreath installed! Access it from your home screen.');
+  }
+  deferredPrompt = null;
+  installBtn.classList.remove('show');
+});
+
+window.addEventListener('appinstalled', () => {
+  showToast('BreakBreath is now installed on your device!');
+  installBtn.classList.remove('show');
+});
+
+// Sticky bar scroll behavior
+const stickyBar = $("stickyBar");
+const stickyStartBtn = $("stickyStartBtn");
+const stickyIcsBtn = $("stickyIcsBtn");
+
+let notificationsEnabled = localStorage.getItem('notifications_enabled') !== 'false';
+let soundEnabled = localStorage.getItem('sound_enabled') !== 'false';
+
+let stickyBarDismissed = false;
+
+function updateStickyBarVisibility() {
+  const isMobile = window.innerWidth <= 640;
+
+  if (isMobile && window.scrollY > 300 && !stickyBarDismissed) {
+    stickyBar.classList.add('visible');
+  } else if (window.scrollY <= 300 || !isMobile) {
+    stickyBar.classList.remove('visible');
+  }
+}
+
+window.addEventListener('scroll', updateStickyBarVisibility);
+window.addEventListener('resize', updateStickyBarVisibility);
+
+function closeStickyBar() {
+  stickyBarDismissed = true;
+  stickyBar.classList.remove('visible');
+}
+
+const stickyBarClose = $("stickyBarClose");
+stickyBarClose.addEventListener('click', closeStickyBar);
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && stickyBar.classList.contains('visible')) {
+    closeStickyBar();
+  }
+});
+
+stickyStartBtn.addEventListener('click', () => {
+  if (isActive) {
+    stopNudges();
+    stickyStartBtn.textContent = 'Start nudges';
+  } else {
+    startNudges();
+    stickyStartBtn.textContent = 'Stop nudges';
+  }
+});
+
+stickyIcsBtn.addEventListener('click', () => {
+  downloadICS();
+});
+
+// Seated-only toggle
+const seatedOnlyToggle = $('seatedOnlyToggle');
+if (seatedOnlyToggle) {
+  // Load saved preference
+  const seatedOnly = localStorage.getItem('bb_seated_only') === 'true';
+  seatedOnlyToggle.checked = seatedOnly;
+
+  seatedOnlyToggle.addEventListener('change', () => {
+    const isSeatedOnly = seatedOnlyToggle.checked;
+    localStorage.setItem('bb_seated_only', isSeatedOnly);
+    showToast(isSeatedOnly ? 'Showing only seated & upper-body exercises' : 'Showing all exercises');
+    appendLog(isSeatedOnly ? 'Accessibility: Seated-only mode enabled' : 'Accessibility: Seated-only mode disabled');
+    setSuggestion();
+  });
+}
+
+// Initialize daily streak display on load
+updateDailyStreakDisplay();
+
+// Handle shared streak links
+function displaySharedStreak() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#streak=')) {
+    try {
+      const encoded = hash.substring(8);
+      const decoded = JSON.parse(atob(encoded));
+
+      const dailyStreak = decoded.dailyStreak || 0;
+      const hourlyStreak = decoded.hourlyStreak || 0;
+      const env = decoded.environment || 'office';
+      const timestamp = decoded.timestamp ? new Date(decoded.timestamp) : null;
+
+      const envCapitalized = env.charAt(0).toUpperCase() + env.slice(1);
+      const streakText = dailyStreak > 0
+        ? `${dailyStreak} day${dailyStreak !== 1 ? 's' : ''}`
+        : `${hourlyStreak} hour${hourlyStreak !== 1 ? 's' : ''}`;
+
+      let timeAgo = '';
+      if (timestamp) {
+        const now = new Date();
+        const diff = Math.floor((now - timestamp) / 1000);
+        if (diff < 60) timeAgo = 'just now';
+        else if (diff < 3600) timeAgo = `${Math.floor(diff / 60)}m ago`;
+        else if (diff < 86400) timeAgo = `${Math.floor(diff / 3600)}h ago`;
+        else timeAgo = `${Math.floor(diff / 86400)}d ago`;
+      }
+
+      const badgeMsg = `Someone shared their ${streakText} streak in ${envCapitalized} mode ${timeAgo}! Start your own streak below.`;
+      showToast(badgeMsg, 8000);
+
+      // Clear the hash after displaying
+      history.replaceState(null, '', window.location.pathname);
+    } catch (e) {
+      console.error('Failed to parse shared streak:', e);
+    }
+  }
+}
+
+displaySharedStreak();
+
+// Visibility change handler - re-sync timer when tab regains focus
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && isActive) {
+    // Re-sync to hourly alignment when user returns
+    const lastAt = localStorage.getItem('breakbreath_lastAt');
+    if (lastAt) {
+      const elapsed = Date.now() - new Date(lastAt).getTime();
+      const hourMs = 3600000;
+
+      // If more than an hour has passed, trigger a nudge
+      if (elapsed > hourMs) {
+        notifyNow();
+      }
+    }
+
+    // Restart the timer with proper alignment
+    if (timerId || intervalId) {
+      if (timerId) clearTimeout(timerId);
+      if (intervalId) clearInterval(intervalId);
+
+      const hourMs = 3600000;
+      const delay = nextTopOfHour();
+
+      startCountdown();
+
+      timerId = setTimeout(() => {
+        notifyNow();
+        startCountdown();
+        intervalId = setInterval(() => {
+          notifyNow();
+          startCountdown();
+        }, hourMs);
+      }, delay);
+    }
+  }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  // Ignore if typing in input/textarea or modifier keys are pressed
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.ctrlKey || e.metaKey || e.altKey) {
+    return;
+  }
+
+  // Spacebar: Toggle start/stop
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (isActive) {
+      stopNudges();
+    } else {
+      startNudges();
+    }
+    return;
+  }
+
+  // Number keys 1-5: Switch environment chips
+  const envMap = {
+    '1': 'office',
+    '2': 'queue',
+    '3': 'home',
+    '4': 'commute',
+    '5': 'outdoors'
+  };
+
+  if (envMap[e.key]) {
+    e.preventDefault();
+    const targetEnv = envMap[e.key];
+    const chip = document.querySelector(`[data-env="${targetEnv}"]`);
+    if (chip) {
+      chip.click();
+    }
+  }
+});
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(()=>{});
+}
+</script>
+</body>
+</html>
