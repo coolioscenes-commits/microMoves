@@ -17,9 +17,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
   <title>BreakBreath — Hourly Micro-Reminders for Breathwork & Stretches</title>
+  <link rel="canonical" href="https://yourdomain.com/" />
 
   <!-- SEO Meta Tags -->
   <meta name="keywords" content="breathwork, stretching, micro breaks, hourly reminders, desk exercises, mindful breathing, office wellness, remote work health, posture correction, movement reminders, productivity breaks, workplace wellness, digital wellbeing, health reminders, stress relief" />
+  <meta name="author" content="BreakBreath" />
+  <meta name="robots" content="index, follow" />
 
   <!-- Open Graph / Social Media -->
   <meta property="og:type" content="website" />
@@ -1049,9 +1052,9 @@
   <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 
-  <div id="stickyBar" class="sticky-bar" style="gap: 20px;">
-    <button id="stickyStartBtn" type="button" aria-label="Start hourly nudges">Start nudges</button>
-    <button id="stickyIcsBtn" type="button" class="secondary" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.25);" aria-label="Download calendar file for guaranteed hourly alerts">Add .ics</button>
+  <div id="stickyBar" class="sticky-bar" style="gap: 12px;">
+    <button id="stickyStartBtn" type="button" aria-label="Start hourly nudges">Start hourly reminders</button>
+    <button id="stickyDemoBtn" type="button" class="secondary" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.25); font-size: 13px;" aria-label="Try a quick exercise">Try exercise</button>
     <button id="stickyBarClose" type="button" class="sticky-bar-close" aria-label="Close notification bar">
       <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1068,19 +1071,11 @@
     <p class="sub">1-minute resets, every hour—wherever you are.</p>
     <p class="privacy-badge">Privacy-first • No login • Works offline</p>
     <ul class="day-dots" id="dayDots" aria-label="Weekly activity"></ul>
-    <div class="row" role="group" aria-label="Reminder actions" style="gap: 20px;">
-      <button id="startBtn" type="button" tabindex="1">Start nudges</button>
-      <div style="display: inline-flex; align-items: center; gap: 8px;">
-        <button id="icsBtn" type="button" class="secondary" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.25);" tabindex="2">Guarantee hourly alerts (add .ics)</button>
-        <button id="installBtn" type="button" class="install-btn" tabindex="3">
-          <svg style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-          </svg>
-          Install app
-        </button>
-      </div>
+    <div class="row" role="group" aria-label="Reminder actions" style="gap: 12px; margin-top: 24px;">
+      <button id="startBtn" type="button" tabindex="1" style="font-size: 16px; padding: 14px 32px;">Start hourly reminders</button>
+      <button id="quickDemoBtn" type="button" class="secondary" tabindex="2" style="font-size: 14px; padding: 12px 24px;">Try a 60-sec exercise</button>
     </div>
-    <small>Browser notifications now; calendar file for guaranteed hourly alerts.</small>
+    <small style="margin-top: 12px; display: block; opacity: 0.7;">No signup required. Works in your browser right now.</small>
   </header>
 
   <main style="position: relative; z-index: 1;">
@@ -2959,7 +2954,14 @@ END:VCALENDAR`.replace(/\n/g, "\r\n");
 }
 
 $("startBtn").addEventListener("click", startNudges);
-$("icsBtn").addEventListener("click", downloadICS);
+
+const quickDemoBtn = document.getElementById("quickDemoBtn");
+if (quickDemoBtn) {
+  quickDemoBtn.addEventListener("click", () => {
+    notifyNow();
+    showToast("Try the suggested exercise!");
+  });
+}
 
 function updateShareButton() {
   const btn = $("shareBtnText");
@@ -3854,7 +3856,7 @@ updateProUI();
 
 // Sync sticky button state
 if (isActive) {
-  stickyStartBtn.textContent = 'Stop nudges';
+  stickyStartBtn.textContent = 'Stop reminders';
   startCountdown();
 }
 
@@ -3894,7 +3896,7 @@ window.addEventListener('appinstalled', () => {
 // Sticky bar scroll behavior
 const stickyBar = $("stickyBar");
 const stickyStartBtn = $("stickyStartBtn");
-const stickyIcsBtn = $("stickyIcsBtn");
+const stickyDemoBtn = $("stickyDemoBtn");
 
 let notificationsEnabled = localStorage.getItem('notifications_enabled') !== 'false';
 let soundEnabled = localStorage.getItem('sound_enabled') !== 'false';
@@ -3931,15 +3933,16 @@ window.addEventListener('keydown', (e) => {
 stickyStartBtn.addEventListener('click', () => {
   if (isActive) {
     stopNudges();
-    stickyStartBtn.textContent = 'Start nudges';
+    stickyStartBtn.textContent = 'Start hourly reminders';
   } else {
     startNudges();
-    stickyStartBtn.textContent = 'Stop nudges';
+    stickyStartBtn.textContent = 'Stop reminders';
   }
 });
 
-stickyIcsBtn.addEventListener('click', () => {
-  downloadICS();
+stickyDemoBtn.addEventListener('click', () => {
+  notifyNow();
+  showToast("Try the suggested exercise!");
 });
 
 // Seated-only toggle
