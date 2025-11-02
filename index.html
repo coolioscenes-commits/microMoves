@@ -4632,6 +4632,210 @@ function playBBAudio(theme) {
     audio.play().catch(e => console.log('Audio play failed:', e));
   }
 }
+
+// ========================= BB PRO FEATURES CORE =========================
+const BB = {
+  proActive: false,
+  state: {
+    intervalMins: 60,
+    quietRanges: [],
+    packs: ["desk","eyes"],
+    audio: "none",
+    theme: "ocean",
+    snoozeUntil: 0,
+    faves: [],
+    context: null,
+  },
+  coach: [
+    "Unclench your jaw 🙂",
+    "Relax your shoulders.",
+    "Soften your gaze.",
+    "Slow inhale… slow exhale.",
+    "Uncross legs, reset posture."
+  ],
+  lsGet(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d }catch(_){ return d } },
+  lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)) }catch(_){ } },
+  now(){ return Date.now() },
+  toHM(d){ return String(d.getHours()).padStart(2,"0")+ ":"+ String(d.getMinutes()).padStart(2,"0") },
+  withinRange(nowHM, start, end){
+    if(start===end) return true;
+    if(start < end){ return nowHM>=start && nowHM<end }
+    return (nowHM>=start || nowHM<end)
+  },
+  prefersReducedMotion(){
+    try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches }catch(_){ return false }
+  }
+};
+
+function initBBCore(){
+  const s = BB.lsGet('bb_settings_v1', null);
+  if (s) Object.assign(BB.state, s);
+  BB.state.faves = BB.lsGet('bb_faves', []);
+  applyTheme(BB.state.theme);
+
+  qsa('.bb-theme').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      qsa('.bb-theme').forEach(btn => btn.classList.remove('ring-indigo-500'));
+      b.classList.add('ring-indigo-500');
+      BB.state.theme = b.dataset.theme;
+      applyTheme(BB.state.theme);
+      persistBBSettings();
+    });
+  });
+}
+
+function canNudgeNow(){
+  const now = new Date();
+  const hm = BB.toHM(now);
+  if (BB.state.snoozeUntil && BB.now() < BB.state.snoozeUntil) return false;
+  for (const r of (BB.state.quietRanges||[])){
+    if (BB.withinRange(hm, r.start, r.end)) return false;
+  }
+  return true;
+}
+
+function persistBBSettings(){
+  BB.lsSet('bb_settings_v1', BB.state);
+}
+
+function applyTheme(t){
+  document.documentElement.dataset.bbTheme = t;
+  qsa('.bb-theme').forEach(btn => {
+    btn.classList.toggle('ring-indigo-500', btn.dataset.theme === t);
+  });
+}
+
+function maybeCoachLine(){
+  const el = document.getElementById('bb-micro-coach');
+  if (!el) return;
+  if (Math.random() < 0.1){
+    el.textContent = pick(BB.coach);
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+function toggleFav(exKey){
+  const i = BB.state.faves.indexOf(exKey);
+  if (i>=0) BB.state.faves.splice(i,1); else BB.state.faves.push(exKey);
+  BB.lsSet('bb_faves', BB.state.faves);
+  paintFavIcon(exKey);
+}
+
+function paintFavIcon(exKey){
+  document.querySelectorAll(`.bb-fav[data-ex-key="${exKey}"] .bb-fav-icon`).forEach(el=>{
+    el.textContent = BB.state.faves.includes(exKey) ? '❤' : '♡';
+  });
+}
+
+function maybeNotify(title="Time for a micro-move", body="60 seconds, gentle reset"){
+  const ok = BB.lsGet('bb_notifications_enabled', false);
+  if (!ok) return;
+  try{ new Notification(title, {body}) }catch(_){}
+}
+
+function playChime(){
+  if (BB.state.audio === 'none') return;
+  if (BB.prefersReducedMotion()) return;
+  const el = document.getElementById(`bb-audio-${BB.state.audio}`);
+  if (el) {
+    el.currentTime = 0;
+    el.play().catch(()=>{});
+  }
+}
+
+function onNudgeTick(){
+  if (!canNudgeNow()) return;
+  playChime();
+  maybeNotify();
+  maybeCoachLine();
+}
+
+function qsa(sel){ return Array.from(document.querySelectorAll(sel)) }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)] }
+
+function downloadICS(everyMins=60){
+  if ([45,30].includes(everyMins) && !BB.proActive){
+    console.log("Pro feature"); return;
+  }
+  const uid = 'breakbreath-'+everyMins+'m@local';
+  const dtStamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  const dtStart = new Date(Date.now()+ 60*1000);
+  const startUtc = toICS(dtStart);
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//BreakBreath//EN",
+    "CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT",
+    "UID:"+uid,
+    "DTSTAMP:"+dtStamp,
+    "DTSTART:"+startUtc,
+    "SUMMARY:BreakBreath Hourly Reset",
+    "RRULE:FREQ=MINUTELY;INTERVAL="+everyMins,
+    "BEGIN:VALARM",
+    "TRIGGER:-PT1M",
+    "ACTION:DISPLAY",
+    "DESCRIPTION:BreakBreath reminder",
+    "END:VALARM",
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].join("\r\n");
+  downloadBlob(ics, `breakbreath-${everyMins}min.ics`, 'text/calendar');
+}
+
+function toICS(d){
+  return d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+}
+
+function downloadBlob(content, filename, type){
+  const blob = new Blob([content], {type});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function weeklyRecap(){
+  const log = BB.lsGet('bb_log', []);
+  const sevenDaysAgo = Date.now()- 7*864e5;
+  const rows = log.filter(x=> x.t>=sevenDaysAgo);
+  const byDay = {};
+  rows.forEach(x=>{
+    const d = new Date(x.t); const key = d.toISOString().slice(0,10);
+    byDay[key] = (byDay[key]||0)+1;
+  });
+  let out = "BreakBreath — Weekly Recap\n\n";
+  Object.keys(byDay).sort().forEach(k=> out+= `${k}: ${byDay[k]} micro-moves\n`);
+  out += `\nTotal: ${rows.length}\n`;
+  return out;
+}
+
+document.getElementById('bb-weekly-recap')?.addEventListener('click', ()=>{
+  downloadBlob(weeklyRecap(), "breakbreath-weekly-recap.txt", "text/plain");
+});
+
+async function enableNotificationsCore(){
+  try{
+    if (!('Notification' in window)) return console.log("Notifications not supported");
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted'){
+      BB.lsSet('bb_notifications_enabled', true);
+      console.log("Notifications enabled");
+    } else {
+      console.log("Notifications denied");
+    }
+  }catch(e){ console.log("Notifications error") }
+}
+
+document.getElementById('bb-enable-notify')?.addEventListener('click', enableNotificationsCore);
+
+document.querySelectorAll('.bb-ics').forEach(btn=>{
+  btn.addEventListener('click', ()=>downloadICS(parseInt(btn.dataset.mins,10)));
+});
+
+initBBCore();
 </script>
 
 <!-- ========================= BB SETTINGS & FEATURES HTML ========================= -->
