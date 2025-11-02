@@ -3365,7 +3365,21 @@ function renderHowtoCard() {
 
     <div style="margin-top: 16px; border-top: 1px solid rgba(39, 39, 42, 0.6);"></div>
 
-    <footer style="padding-top: 12px; display: flex; width: 100%; align-items: center; justify-content: flex-end; gap: 8px;">
+    <footer style="padding-top: 12px; display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px;">
+      <button
+        class="bb-fav"
+        data-ex-key="${currentExercise.key}"
+        onclick="toggleFav('${currentExercise.key}')"
+        style="display: inline-flex; min-height: 44px; align-items: center; gap: 6px; border-radius: 6px; border: 1px solid rgba(63, 63, 70, 1); background: rgba(39, 39, 42, 1); padding: 8px 12px; font-size: 14px; color: rgb(244, 244, 245); cursor: pointer; transition: all 0.2s;"
+        onmouseover="this.style.background='rgba(63,63,70,1)'"
+        onmouseout="this.style.background='rgba(39,39,42,1)'"
+        aria-label="Toggle favorite"
+      >
+        <span class="bb-fav-icon" style="font-size: 18px;">♡</span>
+        <span style="font-size: 13px;">Favorite</span>
+      </button>
+
+      <div style="display: flex; gap: 8px;">
       <details style="position: relative;" data-bb-more-details>
         <summary style="display: inline-flex; cursor: pointer; list-style: none; align-items: center; gap: 4px; border-radius: 6px; border: 1px solid rgba(63, 63, 70, 1); background: rgba(39, 39, 42, 1); padding: 12px; height: 36px; font-size: 14px; color: rgb(244, 244, 245); transition: all 0.2s;" aria-haspopup="menu" onmouseover="this.style.background='rgba(63,63,70,1)'" onmouseout="this.style.background='rgba(39,39,42,1)'" onfocus="this.style.outline='2px solid rgb(99, 102, 241)'; this.style.outlineOffset='2px';" onblur="this.style.outline='none'; this.style.outlineOffset='0';">
           More
@@ -3437,6 +3451,7 @@ function renderHowtoCard() {
         onblur="this.style.outline='none'; this.style.outlineOffset='0';">
         Close
       </button>
+      </div>
     </footer>
 
     <dialog id="bb-shortcuts-dialog" style="border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.18); background: #111827; padding: 16px; color: #F3F4F6; max-width: 300px;">
@@ -3458,6 +3473,11 @@ function renderHowtoCard() {
   if (checkbox && currentExercise.key) {
     checkbox.checked = !getExerciseAutoShow(currentExercise.key);
     checkbox.style.background = checkbox.checked ? '#6366F1' : '#4B5563';
+  }
+
+  // Bind favorite button state
+  if (typeof bindFavForExercise === 'function' && currentExercise.key) {
+    bindFavForExercise(currentExercise.key);
   }
 }
 
@@ -4820,6 +4840,11 @@ function paintFavIcon(exKey){
   document.querySelectorAll(`.bb-fav[data-ex-key="${exKey}"] .bb-fav-icon`).forEach(el=>{
     el.textContent = BB.state.faves.includes(exKey) ? '❤' : '♡';
   });
+}
+
+function bindFavForExercise(exKey){
+  if (!exKey) return;
+  paintFavIcon(exKey);
 }
 
 function maybeNotify(title="Time for a micro-move", body="60 seconds, gentle reset"){
