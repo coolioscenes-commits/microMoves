@@ -17,7 +17,7 @@
     "closeNotificationBar": "Close notification bar",
     "closeSafety": "Close safety information",
     "closePrivacy": "Close privacy information",
-    "closeRegion": "Close region information",
+    "closeTerms": "Close terms information",
     "acknowledgeSafety": "Acknowledge safety information and close"
   },
   "environment": {
@@ -103,11 +103,7 @@
     "tagline": "No account. No trackers. Settings stored locally on your device."
   },
   "region": {
-    "title": "Region & Hosting",
-    "auHostedTitle": "Australian-Hosted",
-    "auHostedText": "BreakBreath is hosted in Australia. While the app works globally, our infrastructure is based in AU for compliance with local data protection standards.",
-    "globalAccessTitle": "Global Access",
-    "globalAccessText": "The app is accessible worldwide. All features work regardless of your location, and local storage ensures your data never leaves your device."
+    "title": "Terms of Use"
   },
   "footer": {
     "notMedicalAdvice": "Not medical advice · safety tips",
@@ -121,7 +117,7 @@
       "safety": "Safety",
       "accessibility": "Accessibility",
       "privacy": "Privacy",
-      "region": "Region",
+      "terms": "Terms",
       "contact": "Contact",
       "support": "Support the app"
     }
