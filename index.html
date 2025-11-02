@@ -4062,12 +4062,7 @@ if (restoreProToggle) {
 }
 
 // Initialize from persisted state
-renderLog();
-renderDayDots();
-setSuggestion();
-updateShareButton();
-renderFiltersUI();
-updateProUI();
+// Initialization moved after BB is defined - see after initBBCore()
 
 // Sync sticky button state
 if (isActive) {
@@ -5117,6 +5112,14 @@ document.querySelectorAll('.bb-ics').forEach(btn=>{
 });
 
 initBBCore();
+
+// Initialize UI after BB is ready
+renderLog();
+renderDayDots();
+setSuggestion();
+updateShareButton();
+renderFiltersUI();
+updateProUI();
 </script>
 
 <!-- ========================= BB SETTINGS & FEATURES HTML ========================= -->
