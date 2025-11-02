@@ -4692,36 +4692,90 @@ const bbToggleWidget = document.getElementById('bb-toggle-widget');
 const bbWidget = document.getElementById('bb-widget');
 const bbWidgetExit = document.getElementById('bb-widget-exit');
 
+let widgetExerciseIndex = 0;
+let widgetExercisePool = [];
+let widgetRotationInterval = null;
+
+function refreshWidgetPool() {
+  // Get all exercise keys
+  const allKeys = Object.keys(EXERCISE_LIBRARY);
+
+  // Apply pack filtering
+  widgetExercisePool = typeof filterPool === 'function'
+    ? filterPool(allKeys)
+    : allKeys;
+
+  // Apply matchesFilters (context, accessibility)
+  if (typeof matchesFilters === 'function') {
+    widgetExercisePool = widgetExercisePool.filter(key => matchesFilters(key));
+  }
+
+  // Fallback if no exercises match
+  if (widgetExercisePool.length === 0) {
+    widgetExercisePool = allKeys.slice(0, 5);
+  }
+
+  widgetExerciseIndex = 0;
+}
+
+function startWidgetRotation() {
+  // Auto-rotate every 30 seconds
+  if (widgetRotationInterval) clearInterval(widgetRotationInterval);
+  widgetRotationInterval = setInterval(() => {
+    widgetExerciseIndex = (widgetExerciseIndex + 1) % widgetExercisePool.length;
+    loadWidgetExercise();
+  }, 30000);
+}
+
+function stopWidgetRotation() {
+  if (widgetRotationInterval) {
+    clearInterval(widgetRotationInterval);
+    widgetRotationInterval = null;
+  }
+}
+
 bbToggleWidget?.addEventListener('click', () => {
+  refreshWidgetPool();
   bbWidget?.classList.remove('hidden');
   loadWidgetExercise();
+  startWidgetRotation();
 });
 
 bbWidgetExit?.addEventListener('click', () => {
   bbWidget?.classList.add('hidden');
+  stopWidgetRotation();
 });
 
-let widgetExerciseIndex = 0;
-const widgetExercises = [
-  { title: 'Neck Rolls', steps: '1. Drop chin to chest\n2. Roll head slowly right\n3. Roll to back\n4. Roll to left\n5. Return to center' },
-  { title: 'Shoulder Shrugs', steps: '1. Lift shoulders to ears\n2. Hold for 3 seconds\n3. Release slowly\n4. Repeat 5 times' },
-  { title: 'Wrist Circles', steps: '1. Extend arms forward\n2. Make circles with wrists\n3. 10 circles clockwise\n4. 10 circles counter-clockwise' }
-];
-
 function loadWidgetExercise() {
-  const ex = widgetExercises[widgetExerciseIndex];
-  document.getElementById('bb-widget-title').textContent = ex.title;
-  document.getElementById('bb-widget-steps').textContent = ex.steps;
+  if (widgetExercisePool.length === 0) {
+    refreshWidgetPool();
+  }
+
+  const key = widgetExercisePool[widgetExerciseIndex];
+  const ex = EXERCISE_LIBRARY[key];
+
+  if (!ex) {
+    refreshWidgetPool();
+    return;
+  }
+
+  const titleEl = document.getElementById('bb-widget-title');
+  const stepsEl = document.getElementById('bb-widget-steps');
+
+  if (titleEl) titleEl.textContent = ex.title;
+  if (stepsEl) stepsEl.textContent = ex.steps.join('\n');
 }
 
 document.getElementById('bb-widget-prev')?.addEventListener('click', () => {
-  widgetExerciseIndex = (widgetExerciseIndex - 1 + widgetExercises.length) % widgetExercises.length;
+  widgetExerciseIndex = (widgetExerciseIndex - 1 + widgetExercisePool.length) % widgetExercisePool.length;
   loadWidgetExercise();
+  startWidgetRotation(); // Restart rotation timer
 });
 
 document.getElementById('bb-widget-next')?.addEventListener('click', () => {
-  widgetExerciseIndex = (widgetExerciseIndex + 1) % widgetExercises.length;
+  widgetExerciseIndex = (widgetExerciseIndex + 1) % widgetExercisePool.length;
   loadWidgetExercise();
+  startWidgetRotation(); // Restart rotation timer
 });
 
 // Notification Permission - handled by enableNotificationsCore() below
