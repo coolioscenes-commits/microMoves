@@ -2584,6 +2584,15 @@ function setSuggestion(){
 
   let pool = BANK[currentEnv];
 
+  // Apply BB Pro pack filtering if filterPool is available
+  if (typeof filterPool === 'function') {
+    pool = filterPool(pool);
+    // If pack filtering returned nothing, fallback to environment default
+    if (pool.length === 0) {
+      pool = BANK[currentEnv];
+    }
+  }
+
   // Apply category filters
   pool = pool.filter(key => matchesFilters(key));
 
@@ -4782,6 +4791,57 @@ function onNudgeTick(){
 
 function qsa(sel){ return Array.from(document.querySelectorAll(sel)) }
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)] }
+
+// Pack to Category Mapping
+const PACK_CATEGORY_MAP = {
+  desk: ['upper', 'posture', 'eyes'],
+  eyes: ['eyes'],
+  commute: ['breath', 'posture'],
+  stretch: ['lower', 'upper']
+};
+
+function filterPool(exerciseKeys) {
+  if (!exerciseKeys || exerciseKeys.length === 0) return [];
+
+  const packs = new Set(BB.state.packs || ['desk', 'eyes']);
+  const context = BB.state.context;
+  const faves = BB.state.faves || [];
+
+  // Build allowed categories from selected packs
+  const allowedCategories = new Set();
+  packs.forEach(pack => {
+    const cats = PACK_CATEGORY_MAP[pack] || [];
+    cats.forEach(cat => allowedCategories.add(cat));
+  });
+
+  // Filter by pack/category
+  let filtered = exerciseKeys.filter(key => {
+    const exercise = EXERCISE_LIBRARY[key];
+    if (!exercise) return false;
+
+    const category = exercise.category;
+    if (!allowedCategories.has(category)) return false;
+
+    return true;
+  });
+
+  // Apply context filtering
+  if (context === 'quiet') {
+    filtered = filtered.filter(key => {
+      const ex = EXERCISE_LIBRARY[key];
+      return ex && (ex.quiet_alt || ex.tags?.includes('quiet') || ex.tags?.includes('seated'));
+    });
+  }
+
+  // Sort: favorites first
+  filtered.sort((a, b) => {
+    const aFav = faves.includes(a) ? 1 : 0;
+    const bFav = faves.includes(b) ? 1 : 0;
+    return bFav - aFav;
+  });
+
+  return filtered;
+}
 
 function downloadICS(everyMins=60){
   if ([45,30].includes(everyMins) && !BB.proActive){
