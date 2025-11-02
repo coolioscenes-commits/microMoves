@@ -6,15 +6,23 @@
   },
   "actions": {
     "startNudges": "Start nudges",
+    "startNudgesAriaLabel": "Start hourly nudges",
     "stopNudges": "Stop nudges",
     "addIcs": "Guarantee hourly alerts (add .ics)",
+    "addIcsAriaLabel": "Download calendar file for guaranteed hourly alerts",
     "installApp": "Install app",
     "gotIt": "Got it",
     "accept": "Accept",
-    "decline": "Decline"
+    "decline": "Decline",
+    "closeNotificationBar": "Close notification bar",
+    "closeSafety": "Close safety information",
+    "closePrivacy": "Close privacy information",
+    "closeRegion": "Close region information",
+    "acknowledgeSafety": "Acknowledge safety information and close"
   },
   "environment": {
     "label": "Where are you now?",
+    "ariaLabel": "Choose environment",
     "office": "Office",
     "queue": "Queue",
     "home": "Home",
@@ -24,10 +32,13 @@
   "suggestion": {
     "label": "Next suggestion",
     "tryThis": "Try this",
-    "showSteps": "Show steps"
+    "showSteps": "Show steps",
+    "weeklyActivity": "Weekly activity",
+    "reminderActions": "Reminder actions"
   },
   "filters": {
     "label": "Filters",
+    "ariaLabel": "Filter exercise categories",
     "breath": "Breath",
     "eyes": "Eyes",
     "neck": "Neck",

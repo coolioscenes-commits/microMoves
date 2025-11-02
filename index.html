@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="auto">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5" />
@@ -1033,6 +1033,62 @@
     }
     dialog::backdrop {
       background: rgba(0, 0, 0, 0.4);
+    }
+
+    [dir="rtl"] {
+      direction: rtl;
+    }
+
+    [dir="rtl"] .card,
+    [dir="rtl"] .next-card,
+    [dir="rtl"] .filters-grid,
+    [dir="rtl"] .pro-card {
+      text-align: right;
+    }
+
+    [dir="rtl"] .chip-group {
+      direction: rtl;
+    }
+
+    [dir="rtl"] .icon {
+      margin-left: 8px;
+      margin-right: 0;
+    }
+
+    [dir="rtl"] .pro-badge {
+      margin-left: 0;
+      margin-right: 8px;
+    }
+
+    [dir="rtl"] ul,
+    [dir="rtl"] ol {
+      padding-left: 0;
+      padding-right: 20px;
+    }
+
+    [dir="rtl"] .sticky-bar button:not(:last-child) {
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    [dir="rtl"] .faq-toggle svg {
+      transform: rotate(180deg);
+    }
+
+    [dir="rtl"] .faq-item.open .faq-toggle svg {
+      transform: rotate(90deg);
+    }
+
+    [dir="rtl"] input[type="range"] {
+      direction: rtl;
+    }
+
+    [dir="rtl"] .privacy-badge {
+      text-align: right;
+    }
+
+    [dir="rtl"] footer {
+      text-align: right;
     }
   </style>
 </head>
@@ -4190,8 +4246,24 @@ function updateUIWithTranslations() {
   const startBtn = document.getElementById('startBtn');
   if (startBtn) startBtn.textContent = t('actions.startNudges');
 
+  const stickyStartBtn = document.getElementById('stickyStartBtn');
+  if (stickyStartBtn) {
+    stickyStartBtn.textContent = t('actions.startNudges');
+    stickyStartBtn.setAttribute('aria-label', t('actions.startNudgesAriaLabel'));
+  }
+
   const icsBtn = document.getElementById('icsBtn');
   if (icsBtn) icsBtn.textContent = t('actions.addIcs');
+
+  const stickyIcsBtn = document.getElementById('stickyIcsBtn');
+  if (stickyIcsBtn) {
+    stickyIcsBtn.setAttribute('aria-label', t('actions.addIcsAriaLabel'));
+  }
+
+  const stickyBarClose = document.getElementById('stickyBarClose');
+  if (stickyBarClose) {
+    stickyBarClose.setAttribute('aria-label', t('actions.closeNotificationBar'));
+  }
 
   const installBtn = document.getElementById('installBtn');
   if (installBtn) {
@@ -4202,6 +4274,18 @@ function updateUIWithTranslations() {
       installBtn.appendChild(document.createTextNode(t('actions.installApp')));
     }
   }
+
+  const dayDots = document.getElementById('dayDots');
+  if (dayDots) dayDots.setAttribute('aria-label', t('suggestion.weeklyActivity'));
+
+  const reminderActionsGroup = document.querySelector('[role="group"][aria-label="Reminder actions"]');
+  if (reminderActionsGroup) reminderActionsGroup.setAttribute('aria-label', t('suggestion.reminderActions'));
+
+  const envChipsGroup = document.getElementById('envChips');
+  if (envChipsGroup) envChipsGroup.setAttribute('aria-label', t('environment.ariaLabel'));
+
+  const filterGroup = document.querySelector('[role="group"][aria-label="Filter exercise categories"]');
+  if (filterGroup) filterGroup.setAttribute('aria-label', t('filters.ariaLabel'));
 
   const envChips = {
     'office': t('environment.office'),
@@ -4236,6 +4320,30 @@ function updateUIWithTranslations() {
 
   const regionTitle = document.getElementById('regionTitle');
   if (regionTitle) regionTitle.textContent = t('region.title');
+
+  document.querySelectorAll('[aria-label="Close safety information"]').forEach(btn => {
+    btn.setAttribute('aria-label', t('actions.closeSafety'));
+  });
+
+  document.querySelectorAll('[aria-label="Close privacy information"]').forEach(btn => {
+    btn.setAttribute('aria-label', t('actions.closePrivacy'));
+  });
+
+  document.querySelectorAll('[aria-label="Close region information"]').forEach(btn => {
+    btn.setAttribute('aria-label', t('actions.closeRegion'));
+  });
+
+  document.querySelectorAll('[aria-label="Acknowledge safety information and close"]').forEach(btn => {
+    btn.setAttribute('aria-label', t('actions.acknowledgeSafety'));
+    btn.textContent = t('actions.gotIt');
+  });
+
+  const gotItButtons = document.querySelectorAll('dialog button[onclick*="closeModal"]');
+  gotItButtons.forEach(btn => {
+    if (btn.textContent.trim() === 'Got it') {
+      btn.textContent = t('actions.gotIt');
+    }
+  });
 }
 </script>
 </body>

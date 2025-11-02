@@ -6,15 +6,23 @@
   },
   "actions": {
     "startNudges": "Iniciar recordatorios",
+    "startNudgesAriaLabel": "Iniciar recordatorios cada hora",
     "stopNudges": "Detener recordatorios",
     "addIcs": "Garantizar alertas cada hora (añadir .ics)",
+    "addIcsAriaLabel": "Descargar archivo de calendario para alertas garantizadas cada hora",
     "installApp": "Instalar app",
     "gotIt": "Entendido",
     "accept": "Aceptar",
-    "decline": "Rechazar"
+    "decline": "Rechazar",
+    "closeNotificationBar": "Cerrar barra de notificación",
+    "closeSafety": "Cerrar información de seguridad",
+    "closePrivacy": "Cerrar información de privacidad",
+    "closeRegion": "Cerrar información de región",
+    "acknowledgeSafety": "Confirmar información de seguridad y cerrar"
   },
   "environment": {
     "label": "¿Dónde estás ahora?",
+    "ariaLabel": "Elegir entorno",
     "office": "Oficina",
     "queue": "Cola",
     "home": "Casa",
@@ -24,10 +32,13 @@
   "suggestion": {
     "label": "Siguiente sugerencia",
     "tryThis": "Prueba esto",
-    "showSteps": "Mostrar pasos"
+    "showSteps": "Mostrar pasos",
+    "weeklyActivity": "Actividad semanal",
+    "reminderActions": "Acciones de recordatorio"
   },
   "filters": {
     "label": "Filtros",
+    "ariaLabel": "Filtrar categorías de ejercicios",
     "breath": "Respiración",
     "eyes": "Ojos",
     "neck": "Cuello",
