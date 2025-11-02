@@ -100,23 +100,7 @@
   },
   "privacy": {
     "title": "Privacy & Data",
-    "privacyFirstTitle": "Privacy-First Design",
-    "privacyFirstText": "BreakBreath is built with your privacy in mind. All your data stays on your device—we don't collect or store any personal information on servers.",
-    "noLoginTitle": "No Login Required",
-    "noLoginText": "Use the app instantly without creating an account. Your settings, streaks, and preferences are stored locally in your browser's storage.",
-    "offlineTitle": "Works Offline",
-    "offlineText": "Once loaded, BreakBreath works without an internet connection. Perfect for privacy-conscious users and offline use.",
-    "thirdPartyTitle": "Third-Party Services",
-    "thirdPartyText": "This site uses Google AdSense for optional advertisements (with your consent via the cookie banner). Ads may use cookies to serve personalized content based on your browsing. You can decline at any time.",
-    "whatWeStoreTitle": "What We Store Locally",
-    "whatWeStore": [
-      "Your exercise preferences and filters",
-      "Hourly and daily streak counts",
-      "Environment selection (office, home, etc.)",
-      "Notification and sound preferences",
-      "Pro unlock status (if activated)"
-    ],
-    "clearDataText": "All local data can be cleared by clearing your browser's storage or using incognito/private browsing mode."
+    "tagline": "No account. No trackers. Settings stored locally on your device."
   },
   "region": {
     "title": "Region & Hosting",
@@ -147,9 +131,5 @@
     "permissionDenied": "Notification permission denied. Please enable in browser settings.",
     "icsDownloaded": "Downloaded .ics (hourly calendar reminders in {timezone} timezone).",
     "toastIcsDownload": "Calendar file downloaded for {timezone} timezone"
-  },
-  "cookie": {
-    "title": "We use cookies and personalized ads.",
-    "message": "This site uses Google AdSense, which may serve personalized ads based on your browsing. By continuing, you consent to cookies and personalized advertising. See our <a href=\"#privacy\">Privacy Policy</a> for details."
   }
 }

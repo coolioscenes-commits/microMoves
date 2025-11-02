@@ -100,23 +100,7 @@
   },
   "privacy": {
     "title": "Privacidad y Datos",
-    "privacyFirstTitle": "Diseño con Privacidad Primero",
-    "privacyFirstText": "BreakBreath está construido pensando en tu privacidad. Todos tus datos permanecen en tu dispositivo—no recopilamos ni almacenamos información personal en servidores.",
-    "noLoginTitle": "Sin Registro Requerido",
-    "noLoginText": "Usa la app instantáneamente sin crear una cuenta. Tu configuración, rachas y preferencias se almacenan localmente en el almacenamiento de tu navegador.",
-    "offlineTitle": "Funciona Sin Conexión",
-    "offlineText": "Una vez cargado, BreakBreath funciona sin conexión a internet. Perfecto para usuarios conscientes de la privacidad y uso sin conexión.",
-    "thirdPartyTitle": "Servicios de Terceros",
-    "thirdPartyText": "Este sitio usa Google AdSense para anuncios opcionales (con tu consentimiento a través del banner de cookies). Los anuncios pueden usar cookies para servir contenido personalizado basado en tu navegación. Puedes rechazar en cualquier momento.",
-    "whatWeStoreTitle": "Qué Almacenamos Localmente",
-    "whatWeStore": [
-      "Tus preferencias de ejercicios y filtros",
-      "Contadores de rachas por hora y diarias",
-      "Selección de entorno (oficina, casa, etc.)",
-      "Preferencias de notificación y sonido",
-      "Estado de desbloqueo Pro (si está activado)"
-    ],
-    "clearDataText": "Todos los datos locales se pueden borrar limpiando el almacenamiento de tu navegador o usando el modo de navegación privada/incógnito."
+    "tagline": "Sin cuenta. Sin rastreadores. Configuración almacenada localmente en tu dispositivo."
   },
   "region": {
     "title": "Región y Alojamiento",
@@ -147,9 +131,5 @@
     "permissionDenied": "Permiso de notificación denegado. Por favor habilita en la configuración del navegador.",
     "icsDownloaded": ".ics descargado (recordatorios de calendario cada hora en zona horaria {timezone}).",
     "toastIcsDownload": "Archivo de calendario descargado para zona horaria {timezone}"
-  },
-  "cookie": {
-    "title": "Usamos cookies y anuncios personalizados.",
-    "message": "Este sitio usa Google AdSense, que puede servir anuncios personalizados basados en tu navegación. Al continuar, consientes cookies y publicidad personalizada. Consulta nuestra <a href=\"#privacy\">Política de Privacidad</a> para más detalles."
   }
 }

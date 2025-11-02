@@ -902,64 +902,6 @@
     .sticky-bar .secondary {
       padding: 7px 14px;
     }
-    .cookie-banner {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(17, 24, 39, 0.98);
-      backdrop-filter: blur(16px);
-      border-top: 1px solid rgba(59, 130, 246, 0.3);
-      padding: 16px 20px;
-      z-index: 2000;
-      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
-      display: none;
-    }
-    .cookie-banner.show {
-      display: block;
-    }
-    .cookie-banner-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .cookie-banner-text {
-      flex: 1;
-      min-width: 280px;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--text);
-    }
-    .cookie-banner-text a {
-      color: var(--primary);
-      text-decoration: underline;
-    }
-    .cookie-banner-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .cookie-banner button {
-      font-size: 13px;
-      padding: 8px 16px;
-      white-space: nowrap;
-    }
-    @media (max-width: 640px) {
-      .cookie-banner-content {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .cookie-banner-actions {
-        width: 100%;
-      }
-      .cookie-banner-actions button {
-        flex: 1;
-      }
-    }
     .pro-badge {
       display: inline-flex;
       align-items: center;
@@ -1097,18 +1039,6 @@
   <div class="breath-orb"></div>
   <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- Cookie/Ad Consent Banner -->
-  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-labelledby="cookieBannerText" aria-describedby="cookieBannerText">
-    <div class="cookie-banner-content">
-      <div class="cookie-banner-text" id="cookieBannerText">
-        <strong>We use cookies and personalized ads.</strong> This site uses Google AdSense, which may serve personalized ads based on your browsing. By continuing, you consent to cookies and personalized advertising. See our <a href="#privacy">Privacy Policy</a> for details.
-      </div>
-      <div class="cookie-banner-actions">
-        <button id="cookieAccept" type="button">Accept</button>
-        <button id="cookieDecline" type="button" class="secondary">Decline</button>
-      </div>
-    </div>
-  </div>
 
   <div id="stickyBar" class="sticky-bar" style="gap: 20px;">
     <button id="stickyStartBtn" type="button" aria-label="Start hourly nudges">Start nudges</button>
@@ -1472,30 +1402,10 @@
         </div>
       </div>
 
-      <!-- In-content Ad (near FAQ bottom) -->
-      <div role="region" aria-label="Advertisement" style="margin: 32px 0; padding: 16px; background: rgba(17, 24, 39, 0.3); border: 1px solid rgba(55, 65, 81, 0.3); border-radius: 12px; text-align: center;">
-        <p style="margin: 0 0 12px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Advertisement</p>
-        <ins class="adsbygoogle"
-             style="display:block;margin:0 auto"
-             data-ad-client="ca-pub-YOUR_ID"
-             data-ad-slot="YOUR_SLOT_ID"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-      </div>
     </div>
   </main>
 
   <footer style="text-align: center; padding: 40px 20px 20px; color: var(--muted); font-size: 13px; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 40px; background: rgba(11, 18, 32, 0.5);">
-    <!-- Footer Ad -->
-    <div role="region" aria-label="Advertisement" style="margin: 0 auto 32px; max-width: 728px; padding: 16px; background: rgba(17, 24, 39, 0.3); border: 1px solid rgba(55, 65, 81, 0.3); border-radius: 12px;">
-      <p style="margin: 0 0 12px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Advertisement</p>
-      <ins class="adsbygoogle"
-           style="display:block;margin:0 auto"
-           data-ad-client="ca-pub-YOUR_ID"
-           data-ad-slot="YOUR_SLOT_ID_2"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-    </div>
     <p style="margin: 0 0 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
       <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
@@ -1564,28 +1474,27 @@
       <h3 id="privacyTitle" style="margin-top: 0;">Privacy & Data</h3>
 
       <div class="howto-section">
-        <h4>Privacy-First Design</h4>
-        <p style="line-height: 1.6; margin: 0 0 16px;">BreakBreath is built with your privacy in mind. All your data stays on your device—we don't collect or store any personal information on servers.</p>
+        <p style="line-height: 1.6; margin: 0 0 24px; font-size: 16px; font-weight: 500;">No account. No trackers. Settings stored locally on your device.</p>
 
-        <h4>No Login Required</h4>
-        <p style="line-height: 1.6; margin: 0 0 16px;">Use the app instantly without creating an account. Your settings, streaks, and preferences are stored locally in your browser's storage.</p>
+        <h4>What This Means</h4>
+        <ul style="line-height: 1.7; margin: 8px 0 16px;">
+          <li><strong>No account required</strong> — Use the app instantly without signing up</li>
+          <li><strong>No tracking</strong> — We don't collect analytics, cookies, or personal data</li>
+          <li><strong>Local storage only</strong> — All your settings stay on your device</li>
+          <li><strong>Works offline</strong> — Once loaded, no internet connection needed</li>
+        </ul>
 
-        <h4>Works Offline</h4>
-        <p style="line-height: 1.6; margin: 0 0 16px;">Once loaded, BreakBreath works without an internet connection. Perfect for privacy-conscious users and offline use.</p>
-
-        <h4>Third-Party Services</h4>
-        <p style="line-height: 1.6; margin: 0 0 16px;">This site uses Google AdSense for optional advertisements (with your consent via the cookie banner). Ads may use cookies to serve personalized content based on your browsing. You can decline at any time.</p>
-
-        <h4>What We Store Locally</h4>
+        <h4>What's Stored Locally</h4>
         <ul style="line-height: 1.7; margin: 8px 0 16px;">
           <li>Your exercise preferences and filters</li>
           <li>Hourly and daily streak counts</li>
           <li>Environment selection (office, home, etc.)</li>
           <li>Notification and sound preferences</li>
-          <li>Pro unlock status (if activated)</li>
         </ul>
 
-        <p style="line-height: 1.6; margin: 0; font-size: 13px; color: var(--muted);">All local data can be cleared by clearing your browser's storage or using incognito/private browsing mode.</p>
+        <p style="line-height: 1.6; margin: 16px 0 0; font-size: 13px; color: var(--muted);">Clear local data anytime by clearing your browser's storage or using incognito/private mode.</p>
+
+        <p style="line-height: 1.6; margin: 16px 0 0; font-size: 13px; color: var(--muted);"><em>Note: If we add analytics in the future, we'll use privacy-focused, cookie-free solutions like Plausible or Umami.</em></p>
       </div>
 
       <button type="button" onclick="closePrivacyModal()" aria-label="Close privacy information" style="margin-top: 20px; padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Got it</button>
@@ -4167,79 +4076,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// Cookie consent handling
-const CONSENT_KEY = 'bb_ad_consent';
-const cookieBanner = $('cookieBanner');
-const cookieAccept = $('cookieAccept');
-const cookieDecline = $('cookieDecline');
-
-function checkCookieConsent() {
-  const consent = localStorage.getItem(CONSENT_KEY);
-  if (!consent) {
-    cookieBanner.classList.add('show');
-  } else if (consent === 'accepted') {
-    loadAdsWithConsent();
-  }
-}
-
-cookieAccept.addEventListener('click', () => {
-  localStorage.setItem(CONSENT_KEY, 'accepted');
-  cookieBanner.classList.remove('show');
-  loadAdsWithConsent();
-});
-
-cookieDecline.addEventListener('click', () => {
-  localStorage.setItem(CONSENT_KEY, 'declined');
-  cookieBanner.classList.remove('show');
-});
-
-// Load AdSense only after user consent
-function loadAdsWithConsent() {
-  function inject(){
-    const s=document.createElement('script');
-    s.async=true;
-    s.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ID";
-    s.crossOrigin="anonymous";
-    document.body.appendChild(s);
-
-    s.onload = function() {
-      const adSlots = document.querySelectorAll('.adsbygoogle');
-      adSlots.forEach(() => {
-        try {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch(e) {
-          console.warn('AdSense initialization skipped:', e);
-        }
-      });
-    };
-
-    // Graceful failure: collapse ad containers if blocked
-    s.onerror = function() {
-      const adContainers = document.querySelectorAll('[role="region"][aria-label="Advertisement"]');
-      adContainers.forEach(container => {
-        container.style.display = 'none';
-      });
-    };
-
-    // Additional check: if ads don't load within 3s, collapse
-    setTimeout(() => {
-      const adSlots = document.querySelectorAll('.adsbygoogle');
-      adSlots.forEach(slot => {
-        if (!slot.hasAttribute('data-ad-status') || slot.offsetHeight === 0) {
-          const container = slot.closest('[role="region"][aria-label="Advertisement"]');
-          if (container) container.style.display = 'none';
-        }
-      });
-    }, 3000);
-  }
-  if('requestIdleCallback' in window) {
-    requestIdleCallback(inject, {timeout:2000});
-  } else {
-    setTimeout(inject, 1500);
-  }
-}
-
-checkCookieConsent();
 
 loadI18n().then(() => {
   updateUIWithTranslations();
@@ -4317,14 +4153,6 @@ function updateUIWithTranslations() {
     }
   });
 
-  const cookieTitle = document.querySelector('#cookieBannerText strong');
-  if (cookieTitle) cookieTitle.textContent = t('cookie.title');
-
-  const cookieAccept = document.getElementById('cookieAccept');
-  if (cookieAccept) cookieAccept.textContent = t('actions.accept');
-
-  const cookieDecline = document.getElementById('cookieDecline');
-  if (cookieDecline) cookieDecline.textContent = t('actions.decline');
 
   const safetyTitle = document.getElementById('safetyTitle');
   if (safetyTitle) safetyTitle.textContent = t('safety.title');
