@@ -1426,7 +1426,51 @@
     </div>
   </main>
 
-  <footer style="text-align: center; padding: 40px 20px 20px; color: var(--muted); font-size: 13px; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 40px; background: rgba(11, 18, 32, 0.5);">
+  <section id="pro" style="border-top: 1px solid rgba(255, 255, 255, 0.1); background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%); position: relative; z-index: 1;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 48px 16px; display: grid; grid-template-columns: 1fr; gap: 32px; align-items: start;">
+      <style>
+        @media (min-width: 640px) {
+          #pro > div {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+      </style>
+      <div>
+        <h2 style="font-size: 24px; font-weight: 600; margin: 0 0 12px; color: var(--text-bright);">Pro Unlock (A$12/year)</h2>
+        <p style="margin: 12px 0 0; color: #9CA3AF; font-size: 16px; line-height: 1.6;">
+          Unlock BreakBreath Pro for A$12/year and make it truly yours: Quiet Hours, custom intervals, extra micro-move packs (desk, commute, stretch), one-tap .ics scheduling, and streak boosts—still lightweight, no trackers, AU-hosted. Cancel anytime; your data stays on your device. Try it for a week and see if it sticks.
+        </p>
+        <p style="margin: 8px 0 0; font-size: 14px; color: var(--muted);">Prices in AUD. Cancel anytime.</p>
+        <a href="/pro" style="margin-top: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: #2563EB; padding: 12px 20px; color: white; font-weight: 500; text-decoration: none; font-size: 16px; transition: background 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563EB'">
+          Unlock Pro
+        </a>
+      </div>
+      <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; color: var(--text);">
+        <li style="display: flex; align-items: start; gap: 8px;">
+          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
+          <span>Quiet Hours</span>
+        </li>
+        <li style="display: flex; align-items: start; gap: 8px;">
+          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
+          <span>Custom intervals</span>
+        </li>
+        <li style="display: flex; align-items: start; gap: 8px;">
+          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
+          <span>Extra move packs</span>
+        </li>
+        <li style="display: flex; align-items: start; gap: 8px;">
+          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
+          <span>One-tap .ics scheduling</span>
+        </li>
+        <li style="display: flex; align-items: start; gap: 8px;">
+          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
+          <span>Streak boosts</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <footer style="text-align: center; padding: 40px 20px 20px; color: var(--muted); font-size: 13px; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 0; background: rgba(11, 18, 32, 0.5);">
     <p style="margin: 0 0 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
       <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
