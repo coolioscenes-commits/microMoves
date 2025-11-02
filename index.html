@@ -2943,9 +2943,12 @@ function startNudges(){
   // Start countdown
   startCountdown();
 
-  // Hourly alignment: schedule to next top of hour
-  const hourMs = 3600000;
-  const delay = nextTopOfHour();
+  // Use BB interval setting (defaults to 60 minutes)
+  const intervalMins = BB?.state?.intervalMins || 60;
+  const intervalMs = intervalMins * 60000;
+
+  // Hourly alignment: schedule to next top of hour for 60min, otherwise use interval
+  const delay = intervalMins === 60 ? nextTopOfHour() : intervalMs;
 
   timerId = setTimeout(() => {
     notifyNow();
@@ -2953,13 +2956,13 @@ function startNudges(){
     intervalId = setInterval(() => {
       notifyNow();
       startCountdown();
-    }, hourMs);
+    }, intervalMs);
   }, delay);
 
   localStorage.setItem('breakbreath_active', 'true');
   localStorage.setItem('breakbreath_lastAt', new Date().toISOString());
   isActive = true;
-  appendLog("Hourly nudges started (aligned to top of hour).");
+  appendLog(`Nudges started (${intervalMins}-min intervals).`);
   streakCount++;
   localStorage.setItem('bb_streak', streakCount);
 
@@ -2967,7 +2970,7 @@ function startNudges(){
   updateDailyStreak();
 
   updateShareButton();
-  showToast(`Nice! See you at the top of the hour. You've kept a ${streakCount}-hour streak.`);
+  showToast(`Nice! See you in ${intervalMins} minutes. You've kept a ${streakCount}-hour streak.`);
 }
 
 function stopNudges(){
@@ -2979,6 +2982,15 @@ function stopNudges(){
   localStorage.setItem('breakbreath_active', 'false');
   isActive = false;
   appendLog("Nudges stopped.");
+}
+
+function setNextNudgeTimer(){
+  // Restart the scheduler if nudges are active
+  if (isActive) {
+    stopNudges();
+    startNudges();
+    appendLog("Scheduler restarted with new settings.");
+  }
 }
 
 // Sound effect for nudge notification
@@ -3010,13 +3022,28 @@ function playNudgeSound() {
 }
 
 async function notifyNow(){
+  // Check if we can nudge now (quiet hours, snooze)
+  if (typeof canNudgeNow === 'function' && !canNudgeNow()) {
+    appendLog('Nudge skipped (quiet hours or snoozed)');
+    return;
+  }
+
   const msg = setSuggestion();
   if ('vibrate' in navigator) {
     navigator.vibrate([12, 0, 12]);
   }
 
-  // Play sound
-  playNudgeSound();
+  // Play sound (BB Pro audio or legacy sound)
+  if (typeof playChime === 'function') {
+    playChime();
+  } else {
+    playNudgeSound();
+  }
+
+  // Show micro-coach line occasionally
+  if (typeof maybeCoachLine === 'function') {
+    maybeCoachLine();
+  }
 
   const notificationsEnabled = localStorage.getItem('notifications_enabled') !== 'false';
   if (notificationsEnabled && "Notification" in window) {
@@ -4412,50 +4439,47 @@ function closeBBSettings() {
 }
 
 function loadBBSettings() {
-  const settings = JSON.parse(localStorage.getItem('bb-settings') || '{}');
-
-  // Interval
+  // Load from BB.state (unified settings)
   const intervalSelect = document.getElementById('bb-interval');
-  if (intervalSelect && settings.interval) {
-    intervalSelect.value = settings.interval;
+  if (intervalSelect) {
+    intervalSelect.value = String(BB.state.intervalMins);
   }
 
   // Audio
   const audioSelect = document.getElementById('bb-audio');
-  if (audioSelect && settings.audio) {
-    audioSelect.value = settings.audio;
+  if (audioSelect) {
+    audioSelect.value = BB.state.audio;
   }
 
   // Packs
-  const packs = settings.packs || ['desk', 'eyes'];
   document.querySelectorAll('.bb-pack').forEach(checkbox => {
-    checkbox.checked = packs.includes(checkbox.value);
+    checkbox.checked = BB.state.packs.includes(checkbox.value);
   });
 
-  // Quiet hours
-  renderQuietHours(settings.quietHours || []);
+  // Quiet hours - convert from BB.state.quietRanges format
+  const quietHours = (BB.state.quietRanges || []).map(r => ({start: r.start, end: r.end}));
+  renderQuietHours(quietHours);
 
   // Theme
-  const theme = settings.theme || 'ocean';
   document.querySelectorAll('.bb-theme').forEach(btn => {
-    btn.classList.toggle('ring-indigo-500', btn.dataset.theme === theme);
+    btn.classList.toggle('ring-indigo-500', btn.dataset.theme === BB.state.theme);
   });
 }
 
 function saveBBSettings() {
-  const settings = {
-    interval: document.getElementById('bb-interval')?.value || '60',
-    audio: document.getElementById('bb-audio')?.value || 'none',
-    packs: Array.from(document.querySelectorAll('.bb-pack:checked')).map(cb => cb.value),
-    quietHours: Array.from(document.querySelectorAll('.bb-quiet-item')).map(item => ({
-      start: item.querySelector('.bb-quiet-start')?.value,
-      end: item.querySelector('.bb-quiet-end')?.value
-    })),
-    theme: document.querySelector('.bb-theme.ring-indigo-500')?.dataset.theme || 'ocean'
-  };
+  // Save to BB.state and persist
+  BB.state.intervalMins = parseInt(document.getElementById('bb-interval')?.value || '60', 10);
+  BB.state.audio = document.getElementById('bb-audio')?.value || 'none';
+  BB.state.packs = Array.from(document.querySelectorAll('.bb-pack:checked')).map(cb => cb.value);
+  BB.state.quietRanges = Array.from(document.querySelectorAll('.bb-quiet-item')).map(item => ({
+    start: item.querySelector('.bb-quiet-start')?.value || '22:00',
+    end: item.querySelector('.bb-quiet-end')?.value || '07:00'
+  }));
+  BB.state.theme = document.querySelector('.bb-theme.ring-indigo-500')?.dataset.theme || 'ocean';
 
-  localStorage.setItem('bb-settings', JSON.stringify(settings));
-  console.log('BB settings saved:', settings);
+  persistBBSettings();
+  applyTheme(BB.state.theme);
+  console.log('BB settings saved:', BB.state);
 }
 
 // Quiet Hours Management
@@ -4696,6 +4720,10 @@ function canNudgeNow(){
 
 function persistBBSettings(){
   BB.lsSet('bb_settings_v1', BB.state);
+  // Restart scheduler with new settings if active
+  if (typeof setNextNudgeTimer === 'function') {
+    setNextNudgeTimer();
+  }
 }
 
 function applyTheme(t){
