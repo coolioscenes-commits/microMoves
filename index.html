@@ -3054,13 +3054,13 @@ async function notifyNow(){
     maybeCoachLine();
   }
 
-  const notificationsEnabled = localStorage.getItem('notifications_enabled') !== 'false';
-  if (notificationsEnabled && "Notification" in window) {
-    if (Notification.permission === "granted") {
-      new Notification("MicroMoves reminder", { body: msg });
-    } else if (Notification.permission !== "denied") {
-      const perm = await Notification.requestPermission();
-      if (perm === "granted") new Notification("MicroMoves reminder", { body: msg });
+  // Only show notification if user has explicitly enabled them AND granted permission
+  const notificationsEnabled = BB.lsGet('bb_notifications_enabled', false);
+  if (notificationsEnabled && "Notification" in window && Notification.permission === "granted") {
+    try {
+      new Notification("BreakBreath", { body: msg });
+    } catch (e) {
+      console.log('Notification failed:', e);
     }
   }
   appendLog(`Reminder: ${msg}`);
@@ -4724,14 +4724,7 @@ document.getElementById('bb-widget-next')?.addEventListener('click', () => {
   loadWidgetExercise();
 });
 
-// Notification Permission
-document.getElementById('bb-enable-notify')?.addEventListener('click', () => {
-  if ('Notification' in window) {
-    Notification.requestPermission().then(permission => {
-      console.log('Notification permission:', permission);
-    });
-  }
-});
+// Notification Permission - handled by enableNotificationsCore() below
 
 // Audio Playback
 function playBBAudio(theme) {
@@ -5009,18 +5002,62 @@ document.getElementById('bb-weekly-recap')?.addEventListener('click', ()=>{
 
 async function enableNotificationsCore(){
   try{
-    if (!('Notification' in window)) return console.log("Notifications not supported");
+    if (!('Notification' in window)) {
+      if (typeof showToast === 'function') {
+        showToast('Notifications not supported in this browser');
+      }
+      return console.log("Notifications not supported");
+    }
     const perm = await Notification.requestPermission();
     if (perm === 'granted'){
       BB.lsSet('bb_notifications_enabled', true);
+      updateNotificationButton();
+      if (typeof showToast === 'function') {
+        showToast('Notifications enabled - you\'ll get gentle reminders');
+      }
       console.log("Notifications enabled");
     } else {
+      if (typeof showToast === 'function') {
+        showToast('Notification permission denied');
+      }
       console.log("Notifications denied");
     }
-  }catch(e){ console.log("Notifications error") }
+  }catch(e){
+    console.log("Notifications error");
+    if (typeof showToast === 'function') {
+      showToast('Failed to enable notifications');
+    }
+  }
+}
+
+function updateNotificationButton() {
+  const btn = document.getElementById('bb-enable-notify');
+  if (!btn) return;
+
+  const enabled = BB.lsGet('bb_notifications_enabled', false);
+  const hasPermission = 'Notification' in window && Notification.permission === 'granted';
+
+  if (enabled && hasPermission) {
+    btn.textContent = '✓ Enabled';
+    btn.style.background = '#dcfce7';
+    btn.style.color = '#166534';
+    btn.disabled = true;
+    btn.style.cursor = 'default';
+  } else {
+    btn.textContent = 'Enable';
+    btn.style.background = '#f1f5f9';
+    btn.style.color = '#1e293b';
+    btn.disabled = false;
+    btn.style.cursor = 'pointer';
+  }
 }
 
 document.getElementById('bb-enable-notify')?.addEventListener('click', enableNotificationsCore);
+
+// Update button state on page load
+if (typeof updateNotificationButton === 'function') {
+  updateNotificationButton();
+}
 
 document.querySelectorAll('.bb-ics').forEach(btn=>{
   btn.addEventListener('click', ()=>downloadICS(parseInt(btn.dataset.mins,10)));
