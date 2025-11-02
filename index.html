@@ -1554,6 +1554,52 @@
   </div>
 
 <script defer>
+let i18nStrings = {};
+let currentLocale = 'en';
+
+async function loadI18n() {
+  const browserLang = navigator.language.split('-')[0];
+  const supportedLocales = ['en', 'es'];
+  const detectedLocale = supportedLocales.includes(browserLang) ? browserLang : 'en';
+
+  const savedLocale = localStorage.getItem('bb_locale');
+  currentLocale = savedLocale || detectedLocale;
+
+  try {
+    const response = await fetch(`/i18n/${currentLocale}.json`);
+    if (!response.ok) throw new Error('Locale not found');
+    i18nStrings = await response.json();
+  } catch (e) {
+    const fallbackResponse = await fetch('/i18n/en.json');
+    i18nStrings = await fallbackResponse.json();
+    currentLocale = 'en';
+  }
+
+  localStorage.setItem('bb_locale', currentLocale);
+  document.documentElement.setAttribute('lang', currentLocale);
+}
+
+function t(path, replacements = {}) {
+  const keys = path.split('.');
+  let value = i18nStrings;
+
+  for (const key of keys) {
+    if (value && typeof value === 'object' && key in value) {
+      value = value[key];
+    } else {
+      return path;
+    }
+  }
+
+  if (typeof value === 'string') {
+    return Object.keys(replacements).reduce((str, key) => {
+      return str.replace(new RegExp(`\\{${key}\\}`, 'g'), replacements[key]);
+    }, value);
+  }
+
+  return value;
+}
+
 const EXERCISE_LIBRARY = {
   "eye_20_20_20": {
     "title": "Eye Rest 20-20-20",
@@ -4124,6 +4170,73 @@ function loadAdsWithConsent() {
 }
 
 checkCookieConsent();
+
+loadI18n().then(() => {
+  updateUIWithTranslations();
+}).catch(err => {
+  console.error('Failed to load i18n:', err);
+});
+
+function updateUIWithTranslations() {
+  const title = document.querySelector('header h1 span');
+  if (title) title.textContent = t('app.title');
+
+  const tagline = document.querySelector('.sub');
+  if (tagline) tagline.textContent = t('app.tagline');
+
+  const privacyBadge = document.querySelector('.privacy-badge');
+  if (privacyBadge) privacyBadge.textContent = t('app.privacyBadge');
+
+  const startBtn = document.getElementById('startBtn');
+  if (startBtn) startBtn.textContent = t('actions.startNudges');
+
+  const icsBtn = document.getElementById('icsBtn');
+  if (icsBtn) icsBtn.textContent = t('actions.addIcs');
+
+  const installBtn = document.getElementById('installBtn');
+  if (installBtn) {
+    const iconSvg = installBtn.querySelector('svg');
+    if (iconSvg) {
+      installBtn.innerHTML = '';
+      installBtn.appendChild(iconSvg);
+      installBtn.appendChild(document.createTextNode(t('actions.installApp')));
+    }
+  }
+
+  const envChips = {
+    'office': t('environment.office'),
+    'queue': t('environment.queue'),
+    'home': t('environment.home'),
+    'commute': t('environment.commute'),
+    'outdoors': t('environment.outdoors')
+  };
+
+  document.querySelectorAll('[data-env]').forEach(chip => {
+    const env = chip.getAttribute('data-env');
+    if (envChips[env]) {
+      const emoji = chip.textContent.trim().split(' ')[0];
+      chip.textContent = `${emoji} ${envChips[env]}`;
+    }
+  });
+
+  const cookieTitle = document.querySelector('#cookieBannerText strong');
+  if (cookieTitle) cookieTitle.textContent = t('cookie.title');
+
+  const cookieAccept = document.getElementById('cookieAccept');
+  if (cookieAccept) cookieAccept.textContent = t('actions.accept');
+
+  const cookieDecline = document.getElementById('cookieDecline');
+  if (cookieDecline) cookieDecline.textContent = t('actions.decline');
+
+  const safetyTitle = document.getElementById('safetyTitle');
+  if (safetyTitle) safetyTitle.textContent = t('safety.title');
+
+  const privacyTitle = document.getElementById('privacyTitle');
+  if (privacyTitle) privacyTitle.textContent = t('privacy.title');
+
+  const regionTitle = document.getElementById('regionTitle');
+  if (regionTitle) regionTitle.textContent = t('region.title');
+}
 </script>
 </body>
 </html>

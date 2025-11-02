@@ -1,0 +1,144 @@
+{
+  "app": {
+    "title": "BreakBreath",
+    "tagline": "Pausas de 1 minuto, cada hora—donde sea que estés.",
+    "privacyBadge": "Privacidad primero • Sin registro • Funciona sin conexión"
+  },
+  "actions": {
+    "startNudges": "Iniciar recordatorios",
+    "stopNudges": "Detener recordatorios",
+    "addIcs": "Garantizar alertas cada hora (añadir .ics)",
+    "installApp": "Instalar app",
+    "gotIt": "Entendido",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
+  },
+  "environment": {
+    "label": "¿Dónde estás ahora?",
+    "office": "Oficina",
+    "queue": "Cola",
+    "home": "Casa",
+    "commute": "Viaje",
+    "outdoors": "Exteriores"
+  },
+  "suggestion": {
+    "label": "Siguiente sugerencia",
+    "tryThis": "Prueba esto",
+    "showSteps": "Mostrar pasos"
+  },
+  "filters": {
+    "label": "Filtros",
+    "breath": "Respiración",
+    "eyes": "Ojos",
+    "neck": "Cuello",
+    "shoulders": "Hombros",
+    "back": "Espalda",
+    "standing": "De pie",
+    "seated": "Sentado",
+    "onlyThis": "Solo esto",
+    "excludeThis": "Excluir esto",
+    "reset": "Restablecer"
+  },
+  "settings": {
+    "label": "Configuración",
+    "soundToggle": "Sonido en recordatorio",
+    "intervalLabel": "Intervalo de recordatorio",
+    "intervalHelper": "Usuarios gratuitos tienen intervalo fijo de una hora. Pro puede configurar entre 10-180 min.",
+    "quietHoursLabel": "Horas silenciosas",
+    "quietHoursFrom": "Desde",
+    "quietHoursTo": "Hasta",
+    "quietHoursHelper": "Pausa recordatorios durante tus horas de sueño o concentración. Vuelve a descargar el archivo .ics después de cambiar las horas para garantizar eventos de calendario correctos con horario de verano.",
+    "customMessageLabel": "Mensaje de recordatorio personalizado",
+    "customMessagePlaceholder": "¡Hora de reiniciar!",
+    "customMessageHelper": "Personaliza tu notificación de recordatorio cada hora."
+  },
+  "pro": {
+    "badge": "✨ Pro",
+    "unlockTitle": "Desbloquear Pro",
+    "unlockDescription": "Intervalos personalizados, horas silenciosas, recordatorios personalizados y más.",
+    "features": {
+      "customIntervals": "Intervalos de recordatorio personalizados (10-180 minutos)",
+      "quietHours": "Programador de horas silenciosas",
+      "customMessages": "Mensajes de recordatorio personalizados",
+      "advancedFilters": "Filtros avanzados de ejercicios"
+    },
+    "unlockButton": "Desbloquear para personalizar",
+    "oneTime": "Pago único",
+    "lifetimeAccess": "Acceso de por vida"
+  },
+  "accessibility": {
+    "title": "Accesibilidad",
+    "keyboardShortcuts": "Atajos de teclado",
+    "screenReaders": "Soporte para lectores de pantalla",
+    "visualAlternatives": "Alternativas visuales"
+  },
+  "safety": {
+    "title": "Aviso de Seguridad",
+    "description": "Estas son sugerencias suaves, no consejos médicos. Detente si sientes dolor, mareos o entumecimiento. Consulta a un profesional si tienes dudas.",
+    "whenToStopTitle": "Cuándo Detenerse",
+    "whenToStop": [
+      "Dolor agudo o persistente",
+      "Mareos o aturdimiento",
+      "Entumecimiento u hormigueo",
+      "Dificultad para respirar"
+    ],
+    "inclusivityTitle": "Inclusividad",
+    "inclusivityText": "Cada ejercicio incluye una alternativa silenciosa para práctica discreta. Usa la configuración para mostrar solo opciones sentadas o de parte superior del cuerpo si los ejercicios de pie no son adecuados para ti.",
+    "consultTitle": "Consulta a un Profesional",
+    "consultText": "Si tienes lesiones existentes, condiciones crónicas o estás embarazada, consulta a un proveedor de atención médica antes de comenzar cualquier nueva práctica de movimiento."
+  },
+  "privacy": {
+    "title": "Privacidad y Datos",
+    "privacyFirstTitle": "Diseño con Privacidad Primero",
+    "privacyFirstText": "BreakBreath está construido pensando en tu privacidad. Todos tus datos permanecen en tu dispositivo—no recopilamos ni almacenamos información personal en servidores.",
+    "noLoginTitle": "Sin Registro Requerido",
+    "noLoginText": "Usa la app instantáneamente sin crear una cuenta. Tu configuración, rachas y preferencias se almacenan localmente en el almacenamiento de tu navegador.",
+    "offlineTitle": "Funciona Sin Conexión",
+    "offlineText": "Una vez cargado, BreakBreath funciona sin conexión a internet. Perfecto para usuarios conscientes de la privacidad y uso sin conexión.",
+    "thirdPartyTitle": "Servicios de Terceros",
+    "thirdPartyText": "Este sitio usa Google AdSense para anuncios opcionales (con tu consentimiento a través del banner de cookies). Los anuncios pueden usar cookies para servir contenido personalizado basado en tu navegación. Puedes rechazar en cualquier momento.",
+    "whatWeStoreTitle": "Qué Almacenamos Localmente",
+    "whatWeStore": [
+      "Tus preferencias de ejercicios y filtros",
+      "Contadores de rachas por hora y diarias",
+      "Selección de entorno (oficina, casa, etc.)",
+      "Preferencias de notificación y sonido",
+      "Estado de desbloqueo Pro (si está activado)"
+    ],
+    "clearDataText": "Todos los datos locales se pueden borrar limpiando el almacenamiento de tu navegador o usando el modo de navegación privada/incógnito."
+  },
+  "region": {
+    "title": "Región y Alojamiento",
+    "auHostedTitle": "Alojado en Australia",
+    "auHostedText": "BreakBreath está alojado en Australia. Aunque la app funciona globalmente, nuestra infraestructura está basada en AU para cumplimiento con estándares locales de protección de datos.",
+    "globalAccessTitle": "Acceso Global",
+    "globalAccessText": "La app es accesible en todo el mundo. Todas las funciones funcionan independientemente de tu ubicación, y el almacenamiento local garantiza que tus datos nunca salgan de tu dispositivo."
+  },
+  "footer": {
+    "notMedicalAdvice": "No es consejo médico · consejos de seguridad",
+    "privateOffline": "Privado. Sin conexión primero. Funciona en cualquier lugar.",
+    "shortcuts": {
+      "help": "ayuda",
+      "start": "iniciar",
+      "close": "cerrar"
+    },
+    "links": {
+      "safety": "Seguridad",
+      "accessibility": "Accesibilidad",
+      "privacy": "Privacidad",
+      "region": "Región",
+      "contact": "Contacto",
+      "support": "Apoyar la app"
+    }
+  },
+  "notifications": {
+    "browserSupport": "Notificaciones del navegador ahora; archivo de calendario para alertas garantizadas cada hora.",
+    "permissionDenied": "Permiso de notificación denegado. Por favor habilita en la configuración del navegador.",
+    "icsDownloaded": ".ics descargado (recordatorios de calendario cada hora en zona horaria {timezone}).",
+    "toastIcsDownload": "Archivo de calendario descargado para zona horaria {timezone}"
+  },
+  "cookie": {
+    "title": "Usamos cookies y anuncios personalizados.",
+    "message": "Este sitio usa Google AdSense, que puede servir anuncios personalizados basados en tu navegación. Al continuar, consientes cookies y publicidad personalizada. Consulta nuestra <a href=\"#privacy\">Política de Privacidad</a> para más detalles."
+  }
+}
