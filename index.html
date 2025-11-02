@@ -892,6 +892,52 @@
     .sticky-bar .secondary {
       padding: 7px 14px;
     }
+    .pro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pro-unlock-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.08) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .pro-feature-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      position: relative;
+    }
+    .pro-active .pro-feature-disabled {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .pro-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(17, 24, 39, 0.8);
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      z-index: 10;
+    }
+    .pro-active .pro-overlay {
+      display: none;
+    }
     @media (max-width: 640px) {
       .sticky-bar {
         flex-wrap: wrap;
@@ -1013,6 +1059,33 @@
       </div>
     </div>
 
+    <div id="proUnlockCard" class="pro-unlock-card" style="display: none;">
+      <div style="display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 16px;">
+        <div style="flex: 1;">
+          <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 600; color: var(--text-bright); display: flex; align-items: center; gap: 8px;">
+            <span>Unlock Pro</span>
+            <span class="pro-badge">✨ Pro</span>
+          </h3>
+          <p style="margin: 0 0 12px; font-size: 14px; color: var(--muted); line-height: 1.6;">
+            Custom intervals, quiet hours, personalized reminders, and more.
+          </p>
+          <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: var(--text); line-height: 1.8;">
+            <li>Custom reminder intervals (10-180 minutes)</li>
+            <li>Quiet hours scheduler</li>
+            <li>Custom reminder messages</li>
+            <li>Advanced exercise filters</li>
+            <li>Priority support</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <button id="buyProBtn" type="button" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'">
+          Unlock Pro — A$9 one-time
+        </button>
+        <span id="proStatus" style="font-size: 13px; color: var(--muted);"></span>
+      </div>
+    </div>
+
     <div class="card">
       <div class="label">
         <span class="icon">
@@ -1030,6 +1103,53 @@
             <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">Filters out exercises that require standing or full mobility</div>
           </div>
         </label>
+      </div>
+    </div>
+
+    <div class="card pro-feature-disabled" id="proFeaturesCard">
+      <div class="pro-overlay">
+        <button type="button" onclick="document.getElementById('proUnlockCard').scrollIntoView({behavior: 'smooth', block: 'center'})" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+          <span class="pro-badge" style="background: rgba(255, 255, 255, 0.2);">✨ Pro</span>
+          Unlock to customize
+        </button>
+      </div>
+      <div class="label">
+        <span class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </span>
+        Pro Features
+        <span class="pro-badge">✨ Pro</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 12px;">
+        <div>
+          <label style="display: block; font-weight: 500; color: var(--text-bright); margin-bottom: 8px; font-size: 14px;">Custom reminder interval</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="number" id="customIntervalInput" min="10" max="180" value="60" style="width: 80px; background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(55, 65, 81, 0.5); border-radius: 6px; padding: 8px 12px; color: var(--text-bright); font-size: 14px;" placeholder="60">
+            <span style="font-size: 13px; color: var(--muted);">minutes (10-180)</span>
+          </div>
+          <p style="margin: 8px 0 0; font-size: 12px; color: var(--muted);">Free users are fixed at hourly. Pro can set any 10–180 min.</p>
+        </div>
+        <div>
+          <label style="display: block; font-weight: 500; color: var(--text-bright); margin-bottom: 8px; font-size: 14px;">Quiet hours</label>
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 13px; color: var(--muted);">From</span>
+              <input type="time" id="quietHoursStart" value="22:00" style="background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(55, 65, 81, 0.5); border-radius: 6px; padding: 6px 10px; color: var(--text-bright); font-size: 13px;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 13px; color: var(--muted);">To</span>
+              <input type="time" id="quietHoursEnd" value="08:00" style="background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(55, 65, 81, 0.5); border-radius: 6px; padding: 6px 10px; color: var(--text-bright); font-size: 13px;">
+            </div>
+          </div>
+          <p style="margin: 8px 0 0; font-size: 12px; color: var(--muted);">Pause reminders during your sleep or focus hours.</p>
+        </div>
+        <div>
+          <label style="display: block; font-weight: 500; color: var(--text-bright); margin-bottom: 8px; font-size: 14px;">Custom reminder message</label>
+          <input type="text" id="customReminderMsg" placeholder="Time to reset!" style="width: 100%; background: rgba(17, 24, 39, 0.6); border: 1px solid rgba(55, 65, 81, 0.5); border-radius: 6px; padding: 10px 12px; color: var(--text-bright); font-size: 14px;">
+          <p style="margin: 8px 0 0; font-size: 12px; color: var(--muted);">Personalize your hourly nudge notification.</p>
+        </div>
       </div>
     </div>
 
@@ -3351,12 +3471,63 @@ if (microBenefitsEl) {
   });
 })();
 
+// Pro unlock system
+const PRO_KEY = "breakbreath_pro_v1";
+const STRIPE_PRO_LINK = "https://buy.stripe.com/YOUR_9AUD_PAYMENT_LINK";
+
+function isPro() {
+  return localStorage.getItem(PRO_KEY) === "1";
+}
+
+function setPro(value) {
+  localStorage.setItem(PRO_KEY, value ? "1" : "0");
+}
+
+function updateProUI() {
+  const proUnlockCard = $('proUnlockCard');
+  const proStatus = $('proStatus');
+  const buyBtn = $('buyProBtn');
+  const proFeaturesCard = $('proFeaturesCard');
+
+  if (isPro()) {
+    if (proUnlockCard) proUnlockCard.style.display = 'none';
+    if (proStatus) proStatus.textContent = 'Pro active ✓';
+    if (buyBtn) buyBtn.style.display = 'none';
+    if (proFeaturesCard) proFeaturesCard.classList.remove('pro-feature-disabled');
+    document.documentElement.classList.add('pro-active');
+  } else {
+    if (proUnlockCard) proUnlockCard.style.display = 'block';
+    if (proStatus) proStatus.textContent = '';
+    if (buyBtn) buyBtn.style.display = 'inline-flex';
+    if (proFeaturesCard) proFeaturesCard.classList.add('pro-feature-disabled');
+    document.documentElement.classList.remove('pro-active');
+  }
+}
+
+const buyProBtn = $('buyProBtn');
+if (buyProBtn) {
+  buyProBtn.addEventListener('click', () => {
+    window.open(STRIPE_PRO_LINK, '_blank');
+    showToast('Complete your purchase, then return here to activate Pro.');
+
+    setTimeout(() => {
+      if (confirm('Purchase complete? Click OK to activate Pro features.')) {
+        setPro(true);
+        updateProUI();
+        showToast('Pro unlocked! Enjoy your premium features.');
+        appendLog('Pro features activated');
+      }
+    }, 5000);
+  });
+}
+
 // Initialize from persisted state
 renderLog();
 renderDayDots();
 setSuggestion();
 updateShareButton();
 renderFiltersUI();
+updateProUI();
 
 // Sync sticky button state
 if (isActive) {
