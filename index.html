@@ -1847,6 +1847,7 @@ const EXERCISE_LIBRARY = {
   },
   "shoulder_blade_squeeze": {
     "title": "Shoulder Blade Squeeze (5s × 6)",
+    "category": "upper",
     "env": ["office", "queue", "commute", "home"],
     "equipment": "None",
     "duration": 20,
@@ -1865,6 +1866,7 @@ const EXERCISE_LIBRARY = {
   },
   "seated_twist": {
     "title": "Seated Spine Twist (30s/side)",
+    "category": "posture",
     "env": ["office", "queue", "commute", "home"],
     "equipment": "Chair (optional)",
     "duration": 40,
@@ -1941,6 +1943,7 @@ const EXERCISE_LIBRARY = {
   },
   "micro_gratitude": {
     "title": "Gratitude Reflection (3 things)",
+    "category": "breath",
     "env": ["queue", "commute", "office", "home"],
     "equipment": "None",
     "duration": 30,
@@ -1958,6 +1961,7 @@ const EXERCISE_LIBRARY = {
   },
   "posture_reset": {
     "title": "Posture Reset (30s)",
+    "category": "posture",
     "env": ["queue", "office", "commute", "home"],
     "equipment": "None",
     "duration": 20,
@@ -2031,6 +2035,7 @@ const EXERCISE_LIBRARY = {
   },
   "forward_fold": {
     "title": "Standing Forward Fold (30s)",
+    "category": "lower",
     "env": ["home", "outdoors"],
     "equipment": "None",
     "duration": 30,
@@ -2126,6 +2131,7 @@ const EXERCISE_LIBRARY = {
   },
   "seated_hamstring_stretch": {
     "title": "Seated Hamstring Stretch (30s/side)",
+    "category": "lower",
     "env": ["office", "home", "queue"],
     "equipment": "Chair",
     "duration": 40,
@@ -2182,6 +2188,7 @@ const EXERCISE_LIBRARY = {
   },
   "quad_stretch": {
     "title": "Standing Quad Stretch (30–40s/side)",
+    "category": "lower",
     "env": ["office", "home", "queue", "outdoors"],
     "equipment": "None",
     "duration": 40,
@@ -4064,19 +4071,7 @@ if (restoreProToggle) {
 // Initialize from persisted state
 // Initialization moved after BB is defined - see after initBBCore()
 
-// Sync sticky button state
-if (isActive) {
-  stickyStartBtn.textContent = 'Stop reminders';
-  startCountdown();
-}
-
-document.querySelectorAll("[data-env]").forEach(btn => {
-  if (btn.dataset.env === currentEnv) {
-    btn.setAttribute("aria-pressed", "true");
-  } else {
-    btn.setAttribute("aria-pressed", "false");
-  }
-});
+// Environment button state and sticky button sync moved to after element definitions
 
 let deferredPrompt;
 const installBtn = $("installBtn");
@@ -5120,6 +5115,22 @@ setSuggestion();
 updateShareButton();
 renderFiltersUI();
 updateProUI();
+
+// Sync sticky button state (stickyStartBtn already defined earlier)
+if (isActive) {
+  const btn = document.getElementById('stickyStartBtn');
+  if (btn) btn.textContent = 'Stop nudges';
+  startCountdown();
+}
+
+// Set environment button states
+document.querySelectorAll("[data-env]").forEach(btn => {
+  if (btn.dataset.env === currentEnv) {
+    btn.setAttribute("aria-pressed", "true");
+  } else {
+    btn.setAttribute("aria-pressed", "false");
+  }
+});
 </script>
 
 <!-- ========================= BB SETTINGS & FEATURES HTML ========================= -->
