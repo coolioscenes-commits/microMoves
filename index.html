@@ -4534,6 +4534,22 @@ const bbSnoozePop = document.getElementById('bb-snooze-pop');
 
 bbSnoozeBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
+
+  // If already snoozed, offer to clear it
+  const isSnoozed = BB.state.snoozeUntil && BB.now() < BB.state.snoozeUntil;
+  if (isSnoozed) {
+    BB.state.snoozeUntil = 0;
+    persistBBSettings();
+    updateSnoozeButton();
+    if (typeof showToast === 'function') {
+      showToast('Snooze cleared - nudges resumed');
+    }
+    if (typeof appendLog === 'function') {
+      appendLog('Snooze cleared');
+    }
+    return;
+  }
+
   bbSnoozePop?.classList.toggle('hidden');
 });
 
@@ -4545,13 +4561,53 @@ bbSnoozePop?.addEventListener('click', (e) => e.stopPropagation());
 
 document.querySelectorAll('.bb-snooze-opt').forEach(btn => {
   btn.addEventListener('click', () => {
-    const mins = btn.dataset.mins;
-    const until = new Date(Date.now() + mins * 60000);
-    localStorage.setItem('bb-snooze-until', until.toISOString());
+    const mins = parseInt(btn.dataset.mins, 10);
+    const until = Date.now() + mins * 60000;
+    BB.state.snoozeUntil = until;
+    persistBBSettings();
     bbSnoozePop?.classList.add('hidden');
-    console.log(`Snoozed for ${mins} minutes until ${until}`);
+
+    const untilDate = new Date(until);
+    const timeStr = untilDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (typeof showToast === 'function') {
+      showToast(`Snoozed until ${timeStr} (${mins} min)`);
+    }
+    if (typeof appendLog === 'function') {
+      appendLog(`Snoozed for ${mins} minutes until ${timeStr}`);
+    }
+    updateSnoozeButton();
   });
 });
+
+function updateSnoozeButton() {
+  if (!bbSnoozeBtn) return;
+
+  // Clear expired snooze
+  if (BB.state.snoozeUntil && BB.now() >= BB.state.snoozeUntil) {
+    BB.state.snoozeUntil = 0;
+    persistBBSettings();
+  }
+
+  const isSnoozed = BB.state.snoozeUntil && BB.now() < BB.state.snoozeUntil;
+
+  if (isSnoozed) {
+    const untilDate = new Date(BB.state.snoozeUntil);
+    const timeStr = untilDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    bbSnoozeBtn.textContent = `Snoozed (${timeStr})`;
+    bbSnoozeBtn.style.background = '#fef3c7';
+    bbSnoozeBtn.style.color = '#92400e';
+  } else {
+    bbSnoozeBtn.textContent = 'Snooze';
+    bbSnoozeBtn.style.background = '#f1f5f9';
+    bbSnoozeBtn.style.color = '#1e293b';
+  }
+}
+
+// Update snooze button on page load and every minute
+if (typeof updateSnoozeButton === 'function') {
+  updateSnoozeButton();
+  setInterval(updateSnoozeButton, 60000);
+}
 
 // .ics Export
 document.querySelectorAll('.bb-ics').forEach(btn => {
