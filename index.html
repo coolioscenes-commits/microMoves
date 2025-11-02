@@ -4845,12 +4845,18 @@ function filterPool(exerciseKeys) {
 
 function downloadICS(everyMins=60){
   if ([45,30].includes(everyMins) && !BB.proActive){
-    console.log("Pro feature"); return;
+    if (typeof showToast === 'function') {
+      showToast("Pro feature: Upgrade to unlock 30 & 45-min intervals");
+    } else {
+      console.log("Pro feature");
+    }
+    return;
   }
   const uid = 'breakbreath-'+everyMins+'m@local';
   const dtStamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
   const dtStart = new Date(Date.now()+ 60*1000);
   const startUtc = toICS(dtStart);
+  const summaryText = everyMins === 60 ? 'BreakBreath Hourly Reset' : `BreakBreath ${everyMins}-min Reset`;
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -4860,7 +4866,7 @@ function downloadICS(everyMins=60){
     "UID:"+uid,
     "DTSTAMP:"+dtStamp,
     "DTSTART:"+startUtc,
-    "SUMMARY:BreakBreath Hourly Reset",
+    "SUMMARY:"+summaryText,
     "RRULE:FREQ=MINUTELY;INTERVAL="+everyMins,
     "BEGIN:VALARM",
     "TRIGGER:-PT1M",
@@ -4871,6 +4877,13 @@ function downloadICS(everyMins=60){
     "END:VCALENDAR"
   ].join("\r\n");
   downloadBlob(ics, `breakbreath-${everyMins}min.ics`, 'text/calendar');
+
+  if (typeof showToast === 'function') {
+    showToast(`Calendar file downloaded (${everyMins}-min intervals)`);
+  }
+  if (typeof appendLog === 'function') {
+    appendLog(`Downloaded .ics with ${everyMins}-min recurring reminders.`);
+  }
 }
 
 function toICS(d){
