@@ -1,0 +1,144 @@
+{
+  "app": {
+    "title": "BreakBreath",
+    "tagline": "1-minute resets, every hour—wherever you are.",
+    "privacyBadge": "Privacy-first • No login • Works offline"
+  },
+  "actions": {
+    "startNudges": "Start nudges",
+    "stopNudges": "Stop nudges",
+    "addIcs": "Guarantee hourly alerts (add .ics)",
+    "installApp": "Install app",
+    "gotIt": "Got it",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "environment": {
+    "label": "Where are you now?",
+    "office": "Office",
+    "queue": "Queue",
+    "home": "Home",
+    "commute": "Commute",
+    "outdoors": "Outdoors"
+  },
+  "suggestion": {
+    "label": "Next suggestion",
+    "tryThis": "Try this",
+    "showSteps": "Show steps"
+  },
+  "filters": {
+    "label": "Filters",
+    "breath": "Breath",
+    "eyes": "Eyes",
+    "neck": "Neck",
+    "shoulders": "Shoulders",
+    "back": "Back",
+    "standing": "Standing",
+    "seated": "Seated",
+    "onlyThis": "Only this",
+    "excludeThis": "Exclude this",
+    "reset": "Reset"
+  },
+  "settings": {
+    "label": "Settings",
+    "soundToggle": "Sound on nudge",
+    "intervalLabel": "Reminder interval",
+    "intervalHelper": "Free users are fixed at hourly. Pro can set any 10–180 min.",
+    "quietHoursLabel": "Quiet hours",
+    "quietHoursFrom": "From",
+    "quietHoursTo": "To",
+    "quietHoursHelper": "Pause reminders during your sleep or focus hours. Re-download the .ics file after changing hours to ensure DST-correct calendar events.",
+    "customMessageLabel": "Custom reminder message",
+    "customMessagePlaceholder": "Time to reset!",
+    "customMessageHelper": "Personalize your hourly nudge notification."
+  },
+  "pro": {
+    "badge": "✨ Pro",
+    "unlockTitle": "Unlock Pro",
+    "unlockDescription": "Custom intervals, quiet hours, personalized reminders, and more.",
+    "features": {
+      "customIntervals": "Custom reminder intervals (10-180 minutes)",
+      "quietHours": "Quiet hours scheduler",
+      "customMessages": "Custom reminder messages",
+      "advancedFilters": "Advanced exercise filters"
+    },
+    "unlockButton": "Unlock to customize",
+    "oneTime": "One-time payment",
+    "lifetimeAccess": "Lifetime access"
+  },
+  "accessibility": {
+    "title": "Accessibility",
+    "keyboardShortcuts": "Keyboard shortcuts",
+    "screenReaders": "Screen reader support",
+    "visualAlternatives": "Visual alternatives"
+  },
+  "safety": {
+    "title": "Safety Notice",
+    "description": "These are gentle suggestions, not medical advice. Stop if you feel pain, dizziness, or numbness. Consult a professional if unsure.",
+    "whenToStopTitle": "When to Stop",
+    "whenToStop": [
+      "Sharp or persistent pain",
+      "Dizziness or lightheadedness",
+      "Numbness or tingling",
+      "Difficulty breathing"
+    ],
+    "inclusivityTitle": "Inclusivity",
+    "inclusivityText": "Every exercise includes a quiet alternative for discreet practice. Use the settings to show only seated or upper-body options if standing exercises aren't suitable for you.",
+    "consultTitle": "Consult a Professional",
+    "consultText": "If you have existing injuries, chronic conditions, or are pregnant, please consult a healthcare provider before starting any new movement practice."
+  },
+  "privacy": {
+    "title": "Privacy & Data",
+    "privacyFirstTitle": "Privacy-First Design",
+    "privacyFirstText": "BreakBreath is built with your privacy in mind. All your data stays on your device—we don't collect or store any personal information on servers.",
+    "noLoginTitle": "No Login Required",
+    "noLoginText": "Use the app instantly without creating an account. Your settings, streaks, and preferences are stored locally in your browser's storage.",
+    "offlineTitle": "Works Offline",
+    "offlineText": "Once loaded, BreakBreath works without an internet connection. Perfect for privacy-conscious users and offline use.",
+    "thirdPartyTitle": "Third-Party Services",
+    "thirdPartyText": "This site uses Google AdSense for optional advertisements (with your consent via the cookie banner). Ads may use cookies to serve personalized content based on your browsing. You can decline at any time.",
+    "whatWeStoreTitle": "What We Store Locally",
+    "whatWeStore": [
+      "Your exercise preferences and filters",
+      "Hourly and daily streak counts",
+      "Environment selection (office, home, etc.)",
+      "Notification and sound preferences",
+      "Pro unlock status (if activated)"
+    ],
+    "clearDataText": "All local data can be cleared by clearing your browser's storage or using incognito/private browsing mode."
+  },
+  "region": {
+    "title": "Region & Hosting",
+    "auHostedTitle": "Australian-Hosted",
+    "auHostedText": "BreakBreath is hosted in Australia. While the app works globally, our infrastructure is based in AU for compliance with local data protection standards.",
+    "globalAccessTitle": "Global Access",
+    "globalAccessText": "The app is accessible worldwide. All features work regardless of your location, and local storage ensures your data never leaves your device."
+  },
+  "footer": {
+    "notMedicalAdvice": "Not medical advice · safety tips",
+    "privateOffline": "Private. Offline-first. Works anywhere.",
+    "shortcuts": {
+      "help": "help",
+      "start": "start",
+      "close": "close"
+    },
+    "links": {
+      "safety": "Safety",
+      "accessibility": "Accessibility",
+      "privacy": "Privacy",
+      "region": "Region",
+      "contact": "Contact",
+      "support": "Support the app"
+    }
+  },
+  "notifications": {
+    "browserSupport": "Browser notifications now; calendar file for guaranteed hourly alerts.",
+    "permissionDenied": "Notification permission denied. Please enable in browser settings.",
+    "icsDownloaded": "Downloaded .ics (hourly calendar reminders in {timezone} timezone).",
+    "toastIcsDownload": "Calendar file downloaded for {timezone} timezone"
+  },
+  "cookie": {
+    "title": "We use cookies and personalized ads.",
+    "message": "This site uses Google AdSense, which may serve personalized ads based on your browsing. By continuing, you consent to cookies and personalized advertising. See our <a href=\"#privacy\">Privacy Policy</a> for details."
+  }
+}
