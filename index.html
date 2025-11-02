@@ -1084,6 +1084,12 @@
         </button>
         <span id="proStatus" style="font-size: 13px; color: var(--muted);"></span>
       </div>
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--muted);">
+          <input type="checkbox" id="restoreProToggle" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary);">
+          <span>I already purchased (honesty-based restore)</span>
+        </label>
+      </div>
     </div>
 
     <div class="card">
@@ -3595,6 +3601,26 @@ if (buyProBtn) {
       }
     }, 5000);
   });
+}
+
+// Restore Pro toggle (honesty-based)
+const restoreProToggle = $('restoreProToggle');
+if (restoreProToggle) {
+  restoreProToggle.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      setPro(true);
+      updateProUI();
+      showToast('Pro restored! Thank you for your honesty.');
+      appendLog('Pro features restored');
+    } else {
+      setPro(false);
+      updateProUI();
+      showToast('Pro deactivated.');
+    }
+  });
+
+  // Set initial state based on current Pro status
+  restoreProToggle.checked = isPro();
 }
 
 // Initialize from persisted state
