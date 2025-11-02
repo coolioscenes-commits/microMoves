@@ -892,6 +892,64 @@
     .sticky-bar .secondary {
       padding: 7px 14px;
     }
+    .cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(17, 24, 39, 0.98);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 16px 20px;
+      z-index: 2000;
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+      display: none;
+    }
+    .cookie-banner.show {
+      display: block;
+    }
+    .cookie-banner-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .cookie-banner-text {
+      flex: 1;
+      min-width: 280px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .cookie-banner-text a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+    .cookie-banner-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .cookie-banner button {
+      font-size: 13px;
+      padding: 8px 16px;
+      white-space: nowrap;
+    }
+    @media (max-width: 640px) {
+      .cookie-banner-content {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .cookie-banner-actions {
+        width: 100%;
+      }
+      .cookie-banner-actions button {
+        flex: 1;
+      }
+    }
     .pro-badge {
       display: inline-flex;
       align-items: center;
@@ -972,6 +1030,19 @@
 <body>
   <div class="breath-orb"></div>
   <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Cookie/Ad Consent Banner -->
+  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-labelledby="cookieBannerText" aria-describedby="cookieBannerText">
+    <div class="cookie-banner-content">
+      <div class="cookie-banner-text" id="cookieBannerText">
+        <strong>We use cookies and personalized ads.</strong> This site uses Google AdSense, which may serve personalized ads based on your browsing. By continuing, you consent to cookies and personalized advertising. See our <a href="#privacy">Privacy Policy</a> for details.
+      </div>
+      <div class="cookie-banner-actions">
+        <button id="cookieAccept" type="button">Accept</button>
+        <button id="cookieDecline" type="button" class="secondary">Decline</button>
+      </div>
+    </div>
+  </div>
 
   <div id="stickyBar" class="sticky-bar" style="gap: 20px;">
     <button id="stickyStartBtn" type="button" aria-label="Start hourly nudges">Start nudges</button>
@@ -3859,8 +3930,34 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(()=>{});
 }
 
-// Defer AdSense until idle to protect Core Web Vitals
-(function loadAds(){
+// Cookie consent handling
+const CONSENT_KEY = 'bb_ad_consent';
+const cookieBanner = $('cookieBanner');
+const cookieAccept = $('cookieAccept');
+const cookieDecline = $('cookieDecline');
+
+function checkCookieConsent() {
+  const consent = localStorage.getItem(CONSENT_KEY);
+  if (!consent) {
+    cookieBanner.classList.add('show');
+  } else if (consent === 'accepted') {
+    loadAdsWithConsent();
+  }
+}
+
+cookieAccept.addEventListener('click', () => {
+  localStorage.setItem(CONSENT_KEY, 'accepted');
+  cookieBanner.classList.remove('show');
+  loadAdsWithConsent();
+});
+
+cookieDecline.addEventListener('click', () => {
+  localStorage.setItem(CONSENT_KEY, 'declined');
+  cookieBanner.classList.remove('show');
+});
+
+// Load AdSense only after user consent
+function loadAdsWithConsent() {
   function inject(){
     const s=document.createElement('script');
     s.async=true;
@@ -3868,7 +3965,6 @@ if ("serviceWorker" in navigator) {
     s.crossOrigin="anonymous";
     document.body.appendChild(s);
 
-    // Initialize ad units after script loads
     s.onload = function() {
       const adSlots = document.querySelectorAll('.adsbygoogle');
       adSlots.forEach(() => {
@@ -3885,7 +3981,9 @@ if ("serviceWorker" in navigator) {
   } else {
     setTimeout(inject, 1500);
   }
-})();
+}
+
+checkCookieConsent();
 </script>
 </body>
 </html>
