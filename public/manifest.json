@@ -1,8 +1,10 @@
 {
-  "name": "BreakBreath",
+  "name": "BreakBreath — Hourly Micro-Reminders for Breathwork & Stretches",
   "short_name": "BreakBreath",
-  "description": "1-minute resets, every hour—wherever you are.",
+  "description": "1-minute resets, every hour—wherever you are. Gentle breathwork and stretches for desk workers.",
+  "lang": "en",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0F172A",
   "theme_color": "#2563EB",
@@ -21,6 +23,21 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["health", "lifestyle", "productivity"],
-  "screenshots": []
+  "categories": ["health", "fitness", "lifestyle", "productivity", "wellness"],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "BreakBreath main screen with exercise suggestions"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "BreakBreath on desktop showing hourly reminders"
+    }
+  ]
 }
