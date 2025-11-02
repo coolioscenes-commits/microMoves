@@ -3516,6 +3516,12 @@ function startHowtoTimer() {
         const exerciseKey = currentExercise.key;
         const duration = currentExercise.duration || null;
         appendLog(`Completed: ${currentExercise.title}`, exerciseKey, duration);
+
+        // Log completion for weekly recap
+        if (typeof logCompletion === 'function' && exerciseKey) {
+          logCompletion(exerciseKey);
+        }
+
         markTodayComplete();
       }
 
@@ -4679,12 +4685,7 @@ function downloadFile(filename, content, type) {
   URL.revokeObjectURL(url);
 }
 
-// Weekly Recap
-document.getElementById('bb-weekly-recap')?.addEventListener('click', () => {
-  const stats = JSON.parse(localStorage.getItem('bb-stats') || '{}');
-  const recap = `BreakBreath Weekly Recap\n\nTotal breaks: ${stats.total || 0}\nFavorites used: ${stats.favorites || 0}\nLongest streak: ${stats.streak || 0} days\n\nKeep moving! 💪`;
-  downloadFile('breakbreath-recap.txt', recap, 'text/plain');
-});
+// Weekly Recap - handled below with proper weeklyRecap() function
 
 // Widget Mode
 const bbToggleWidget = document.getElementById('bb-toggle-widget');
@@ -4845,6 +4846,14 @@ function paintFavIcon(exKey){
 function bindFavForExercise(exKey){
   if (!exKey) return;
   paintFavIcon(exKey);
+}
+
+function logCompletion(exerciseKey){
+  if (!exerciseKey) return;
+  const log = BB.lsGet('bb_log', []);
+  log.push({ t: Date.now(), key: exerciseKey });
+  // Keep last 1000 entries
+  BB.lsSet('bb_log', log.slice(-1000));
 }
 
 function maybeNotify(title="Time for a micro-move", body="60 seconds, gentle reset"){
