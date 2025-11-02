@@ -3658,18 +3658,35 @@ function updateProUI() {
 
 const buyProBtn = $('buyProBtn');
 if (buyProBtn) {
-  buyProBtn.addEventListener('click', () => {
-    window.open(STRIPE_PRO_LINK, '_blank');
-    showToast('Complete your purchase, then return here to activate Pro.');
+  buyProBtn.addEventListener('click', async () => {
+    try {
+      // Test Stripe connectivity before opening
+      const testUrl = STRIPE_PRO_LINK;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    setTimeout(() => {
-      if (confirm('Purchase complete? Click OK to activate Pro features.')) {
-        setPro(true);
-        updateProUI();
-        showToast('Pro unlocked! Enjoy your premium features.');
-        appendLog('Pro features activated');
-      }
-    }, 5000);
+      await fetch(testUrl, {
+        method: 'HEAD',
+        signal: controller.signal,
+        mode: 'no-cors'
+      });
+      clearTimeout(timeoutId);
+
+      window.open(STRIPE_PRO_LINK, '_blank');
+      showToast('Complete your purchase, then return here to activate Pro.');
+
+      setTimeout(() => {
+        if (confirm('Purchase complete? Click OK to activate Pro features.')) {
+          setPro(true);
+          updateProUI();
+          showToast('Pro unlocked! Enjoy your premium features.');
+          appendLog('Pro features activated');
+        }
+      }, 5000);
+    } catch (error) {
+      showToast('Unable to reach payment system. Please try again later.', 3000);
+      console.warn('Stripe connectivity issue:', error);
+    }
   });
 }
 
@@ -3974,6 +3991,25 @@ function loadAdsWithConsent() {
         }
       });
     };
+
+    // Graceful failure: collapse ad containers if blocked
+    s.onerror = function() {
+      const adContainers = document.querySelectorAll('[role="region"][aria-label="Advertisement"]');
+      adContainers.forEach(container => {
+        container.style.display = 'none';
+      });
+    };
+
+    // Additional check: if ads don't load within 3s, collapse
+    setTimeout(() => {
+      const adSlots = document.querySelectorAll('.adsbygoogle');
+      adSlots.forEach(slot => {
+        if (!slot.hasAttribute('data-ad-status') || slot.offsetHeight === 0) {
+          const container = slot.closest('[role="region"][aria-label="Advertisement"]');
+          if (container) container.style.display = 'none';
+        }
+      });
+    }, 3000);
   }
   if('requestIdleCallback' in window) {
     requestIdleCallback(inject, {timeout:2000});
