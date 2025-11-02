@@ -88,6 +88,15 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+    }
+    .privacy-badge {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
       white-space: nowrap;
     }
     p.sub { color: var(--text); margin: 0 0 12px; font-size: 15px; }
@@ -1061,6 +1070,7 @@
       <span id="streakChip" class="streak-chip" style="display: none;"></span>
     </h1>
     <p class="sub">1-minute resets, every hour—wherever you are.</p>
+    <p class="privacy-badge">Privacy-first • No login • Works offline</p>
     <ul class="day-dots" id="dayDots" aria-label="Weekly activity"></ul>
     <div class="row" role="group" aria-label="Reminder actions" style="gap: 20px;">
       <button id="startBtn" type="button" tabindex="1">Start nudges</button>
@@ -1447,8 +1457,9 @@
     </p>
     <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; align-items: center;">
       <a href="#" onclick="openSafetyModal(); return false;" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Safety</a>
-      <a href="#accessibility" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Accessibility</a>
-      <a href="#privacy" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Privacy</a>
+      <a href="#accessibility" onclick="document.getElementById('accessibilityCard').scrollIntoView({behavior: 'smooth', block: 'center'}); return false;" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Accessibility</a>
+      <a href="#privacy" onclick="document.getElementById('privacy').style.display='flex'; document.body.style.overflow='hidden'; return false;" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Privacy</a>
+      <a href="#region" onclick="document.getElementById('region').style.display='flex'; document.body.style.overflow='hidden'; return false;" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Region</a>
       <a href="mailto:hello@breakbreath.app" style="color: var(--text); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text)'">Contact</a>
       <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; background: #FF5E5B; padding: 8px 14px; color: white; text-decoration: none; font-weight: 500; transition: all 0.2s; font-size: 13px; min-height: 36px;" onmouseover="this.style.background='#FF4643'" onmouseout="this.style.background='#FF5E5B'">
         ☕ Support the app
@@ -1486,6 +1497,59 @@
       </div>
 
       <button type="button" onclick="closeSafetyModal()" aria-label="Acknowledge safety information and close" style="margin-top: 20px; padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Got it</button>
+    </div>
+  </div>
+
+  <div id="privacy" class="howto-overlay" style="display: none;" onclick="if(event.target === this) closePrivacyModal()">
+    <div class="howto-card" style="max-width: 580px;" role="dialog" aria-labelledby="privacyTitle" aria-modal="true">
+      <button type="button" onclick="closePrivacyModal()" aria-label="Close privacy information" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 24px; line-height: 1; padding: 4px 8px; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">&times;</button>
+
+      <h3 id="privacyTitle" style="margin-top: 0;">Privacy & Data</h3>
+
+      <div class="howto-section">
+        <h4>Privacy-First Design</h4>
+        <p style="line-height: 1.6; margin: 0 0 16px;">BreakBreath is built with your privacy in mind. All your data stays on your device—we don't collect or store any personal information on servers.</p>
+
+        <h4>No Login Required</h4>
+        <p style="line-height: 1.6; margin: 0 0 16px;">Use the app instantly without creating an account. Your settings, streaks, and preferences are stored locally in your browser's storage.</p>
+
+        <h4>Works Offline</h4>
+        <p style="line-height: 1.6; margin: 0 0 16px;">Once loaded, BreakBreath works without an internet connection. Perfect for privacy-conscious users and offline use.</p>
+
+        <h4>Third-Party Services</h4>
+        <p style="line-height: 1.6; margin: 0 0 16px;">This site uses Google AdSense for optional advertisements (with your consent via the cookie banner). Ads may use cookies to serve personalized content based on your browsing. You can decline at any time.</p>
+
+        <h4>What We Store Locally</h4>
+        <ul style="line-height: 1.7; margin: 8px 0 16px;">
+          <li>Your exercise preferences and filters</li>
+          <li>Hourly and daily streak counts</li>
+          <li>Environment selection (office, home, etc.)</li>
+          <li>Notification and sound preferences</li>
+          <li>Pro unlock status (if activated)</li>
+        </ul>
+
+        <p style="line-height: 1.6; margin: 0; font-size: 13px; color: var(--muted);">All local data can be cleared by clearing your browser's storage or using incognito/private browsing mode.</p>
+      </div>
+
+      <button type="button" onclick="closePrivacyModal()" aria-label="Close privacy information" style="margin-top: 20px; padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Got it</button>
+    </div>
+  </div>
+
+  <div id="region" class="howto-overlay" style="display: none;" onclick="if(event.target === this) closeRegionModal()">
+    <div class="howto-card" style="max-width: 480px;" role="dialog" aria-labelledby="regionTitle" aria-modal="true">
+      <button type="button" onclick="closeRegionModal()" aria-label="Close region information" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 24px; line-height: 1; padding: 4px 8px; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">&times;</button>
+
+      <h3 id="regionTitle" style="margin-top: 0;">Region & Hosting</h3>
+
+      <div class="howto-section">
+        <h4>Australian-Hosted</h4>
+        <p style="line-height: 1.6; margin: 0 0 16px;">BreakBreath is hosted in Australia. While the app works globally, our infrastructure is based in AU for compliance with local data protection standards.</p>
+
+        <h4>Global Access</h4>
+        <p style="line-height: 1.6; margin: 0;">The app is accessible worldwide. All features work regardless of your location, and local storage ensures your data never leaves your device.</p>
+      </div>
+
+      <button type="button" onclick="closeRegionModal()" aria-label="Close region information" style="margin-top: 20px; padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Got it</button>
     </div>
   </div>
 
@@ -3312,17 +3376,41 @@ function closeSafetyModal() {
   }
 }
 
+function closePrivacyModal() {
+  const modal = document.getElementById('privacy');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+function closeRegionModal() {
+  const modal = document.getElementById('region');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
   const card = document.getElementById('howtoCard');
   const isCardVisible = card && card.style.display !== 'none';
   const safetyModal = document.getElementById('safetyModal');
   const isSafetyVisible = safetyModal && safetyModal.style.display === 'flex';
+  const privacyModal = document.getElementById('privacy');
+  const isPrivacyVisible = privacyModal && privacyModal.style.display === 'flex';
+  const regionModal = document.getElementById('region');
+  const isRegionVisible = regionModal && regionModal.style.display === 'flex';
 
   // Escape key - close modals
   if (e.key === 'Escape') {
     if (isSafetyVisible) {
       closeSafetyModal();
+    } else if (isPrivacyVisible) {
+      closePrivacyModal();
+    } else if (isRegionVisible) {
+      closeRegionModal();
     } else if (isCardVisible) {
       toggleHowtoCard();
     }
