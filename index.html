@@ -4380,6 +4380,405 @@ function updateUIWithTranslations() {
     }
   });
 }
+
+// ========================= BB SETTINGS & FEATURES =========================
+// Settings Modal Controls
+const bbOpenSettings = document.getElementById('bb-open-settings');
+const bbCloseSettings = document.getElementById('bb-close-settings');
+const bbSaveSettings = document.getElementById('bb-save-settings');
+const bbSettingsModal = document.getElementById('bb-settings-modal');
+const bbSettingsOverlay = document.getElementById('bb-settings-overlay');
+
+if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
+  bbOpenSettings.addEventListener('click', () => {
+    bbSettingsModal.classList.remove('hidden');
+    bbSettingsOverlay.classList.remove('hidden');
+    loadBBSettings();
+  });
+
+  bbCloseSettings?.addEventListener('click', closeBBSettings);
+  bbSettingsOverlay.addEventListener('click', closeBBSettings);
+
+  bbSaveSettings?.addEventListener('click', () => {
+    saveBBSettings();
+    closeBBSettings();
+  });
+}
+
+function closeBBSettings() {
+  bbSettingsModal?.classList.add('hidden');
+  bbSettingsOverlay?.classList.add('hidden');
+}
+
+function loadBBSettings() {
+  const settings = JSON.parse(localStorage.getItem('bb-settings') || '{}');
+
+  // Interval
+  const intervalSelect = document.getElementById('bb-interval');
+  if (intervalSelect && settings.interval) {
+    intervalSelect.value = settings.interval;
+  }
+
+  // Audio
+  const audioSelect = document.getElementById('bb-audio');
+  if (audioSelect && settings.audio) {
+    audioSelect.value = settings.audio;
+  }
+
+  // Packs
+  const packs = settings.packs || ['desk', 'eyes'];
+  document.querySelectorAll('.bb-pack').forEach(checkbox => {
+    checkbox.checked = packs.includes(checkbox.value);
+  });
+
+  // Quiet hours
+  renderQuietHours(settings.quietHours || []);
+
+  // Theme
+  const theme = settings.theme || 'ocean';
+  document.querySelectorAll('.bb-theme').forEach(btn => {
+    btn.classList.toggle('ring-indigo-500', btn.dataset.theme === theme);
+  });
+}
+
+function saveBBSettings() {
+  const settings = {
+    interval: document.getElementById('bb-interval')?.value || '60',
+    audio: document.getElementById('bb-audio')?.value || 'none',
+    packs: Array.from(document.querySelectorAll('.bb-pack:checked')).map(cb => cb.value),
+    quietHours: Array.from(document.querySelectorAll('.bb-quiet-item')).map(item => ({
+      start: item.querySelector('.bb-quiet-start')?.value,
+      end: item.querySelector('.bb-quiet-end')?.value
+    })),
+    theme: document.querySelector('.bb-theme.ring-indigo-500')?.dataset.theme || 'ocean'
+  };
+
+  localStorage.setItem('bb-settings', JSON.stringify(settings));
+  console.log('BB settings saved:', settings);
+}
+
+// Quiet Hours Management
+const bbAddQuiet = document.getElementById('bb-add-quiet');
+const bbQuietList = document.getElementById('bb-quiet-list');
+
+bbAddQuiet?.addEventListener('click', () => {
+  addQuietHour();
+});
+
+function addQuietHour(start = '09:00', end = '17:00') {
+  const item = document.createElement('div');
+  item.className = 'bb-quiet-item flex items-center gap-2';
+  item.innerHTML = `
+    <input type="time" class="bb-quiet-start text-xs px-2 py-1 rounded border" value="${start}">
+    <span class="text-xs">to</span>
+    <input type="time" class="bb-quiet-end text-xs px-2 py-1 rounded border" value="${end}">
+    <button class="bb-quiet-remove text-xs px-2 py-1 rounded bg-red-50 hover:bg-red-100 text-red-600">×</button>
+  `;
+  bbQuietList?.appendChild(item);
+
+  item.querySelector('.bb-quiet-remove')?.addEventListener('click', () => {
+    item.remove();
+  });
+}
+
+function renderQuietHours(hours) {
+  bbQuietList.innerHTML = '';
+  hours.forEach(h => addQuietHour(h.start, h.end));
+}
+
+// Theme Selection
+document.querySelectorAll('.bb-theme').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.bb-theme').forEach(b => b.classList.remove('ring-indigo-500'));
+    btn.classList.add('ring-indigo-500');
+  });
+});
+
+// Snooze Popover
+const bbSnoozeBtn = document.getElementById('bb-snooze-btn');
+const bbSnoozePop = document.getElementById('bb-snooze-pop');
+
+bbSnoozeBtn?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  bbSnoozePop?.classList.toggle('hidden');
+});
+
+document.addEventListener('click', () => {
+  bbSnoozePop?.classList.add('hidden');
+});
+
+bbSnoozePop?.addEventListener('click', (e) => e.stopPropagation());
+
+document.querySelectorAll('.bb-snooze-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mins = btn.dataset.mins;
+    const until = new Date(Date.now() + mins * 60000);
+    localStorage.setItem('bb-snooze-until', until.toISOString());
+    bbSnoozePop?.classList.add('hidden');
+    console.log(`Snoozed for ${mins} minutes until ${until}`);
+  });
+});
+
+// .ics Export
+document.querySelectorAll('.bb-ics').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mins = parseInt(btn.dataset.mins);
+    generateICS(mins);
+  });
+});
+
+function generateICS(intervalMins) {
+  const now = new Date();
+  const events = [];
+
+  for (let i = 0; i < 168; i++) { // 1 week of events
+    const start = new Date(now.getTime() + i * intervalMins * 60000);
+    const end = new Date(start.getTime() + 5 * 60000); // 5 min duration
+
+    events.push(`BEGIN:VEVENT
+UID:bb-${start.getTime()}@breakbreath.app
+DTSTAMP:${formatICSDate(now)}
+DTSTART:${formatICSDate(start)}
+DTEND:${formatICSDate(end)}
+SUMMARY:BreakBreath Movement Break
+DESCRIPTION:Time for a gentle movement break
+END:VEVENT`);
+  }
+
+  const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//BreakBreath//EN
+CALNAME:BreakBreath Reminders
+${events.join('\n')}
+END:VCALENDAR`;
+
+  downloadFile(`breakbreath-${intervalMins}min.ics`, ics, 'text/calendar');
+}
+
+function formatICSDate(date) {
+  return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+function downloadFile(filename, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Weekly Recap
+document.getElementById('bb-weekly-recap')?.addEventListener('click', () => {
+  const stats = JSON.parse(localStorage.getItem('bb-stats') || '{}');
+  const recap = `BreakBreath Weekly Recap\n\nTotal breaks: ${stats.total || 0}\nFavorites used: ${stats.favorites || 0}\nLongest streak: ${stats.streak || 0} days\n\nKeep moving! 💪`;
+  downloadFile('breakbreath-recap.txt', recap, 'text/plain');
+});
+
+// Widget Mode
+const bbToggleWidget = document.getElementById('bb-toggle-widget');
+const bbWidget = document.getElementById('bb-widget');
+const bbWidgetExit = document.getElementById('bb-widget-exit');
+
+bbToggleWidget?.addEventListener('click', () => {
+  bbWidget?.classList.remove('hidden');
+  loadWidgetExercise();
+});
+
+bbWidgetExit?.addEventListener('click', () => {
+  bbWidget?.classList.add('hidden');
+});
+
+let widgetExerciseIndex = 0;
+const widgetExercises = [
+  { title: 'Neck Rolls', steps: '1. Drop chin to chest\n2. Roll head slowly right\n3. Roll to back\n4. Roll to left\n5. Return to center' },
+  { title: 'Shoulder Shrugs', steps: '1. Lift shoulders to ears\n2. Hold for 3 seconds\n3. Release slowly\n4. Repeat 5 times' },
+  { title: 'Wrist Circles', steps: '1. Extend arms forward\n2. Make circles with wrists\n3. 10 circles clockwise\n4. 10 circles counter-clockwise' }
+];
+
+function loadWidgetExercise() {
+  const ex = widgetExercises[widgetExerciseIndex];
+  document.getElementById('bb-widget-title').textContent = ex.title;
+  document.getElementById('bb-widget-steps').textContent = ex.steps;
+}
+
+document.getElementById('bb-widget-prev')?.addEventListener('click', () => {
+  widgetExerciseIndex = (widgetExerciseIndex - 1 + widgetExercises.length) % widgetExercises.length;
+  loadWidgetExercise();
+});
+
+document.getElementById('bb-widget-next')?.addEventListener('click', () => {
+  widgetExerciseIndex = (widgetExerciseIndex + 1) % widgetExercises.length;
+  loadWidgetExercise();
+});
+
+// Notification Permission
+document.getElementById('bb-enable-notify')?.addEventListener('click', () => {
+  if ('Notification' in window) {
+    Notification.requestPermission().then(permission => {
+      console.log('Notification permission:', permission);
+    });
+  }
+});
+
+// Audio Playback
+function playBBAudio(theme) {
+  if (theme === 'none') return;
+  const audio = document.getElementById(`bb-audio-${theme}`);
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play().catch(e => console.log('Audio play failed:', e));
+  }
+}
+</script>
+
+<!-- ========================= BB SETTINGS & FEATURES HTML ========================= -->
+
+<!-- Settings & Widget Buttons (Fixed Position) -->
+<div style="position: fixed; bottom: 20px; right: 20px; z-index: 60; display: flex; gap: 8px; flex-direction: column;">
+  <button id="bb-open-settings"
+    style="padding: 10px 16px; border-radius: 8px; background: #6366f1; color: white; font-size: 14px; font-weight: 500; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); transition: all 0.2s;"
+    onmouseover="this.style.background='#4f46e5'"
+    onmouseout="this.style.background='#6366f1'">
+    Settings
+  </button>
+
+  <button id="bb-toggle-widget"
+    style="padding: 10px 16px; border-radius: 8px; background: #f1f5f9; color: #1e293b; font-size: 14px; font-weight: 500; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.2s;"
+    onmouseover="this.style.background='#e2e8f0'"
+    onmouseout="this.style.background='#f1f5f9'">
+    Widget Mode
+  </button>
+
+  <!-- Snooze with Popover -->
+  <div style="position: relative;">
+    <button id="bb-snooze-btn"
+      style="padding: 10px 16px; border-radius: 8px; background: #f1f5f9; color: #1e293b; font-size: 14px; font-weight: 500; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.2s;"
+      onmouseover="this.style.background='#e2e8f0'"
+      onmouseout="this.style.background='#f1f5f9'">
+      Snooze
+    </button>
+    <div id="bb-snooze-pop" class="hidden" style="position: absolute; bottom: calc(100% + 8px); right: 0; width: 192px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); padding: 8px;">
+      <div style="font-size: 12px; color: #64748b; padding: 4px 8px;">I'm in a meeting…</div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px;">
+        <button class="bb-snooze-opt" data-mins="30" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">30m</button>
+        <button class="bb-snooze-opt" data-mins="60" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">60m</button>
+        <button class="bb-snooze-opt" data-mins="90" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">90m</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal Overlay -->
+<div id="bb-settings-overlay" class="hidden" style="position: fixed; inset: 0; z-index: 70; background: rgba(0, 0, 0, 0.5);"></div>
+
+<!-- Settings Modal -->
+<div id="bb-settings-modal" class="hidden" style="position: fixed; z-index: 71; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 92vw; max-width: 576px; border-radius: 12px; background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.1);">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
+    <h3 style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0;">BreakBreath Settings</h3>
+    <button id="bb-close-settings" style="padding: 8px; border-radius: 4px; border: none; background: transparent; cursor: pointer; font-size: 18px; color: #64748b;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" aria-label="Close">✕</button>
+  </div>
+
+  <div style="padding: 16px; display: flex; flex-direction: column; gap: 24px; font-size: 14px; color: #1e293b; max-height: 70vh; overflow-y: auto;">
+    <!-- Interval -->
+    <section>
+      <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">Remind me every</label>
+      <select id="bb-interval" style="width: 100%; border-radius: 4px; border: 1px solid #cbd5e1; padding: 8px 12px; background: white; cursor: pointer;">
+        <option value="60">60 minutes (free)</option>
+        <option value="45">45 minutes (Pro)</option>
+        <option value="30">30 minutes (Pro)</option>
+        <option value="90">90 minutes (Pro)</option>
+      </select>
+    </section>
+
+    <!-- Quiet Hours -->
+    <section>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+        <label style="font-size: 12px; font-weight: 600; color: #475569;">Quiet Hours</label>
+        <button id="bb-add-quiet" style="font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">+ Add</button>
+      </div>
+      <div id="bb-quiet-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      <p style="font-size: 12px; color: #64748b; margin-top: 8px; margin-bottom: 0;">No nudges during these ranges.</p>
+    </section>
+
+    <!-- Move Packs -->
+    <section>
+      <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 8px;">Move Packs</label>
+      <div id="bb-packs" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="desk" class="bb-pack" style="cursor: pointer;"> Desk (free)</label>
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="eyes" class="bb-pack" style="cursor: pointer;"> Eye-care (free)</label>
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="commute" class="bb-pack" style="cursor: pointer;"> Commute (Pro)</label>
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="stretch" class="bb-pack" style="cursor: pointer;"> Stretch (Pro)</label>
+      </div>
+    </section>
+
+    <!-- Audio Theme -->
+    <section>
+      <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">Audio Theme</label>
+      <select id="bb-audio" style="width: 100%; border-radius: 4px; border: 1px solid #cbd5e1; padding: 8px 12px; background: white; cursor: pointer;">
+        <option value="none">None</option>
+        <option value="calm">Calm</option>
+        <option value="ping">Ping</option>
+      </select>
+      <p style="font-size: 12px; color: #64748b; margin-top: 8px; margin-bottom: 0;">Respects system reduced-motion/sound settings.</p>
+    </section>
+
+    <!-- Browser Notifications -->
+    <section>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <label style="font-size: 12px; font-weight: 600; color: #475569;">Browser Notifications</label>
+        <button id="bb-enable-notify" style="font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Enable</button>
+      </div>
+      <p style="font-size: 12px; color: #64748b; margin-top: 8px; margin-bottom: 0;">Shows a gentle nudge even if the tab isn't focused.</p>
+    </section>
+
+    <!-- Accent Theme -->
+    <section>
+      <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 8px;">Accent Theme</label>
+      <div style="display: flex; gap: 8px;">
+        <button data-theme="ocean" class="bb-theme ring-indigo-500" style="width: 28px; height: 28px; border-radius: 50%; background: #0ea5e9; border: 2px solid transparent; cursor: pointer; transition: all 0.2s;" aria-label="Ocean"></button>
+        <button data-theme="sunrise" class="bb-theme" style="width: 28px; height: 28px; border-radius: 50%; background: #f59e0b; border: 2px solid transparent; cursor: pointer; transition: all 0.2s;" aria-label="Sunrise"></button>
+        <button data-theme="forest" class="bb-theme" style="width: 28px; height: 28px; border-radius: 50%; background: #10b981; border: 2px solid transparent; cursor: pointer; transition: all 0.2s;" aria-label="Forest"></button>
+      </div>
+    </section>
+
+    <p style="font-size: 12px; color: #64748b; margin: 0;">Some options are Pro. Your data stays on your device.</p>
+  </div>
+
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-top: 1px solid #e2e8f0; flex-wrap: wrap;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+      <button class="bb-ics" data-mins="60" style="padding: 8px 12px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">.ics Hourly</button>
+      <button class="bb-ics" data-mins="45" style="padding: 8px 12px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">.ics 45-min (Pro)</button>
+      <button class="bb-ics" data-mins="30" style="padding: 8px 12px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">.ics 30-min (Pro)</button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button id="bb-weekly-recap" style="padding: 8px 12px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Download recap</button>
+      <button id="bb-save-settings" style="padding: 8px 12px; border-radius: 4px; background: #6366f1; color: white; border: none; cursor: pointer; font-size: 13px; font-weight: 500;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Widget Mode Container -->
+<div id="bb-widget" class="hidden" style="position: fixed; inset: 0; background: white; padding: 24px; z-index: 80;">
+  <div style="max-width: 512px; margin: 0 auto;">
+    <div style="font-size: 14px; color: #64748b; margin-bottom: 8px;">Widget Mode</div>
+    <div id="bb-widget-card" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 16px;">
+      <div id="bb-widget-title" style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Next move</div>
+      <div id="bb-widget-steps" style="font-size: 14px; line-height: 1.5; white-space: pre-line;"></div>
+      <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+        <button id="bb-widget-prev" style="padding: 6px 12px; font-size: 14px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Prev</button>
+        <button id="bb-widget-next" style="padding: 6px 12px; font-size: 14px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Next</button>
+        <button id="bb-widget-exit" style="margin-left: auto; padding: 6px 12px; font-size: 14px; border-radius: 4px; background: #6366f1; color: white; border: none; cursor: pointer;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'">Exit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audio Elements -->
+<audio id="bb-audio-calm" preload="auto" src="/audio/calm.mp3"></audio>
+<audio id="bb-audio-ping" preload="auto" src="/audio/ping.mp3"></audio>
+
 </script>
 </body>
 </html>
