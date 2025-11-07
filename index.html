@@ -64,10 +64,25 @@
     *[tabindex]:focus-visible,
     button:focus-visible,
     a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
     [role="button"]:focus-visible {
-      outline: 3px solid var(--ring);
-      outline-offset: 3px;
-      border-radius: 10px;
+      outline: 3px solid #6366f1;
+      outline-offset: 2px;
+    }
+
+    /* Visible focus rings for Settings modal */
+    #bb-settings-modal input[type="radio"]:focus-visible + .interval-chip {
+      outline: 3px solid #6366f1;
+      outline-offset: 2px;
+    }
+    #bb-settings-modal input[type="checkbox"]:focus-visible {
+      outline: 3px solid #6366f1;
+      outline-offset: 2px;
+    }
+    #bb-settings-modal .bb-theme:focus-visible {
+      outline: 3px solid #6366f1;
+      outline-offset: 2px;
     }
 
     /* Toggle Switch Styles */
@@ -5549,9 +5564,12 @@ document.querySelectorAll("[data-env]").forEach(btn => {
 
 <!-- Settings Modal -->
 <div id="bb-settings-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="settings-heading" style="position: fixed; z-index: 71; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 92vw; max-width: 440px; border-radius: 12px; background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.1);">
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
-    <h3 id="settings-heading" style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0;">Settings</h3>
-    <button id="bb-close-settings" style="padding: 8px; border-radius: 4px; border: none; background: transparent; cursor: pointer; font-size: 20px; color: #64748b; line-height: 1;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" aria-label="Close settings">×</button>
+  <div style="display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
+    <div>
+      <h3 id="settings-heading" style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0 0 4px 0;">Settings</h3>
+      <p style="font-size: 13px; color: #64748b; margin: 0; line-height: 1.4;">Make BreakBreath fit your day. Changes save automatically.</p>
+    </div>
+    <button id="bb-close-settings" style="padding: 8px; border-radius: 4px; border: none; background: transparent; cursor: pointer; font-size: 20px; color: #64748b; line-height: 1; flex-shrink: 0;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" aria-label="Close settings">×</button>
   </div>
 
   <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px; font-size: 14px; color: #1e293b; max-height: 65vh; overflow-y: auto;">
@@ -5559,13 +5577,13 @@ document.querySelectorAll("[data-env]").forEach(btn => {
     <section>
       <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Reminder interval</label>
       <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-        <label style="position: relative;"><input type="radio" name="bb-interval" value="60" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="60" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s;">60m</span></label>
-        <label style="position: relative;"><input type="radio" name="bb-interval" value="45" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="45" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">45m <span style="font-size: 12px;">🔒</span></span></label>
-        <label style="position: relative;"><input type="radio" name="bb-interval" value="30" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="30" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">30m <span style="font-size: 12px;">🔒</span></span></label>
-        <label style="position: relative;"><input type="radio" name="bb-interval" value="custom" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="custom" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s;">Custom</span></label>
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="60" tabindex="0" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="60" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s;">60m</span></label>
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="45" tabindex="0" class="pro-locked" data-pro-feature="45m interval" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="45" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">45m <span style="font-size: 12px;">🔒</span></span></label>
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="30" tabindex="0" class="pro-locked" data-pro-feature="30m interval" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="30" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">30m <span style="font-size: 12px;">🔒</span></span></label>
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="custom" tabindex="0" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="custom" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s;">Custom</span></label>
       </div>
       <div id="bb-custom-interval" class="hidden" style="margin-top: 8px;">
-        <input type="number" id="bb-custom-minutes" min="15" max="120" value="60" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" placeholder="15-120 minutes">
+        <input type="number" id="bb-custom-minutes" min="15" max="120" value="60" tabindex="0" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" placeholder="15-120 minutes" aria-label="Custom interval in minutes">
       </div>
     </section>
 
@@ -5573,9 +5591,9 @@ document.querySelectorAll("[data-env]").forEach(btn => {
     <section>
       <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Quiet hours</label>
       <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
-        <input type="time" id="bb-quiet-start" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" value="21:00">
+        <input type="time" id="bb-quiet-start" tabindex="0" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" value="21:00" aria-label="Quiet hours start time">
         <span style="color: #64748b; font-size: 13px;">to</span>
-        <input type="time" id="bb-quiet-end" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" value="07:00">
+        <input type="time" id="bb-quiet-end" tabindex="0" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" value="07:00" aria-label="Quiet hours end time">
       </div>
       <p style="font-size: 12px; color: #64748b; margin: 0;">Applies nightly, including past midnight</p>
     </section>
@@ -5588,7 +5606,7 @@ document.querySelectorAll("[data-env]").forEach(btn => {
           <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Only suggest quiet, upper-body moves</p>
         </div>
         <label class="toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0;">
-          <input type="checkbox" id="bb-seated-only" style="opacity: 0; width: 0; height: 0;">
+          <input type="checkbox" id="bb-seated-only" tabindex="0" style="opacity: 0; width: 0; height: 0;" aria-label="Toggle seated-only mode">
           <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; transition: 0.3s; border-radius: 24px;" class="toggle-slider"></span>
         </label>
       </div>
@@ -5609,10 +5627,10 @@ document.querySelectorAll("[data-env]").forEach(btn => {
     <section>
       <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Exercise packs</label>
       <div id="bb-packs" style="display: flex; flex-direction: column; gap: 8px;">
-        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px;"><input type="checkbox" value="desk" class="bb-pack" style="cursor: pointer; width: 18px; height: 18px;"> <span style="font-size: 14px;">Desk exercises</span></label>
-        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px;"><input type="checkbox" value="eyes" class="bb-pack" style="cursor: pointer; width: 18px; height: 18px;"> <span style="font-size: 14px;">Eye care</span></label>
-        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px; opacity: 0.6;"><input type="checkbox" value="commute" class="bb-pack" style="cursor: pointer; width: 18px; height: 18px;" disabled> <span style="font-size: 14px;">Commute <span style="font-size: 12px;">🔒</span></span></label>
-        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px; opacity: 0.6;"><input type="checkbox" value="stretch" class="bb-pack" style="cursor: pointer; width: 18px; height: 18px;" disabled> <span style="font-size: 14px;">Full stretch <span style="font-size: 12px;">🔒</span></span></label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px;"><input type="checkbox" value="desk" class="bb-pack" tabindex="0" style="cursor: pointer; width: 18px; height: 18px;"> <span style="font-size: 14px;">Desk exercises</span></label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px;"><input type="checkbox" value="eyes" class="bb-pack" tabindex="0" style="cursor: pointer; width: 18px; height: 18px;"> <span style="font-size: 14px;">Eye care</span></label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px; opacity: 0.6;"><input type="checkbox" value="commute" class="bb-pack pro-locked" tabindex="0" data-pro-feature="Commute pack" style="cursor: pointer; width: 18px; height: 18px;" disabled> <span style="font-size: 14px;">Commute <span style="font-size: 12px;">🔒</span></span></label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px; opacity: 0.6;"><input type="checkbox" value="stretch" class="bb-pack pro-locked" tabindex="0" data-pro-feature="Full stretch pack" style="cursor: pointer; width: 18px; height: 18px;" disabled> <span style="font-size: 14px;">Full stretch <span style="font-size: 12px;">🔒</span></span></label>
       </div>
     </section>
 
@@ -5682,11 +5700,16 @@ function showToast(message) {
   const toast = document.createElement('div');
   toast.id = 'bb-toast';
   toast.textContent = message;
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
   toast.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideUp 0.3s ease;';
 
   const style = document.createElement('style');
   style.textContent = '@keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }';
-  document.head.appendChild(style);
+  if (!document.getElementById('bb-toast-style')) {
+    style.id = 'bb-toast-style';
+    document.head.appendChild(style);
+  }
 
   document.body.appendChild(toast);
 
@@ -5769,11 +5792,14 @@ function saveBBSettings() {
     }
   }
 
-  // Save quiet hours
+  // Save quiet hours with validation
   const quietStart = document.getElementById('bb-quiet-start')?.value;
   const quietEnd = document.getElementById('bb-quiet-end')?.value;
-  if (quietStart) localStorage.setItem('bb_quiet_start', quietStart);
-  if (quietEnd) localStorage.setItem('bb_quiet_end', quietEnd);
+  if (quietStart && quietEnd) {
+    // Validate and save - quiet hours can cross midnight (e.g., 21:00 to 07:00)
+    localStorage.setItem('bb_quiet_start', quietStart);
+    localStorage.setItem('bb_quiet_end', quietEnd);
+  }
 
   // Save seated-only
   const seatedCheckbox = document.getElementById('bb-seated-only');
@@ -5839,6 +5865,14 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
   // Autosave listeners
   bbSettingsModal.addEventListener('change', (e) => {
     if (e.target.matches('input, select')) {
+      // Check if Pro-locked checkbox
+      if (e.target.type === 'checkbox' && e.target.classList.contains('pro-locked')) {
+        e.preventDefault();
+        e.target.checked = false;
+        const feature = e.target.dataset.proFeature || 'This feature';
+        alert(`${feature} requires Pro • A$12/yr\n\nUpgrade to unlock all exercise packs.`);
+        return;
+      }
       autoSaveBBSettings();
     }
   });
@@ -5846,6 +5880,19 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
   // Interval radio chips
   document.querySelectorAll('input[name="bb-interval"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
+      // Check if Pro-locked
+      if (e.target.classList.contains('pro-locked')) {
+        e.preventDefault();
+        const feature = e.target.dataset.proFeature || 'This feature';
+        alert(`${feature} requires Pro • A$12/yr\n\nUpgrade to unlock all interval options.`);
+        // Revert to previous selection
+        const currentInterval = localStorage.getItem('bb_interval') || '60';
+        const currentRadio = document.querySelector(`input[name="bb-interval"][value="${currentInterval}"]`);
+        if (currentRadio) currentRadio.checked = true;
+        updateIntervalChips(currentInterval);
+        return;
+      }
+
       updateIntervalChips(e.target.value);
       if (e.target.value === 'custom') {
         document.getElementById('bb-custom-interval')?.classList.remove('hidden');
@@ -5855,6 +5902,21 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
       autoSaveBBSettings();
     });
   });
+
+  // Custom interval clamping
+  const customMinutesInput = document.getElementById('bb-custom-minutes');
+  if (customMinutesInput) {
+    customMinutesInput.addEventListener('input', (e) => {
+      let value = parseInt(e.target.value);
+      if (value < 15) e.target.value = 15;
+      if (value > 120) e.target.value = 120;
+    });
+    customMinutesInput.addEventListener('blur', (e) => {
+      let value = parseInt(e.target.value);
+      if (isNaN(value) || value < 15) e.target.value = 15;
+      if (value > 120) e.target.value = 120;
+    });
+  }
 
   // Theme buttons with live preview
   document.querySelectorAll('.bb-theme').forEach(btn => {
