@@ -6042,21 +6042,38 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
 
   // Widget shortcut
   document.getElementById('bb-widget-shortcut')?.addEventListener('click', () => {
-    const isWidget = localStorage.getItem('bb_widget_mode') === '1';
-    if (isWidget) {
-      exitWidgetMode();
+    const widget = document.getElementById('bb-widget');
+    const isWidgetVisible = widget && !widget.classList.contains('hidden');
+
+    if (isWidgetVisible) {
+      if (typeof exitWidgetMode === 'function') {
+        exitWidgetMode();
+      }
     } else {
-      enterWidgetMode();
+      if (typeof enterWidgetMode === 'function') {
+        enterWidgetMode();
+      }
     }
     closeBBSettings();
   });
 
   // Snooze shortcut
   document.getElementById('bb-snooze-shortcut')?.addEventListener('click', () => {
-    snoozeUntil = Date.now() + (20 * 60 * 1000);
-    localStorage.setItem('bb_snooze_until', snoozeUntil);
-    updateSnoozeUI();
-    stopNudges();
+    const snoozeMinutes = 20;
+    const newSnoozeUntil = Date.now() + (snoozeMinutes * 60 * 1000);
+
+    if (typeof snoozeUntil !== 'undefined') {
+      snoozeUntil = newSnoozeUntil;
+    }
+    localStorage.setItem('bb_snooze_until', newSnoozeUntil);
+
+    if (typeof updateSnoozeUI === 'function') {
+      updateSnoozeUI();
+    }
+    if (typeof stopNudges === 'function') {
+      stopNudges();
+    }
+
     showToast('Snoozed for 20 minutes');
     closeBBSettings();
   });
