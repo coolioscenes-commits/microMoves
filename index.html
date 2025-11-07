@@ -5556,12 +5556,14 @@ document.querySelectorAll("[data-env]").forEach(btn => {
       Snooze
     </button>
     <div id="bb-snooze-pop" class="hidden" role="menu" aria-label="Snooze duration options" style="position: absolute; bottom: calc(100% + 8px); right: 0; width: 192px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); padding: 8px;">
-      <div style="font-size: 12px; color: #64748b; padding: 4px 8px;">I'm in a meeting…</div>
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px;">
-        <button class="bb-snooze-opt" data-mins="15" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 15 minutes">15m</button>
-        <button class="bb-snooze-opt" data-mins="30" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 30 minutes">30m</button>
-        <button class="bb-snooze-opt" data-mins="60" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 60 minutes">60m</button>
-        <button class="bb-snooze-opt" data-mins="90" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 90 minutes">90m</button>
+      <div role="group" aria-label="Snooze options">
+        <div style="font-size: 12px; color: #64748b; padding: 4px 8px;">I'm in a meeting…</div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px;">
+          <button class="bb-snooze-opt" data-mins="15" role="menuitem" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 15 minutes">15m</button>
+          <button class="bb-snooze-opt" data-mins="30" role="menuitem" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 30 minutes">30m</button>
+          <button class="bb-snooze-opt" data-mins="60" role="menuitem" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 60 minutes">60m</button>
+          <button class="bb-snooze-opt" data-mins="90" role="menuitem" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 90 minutes">90m</button>
+        </div>
       </div>
     </div>
   </div>
@@ -5599,8 +5601,10 @@ document.querySelectorAll("[data-env]").forEach(btn => {
     <section>
       <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Quiet hours</label>
       <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+        <label for="bb-quiet-start" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); border: 0;">Quiet hours start time</label>
         <input type="time" id="bb-quiet-start" tabindex="0" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" value="21:00" aria-label="Quiet hours start time">
         <span style="color: #64748b; font-size: 13px;">to</span>
+        <label for="bb-quiet-end" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); border: 0;">Quiet hours end time</label>
         <input type="time" id="bb-quiet-end" tabindex="0" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" value="07:00" aria-label="Quiet hours end time">
       </div>
       <p style="font-size: 12px; color: #64748b; margin: 0;">Applies every night, including past midnight</p>
@@ -5658,7 +5662,7 @@ document.querySelectorAll("[data-env]").forEach(btn => {
     <!-- Audio Theme -->
     <section>
       <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Sound</label>
-      <select id="bb-audio" tabindex="0" style="width: 100%; border-radius: 6px; border: 1px solid #cbd5e1; padding: 10px 12px; background: white; cursor: pointer; font-size: 14px;">
+      <select id="bb-audio" tabindex="0" aria-label="Sound notification theme" style="width: 100%; border-radius: 6px; border: 1px solid #cbd5e1; padding: 10px 12px; background: white; cursor: pointer; font-size: 14px;">
         <option value="none">None</option>
         <option value="calm">Soft chime</option>
         <option value="ping">Bell</option>
