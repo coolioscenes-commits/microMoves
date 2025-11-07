@@ -1307,6 +1307,7 @@
         Next 60-sec reset
         <span id="countdownPill" class="countdown-pill" role="timer" aria-live="polite" style="display: none;"></span>
         <span id="quietHoursBadge" style="display: none; margin-left: 8px; padding: 4px 10px; background: #fef3c7; color: #92400e; border-radius: 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px;" role="status" aria-live="polite">🌙 QUIET HOURS</span>
+        <span id="snoozeBadge" style="display: none; margin-left: 8px; padding: 4px 10px; background: #dbeafe; color: #1e40af; border-radius: 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px;" role="status" aria-live="polite">⏸️ Snoozed until <span id="snoozeTimeDisplay"></span></span>
         <svg id="countdownRing" class="countdown-ring" viewBox="0 0 24 24" style="display: none;" aria-hidden="true">
           <circle class="ring-bg" cx="12" cy="12" r="10" />
           <circle class="ring-progress" cx="12" cy="12" r="10" stroke-dasharray="62.83" stroke-dashoffset="62.83" />
@@ -4983,6 +4984,27 @@ document.querySelectorAll('.bb-theme').forEach(btn => {
 // Snooze Popover
 const bbSnoozeBtn = document.getElementById('bb-snooze-btn');
 const bbSnoozePop = document.getElementById('bb-snooze-pop');
+const snoozeBadge = document.getElementById('snoozeBadge');
+const snoozeTimeDisplay = document.getElementById('snoozeTimeDisplay');
+
+function closeSnoozePopover() {
+  bbSnoozePop?.classList.add('hidden');
+  if (bbSnoozeBtn) {
+    bbSnoozeBtn.setAttribute('aria-expanded', 'false');
+  }
+}
+
+function openSnoozePopover() {
+  bbSnoozePop?.classList.remove('hidden');
+  if (bbSnoozeBtn) {
+    bbSnoozeBtn.setAttribute('aria-expanded', 'true');
+  }
+  // Focus first option
+  setTimeout(() => {
+    const firstOption = bbSnoozePop?.querySelector('.bb-snooze-opt');
+    if (firstOption) firstOption.focus();
+  }, 50);
+}
 
 bbSnoozeBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
@@ -4992,7 +5014,7 @@ bbSnoozeBtn?.addEventListener('click', (e) => {
   if (isSnoozed) {
     BB.state.snoozeUntil = 0;
     persistBBSettings();
-    updateSnoozeButton();
+    updateSnoozeDisplay();
     if (typeof showToast === 'function') {
       showToast('Snooze cleared - nudges resumed');
     }
@@ -5002,14 +5024,27 @@ bbSnoozeBtn?.addEventListener('click', (e) => {
     return;
   }
 
-  bbSnoozePop?.classList.toggle('hidden');
+  if (bbSnoozePop?.classList.contains('hidden')) {
+    openSnoozePopover();
+  } else {
+    closeSnoozePopover();
+  }
 });
 
 document.addEventListener('click', () => {
-  bbSnoozePop?.classList.add('hidden');
+  closeSnoozePopover();
 });
 
 bbSnoozePop?.addEventListener('click', (e) => e.stopPropagation());
+
+// ESC key handler for snooze popover
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && bbSnoozePop && !bbSnoozePop.classList.contains('hidden')) {
+    e.preventDefault();
+    closeSnoozePopover();
+    if (bbSnoozeBtn) bbSnoozeBtn.focus();
+  }
+});
 
 document.querySelectorAll('.bb-snooze-opt').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -5017,7 +5052,7 @@ document.querySelectorAll('.bb-snooze-opt').forEach(btn => {
     const until = Date.now() + mins * 60000;
     BB.state.snoozeUntil = until;
     persistBBSettings();
-    bbSnoozePop?.classList.add('hidden');
+    closeSnoozePopover();
 
     const untilDate = new Date(until);
     const timeStr = untilDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -5027,13 +5062,11 @@ document.querySelectorAll('.bb-snooze-opt').forEach(btn => {
     if (typeof appendLog === 'function') {
       appendLog(`Snoozed for ${mins} minutes until ${timeStr}`);
     }
-    updateSnoozeButton();
+    updateSnoozeDisplay();
   });
 });
 
-function updateSnoozeButton() {
-  if (!bbSnoozeBtn) return;
-
+function updateSnoozeDisplay() {
   // Clear expired snooze
   if (BB.state.snoozeUntil && BB.now() >= BB.state.snoozeUntil) {
     BB.state.snoozeUntil = 0;
@@ -5042,23 +5075,48 @@ function updateSnoozeButton() {
 
   const isSnoozed = BB.state.snoozeUntil && BB.now() < BB.state.snoozeUntil;
 
-  if (isSnoozed) {
-    const untilDate = new Date(BB.state.snoozeUntil);
-    const timeStr = untilDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    bbSnoozeBtn.textContent = `Snoozed (${timeStr})`;
-    bbSnoozeBtn.style.background = '#fef3c7';
-    bbSnoozeBtn.style.color = '#92400e';
-  } else {
-    bbSnoozeBtn.textContent = 'Snooze';
-    bbSnoozeBtn.style.background = '#f1f5f9';
-    bbSnoozeBtn.style.color = '#1e293b';
+  // Update button
+  if (bbSnoozeBtn) {
+    if (isSnoozed) {
+      const untilDate = new Date(BB.state.snoozeUntil);
+      const timeStr = untilDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      bbSnoozeBtn.textContent = `Snoozed (${timeStr})`;
+      bbSnoozeBtn.style.setProperty('background', '#fef3c7', 'important');
+      bbSnoozeBtn.style.setProperty('color', '#92400e', 'important');
+      bbSnoozeBtn.setAttribute('aria-label', `Snoozed until ${timeStr}, click to clear`);
+    } else {
+      bbSnoozeBtn.textContent = 'Snooze';
+      bbSnoozeBtn.style.removeProperty('background');
+      bbSnoozeBtn.style.removeProperty('color');
+      bbSnoozeBtn.style.background = '#f1f5f9';
+      bbSnoozeBtn.style.color = '#1e293b';
+      bbSnoozeBtn.setAttribute('aria-label', 'Snooze menu, pause nudges');
+    }
+  }
+
+  // Update badge
+  if (snoozeBadge && snoozeTimeDisplay) {
+    if (isSnoozed) {
+      const untilDate = new Date(BB.state.snoozeUntil);
+      const timeStr = untilDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      snoozeTimeDisplay.textContent = timeStr;
+      snoozeBadge.style.display = 'inline-block';
+    } else {
+      snoozeBadge.style.display = 'none';
+    }
+  }
+
+  // Update countdown to show "Snoozed" when active
+  if (countdownEl && isSnoozed) {
+    countdownEl.textContent = 'Snoozed';
+    countdownEl.style.display = 'inline-flex';
   }
 }
 
-// Update snooze button on page load and every minute
-if (typeof updateSnoozeButton === 'function') {
-  updateSnoozeButton();
-  setInterval(updateSnoozeButton, 60000);
+// Update snooze display on page load and every 15 seconds
+if (typeof updateSnoozeDisplay === 'function') {
+  updateSnoozeDisplay();
+  setInterval(updateSnoozeDisplay, 15000); // Check every 15 seconds
 }
 
 // .ics Export
@@ -5742,16 +5800,18 @@ document.querySelectorAll("[data-env]").forEach(btn => {
   <div style="position: relative;">
     <button id="bb-snooze-btn"
       style="padding: 10px 16px; border-radius: 8px; background: #f1f5f9; color: #1e293b; font-size: 14px; font-weight: 500; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.2s;"
-      onmouseover="this.style.background='#e2e8f0'"
-      onmouseout="this.style.background='#f1f5f9'">
+      aria-label="Snooze menu, pause nudges"
+      aria-haspopup="true"
+      aria-expanded="false">
       Snooze
     </button>
-    <div id="bb-snooze-pop" class="hidden" style="position: absolute; bottom: calc(100% + 8px); right: 0; width: 192px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); padding: 8px;">
+    <div id="bb-snooze-pop" class="hidden" role="menu" aria-label="Snooze duration options" style="position: absolute; bottom: calc(100% + 8px); right: 0; width: 192px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); padding: 8px;">
       <div style="font-size: 12px; color: #64748b; padding: 4px 8px;">I'm in a meeting…</div>
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px;">
-        <button class="bb-snooze-opt" data-mins="30" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">30m</button>
-        <button class="bb-snooze-opt" data-mins="60" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">60m</button>
-        <button class="bb-snooze-opt" data-mins="90" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">90m</button>
+        <button class="bb-snooze-opt" data-mins="15" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 15 minutes">15m</button>
+        <button class="bb-snooze-opt" data-mins="30" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 30 minutes">30m</button>
+        <button class="bb-snooze-opt" data-mins="60" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 60 minutes">60m</button>
+        <button class="bb-snooze-opt" data-mins="90" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 90 minutes">90m</button>
       </div>
     </div>
   </div>
