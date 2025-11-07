@@ -5000,13 +5000,18 @@ function handleWidgetKeydown(e) {
   }
 }
 
-bbToggleWidget?.addEventListener('click', () => {
-  if (bbWidget?.classList.contains('hidden')) {
-    enterWidgetMode();
-  } else {
-    exitWidgetMode();
-  }
-});
+if (bbToggleWidget) {
+  bbToggleWidget.addEventListener('click', () => {
+    console.log('Widget button clicked');
+    if (bbWidget?.classList.contains('hidden')) {
+      enterWidgetMode();
+    } else {
+      exitWidgetMode();
+    }
+  });
+} else {
+  console.error('Widget button not found! Check DOM order.');
+}
 
 bbWidgetExit?.addEventListener('click', exitWidgetMode);
 
