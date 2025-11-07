@@ -4892,6 +4892,7 @@ let widgetRotationInterval = null;
 let widgetTimerInterval = null;
 let widgetDragging = false;
 let widgetDragOffset = { x: 0, y: 0 };
+let widgetOpacityTimeout = null;
 
 function refreshWidgetPool() {
   // Get all exercise keys
@@ -4970,6 +4971,18 @@ function enterWidgetMode() {
   startWidgetRotation();
   startWidgetTimerSync();
 
+  // Show first-run message if this is the first time opening widget
+  const firstRunMsg = document.getElementById('bb-widget-first-run');
+  if (!localStorage.getItem('bb_widget_first_run_seen')) {
+    if (firstRunMsg) {
+      firstRunMsg.classList.remove('hidden');
+      setTimeout(() => {
+        firstRunMsg.classList.add('hidden');
+        localStorage.setItem('bb_widget_first_run_seen', '1');
+      }, 5000);
+    }
+  }
+
   // Save state
   localStorage.setItem('bb_widget_mode', '1');
 
@@ -4981,6 +4994,22 @@ function enterWidgetMode() {
 
   // Add keyboard listener
   bbWidget.addEventListener('keydown', handleWidgetKeydown);
+
+  // Setup auto-opacity reduction
+  function resetOpacityTimer() {
+    if (widgetOpacityTimeout) clearTimeout(widgetOpacityTimeout);
+    bbWidget.style.opacity = '1';
+    widgetOpacityTimeout = setTimeout(() => {
+      if (bbWidget && !bbWidget.classList.contains('hidden')) {
+        bbWidget.style.opacity = '0.5';
+      }
+    }, 5000);
+  }
+
+  bbWidget.addEventListener('mouseenter', resetOpacityTimer);
+  bbWidget.addEventListener('mouseleave', resetOpacityTimer);
+  bbWidget.addEventListener('click', resetOpacityTimer);
+  resetOpacityTimer();
 }
 
 function exitWidgetMode() {
@@ -4988,6 +5017,13 @@ function exitWidgetMode() {
   bbWidget?.classList.add('hidden');
   stopWidgetRotation();
   stopWidgetTimerSync();
+
+  // Clear opacity timer
+  if (widgetOpacityTimeout) {
+    clearTimeout(widgetOpacityTimeout);
+    widgetOpacityTimeout = null;
+  }
+  if (bbWidget) bbWidget.style.opacity = '1';
 
   // Save state
   localStorage.removeItem('bb_widget_mode');
@@ -5003,6 +5039,39 @@ function handleWidgetKeydown(e) {
   if (e.key === 'Escape') {
     e.preventDefault();
     exitWidgetMode();
+    return;
+  }
+
+  // Global hotkeys
+  if (e.key === 'z' || e.key === 'Z') {
+    e.preventDefault();
+    document.getElementById('bb-snooze-btn')?.click();
+    return;
+  }
+
+  if (e.key === 's' || e.key === 'S') {
+    e.preventDefault();
+    bbWidgetStart?.click();
+    return;
+  }
+
+  // Tab key for focus trap
+  if (e.key === 'Tab') {
+    const focusableElements = bbWidget?.querySelectorAll(
+      'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusableElements || focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey && document.activeElement === firstElement) {
+      e.preventDefault();
+      lastElement.focus();
+    } else if (!e.shiftKey && document.activeElement === lastElement) {
+      e.preventDefault();
+      firstElement.focus();
+    }
   }
 }
 
@@ -5046,9 +5115,6 @@ if (bbWidget) {
       bbWidget.style.top = `${newTop}px`;
       bbWidget.style.right = 'auto';
       bbWidget.style.bottom = 'auto';
-
-      // Save position
-      localStorage.setItem('bb_widget_position', JSON.stringify({ left: newLeft, top: newTop }));
     }
   });
 
@@ -5056,6 +5122,53 @@ if (bbWidget) {
     if (widgetDragging && bbWidget) {
       widgetDragging = false;
       bbWidget.style.cursor = 'move';
+
+      // Snap to edges with 40px threshold
+      const snapThreshold = 40;
+      const rect = bbWidget.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      let position = {};
+
+      // Determine which edge to snap to
+      const distToLeft = rect.left;
+      const distToRight = viewportWidth - rect.right;
+      const distToTop = rect.top;
+      const distToBottom = viewportHeight - rect.bottom;
+
+      // Snap horizontally
+      if (distToLeft < snapThreshold) {
+        position.left = 16;
+        bbWidget.style.left = '16px';
+        bbWidget.style.right = 'auto';
+      } else if (distToRight < snapThreshold) {
+        position.right = 16;
+        bbWidget.style.right = '16px';
+        bbWidget.style.left = 'auto';
+      } else {
+        position.left = rect.left;
+        bbWidget.style.left = `${rect.left}px`;
+        bbWidget.style.right = 'auto';
+      }
+
+      // Snap vertically
+      if (distToTop < snapThreshold) {
+        position.top = 16;
+        bbWidget.style.top = '16px';
+        bbWidget.style.bottom = 'auto';
+      } else if (distToBottom < snapThreshold) {
+        position.bottom = 16;
+        bbWidget.style.bottom = '16px';
+        bbWidget.style.top = 'auto';
+      } else {
+        position.top = rect.top;
+        bbWidget.style.top = `${rect.top}px`;
+        bbWidget.style.bottom = 'auto';
+      }
+
+      // Save position to localStorage
+      localStorage.setItem('bb_widget_position', JSON.stringify(position));
     }
   });
 }
@@ -5069,10 +5182,20 @@ if (localStorage.getItem('bb_widget_mode') === '1') {
   if (savedPos && bbWidget) {
     try {
       const pos = JSON.parse(savedPos);
-      bbWidget.style.left = `${pos.left}px`;
-      bbWidget.style.top = `${pos.top}px`;
-      bbWidget.style.right = 'auto';
-      bbWidget.style.bottom = 'auto';
+      if (pos.left !== undefined) {
+        bbWidget.style.left = `${pos.left}px`;
+        bbWidget.style.right = 'auto';
+      } else if (pos.right !== undefined) {
+        bbWidget.style.right = `${pos.right}px`;
+        bbWidget.style.left = 'auto';
+      }
+      if (pos.top !== undefined) {
+        bbWidget.style.top = `${pos.top}px`;
+        bbWidget.style.bottom = 'auto';
+      } else if (pos.bottom !== undefined) {
+        bbWidget.style.bottom = `${pos.bottom}px`;
+        bbWidget.style.top = 'auto';
+      }
     } catch (e) {}
   }
 }
@@ -5196,6 +5319,35 @@ function applyTheme(t){
   qsa('.bb-theme').forEach(btn => {
     btn.classList.toggle('ring-indigo-500', btn.dataset.theme === t);
   });
+
+  // Apply theme to widget
+  const widget = document.getElementById('bb-widget');
+  const widgetStart = document.getElementById('bb-widget-start');
+  const widgetTimer = document.getElementById('bb-widget-timer');
+
+  if (widget && widgetStart && widgetTimer) {
+    let primaryColor = '#6366f1'; // Default indigo
+
+    if (t === 'ocean') primaryColor = '#0ea5e9';
+    else if (t === 'sunrise') primaryColor = '#f59e0b';
+    else if (t === 'forest') primaryColor = '#10b981';
+
+    widgetStart.style.background = primaryColor;
+    widgetStart.onmouseover = function() { this.style.background = adjustBrightness(primaryColor, -10); };
+    widgetStart.onmouseout = function() { this.style.background = primaryColor; };
+    widgetTimer.style.color = primaryColor;
+  }
+}
+
+function adjustBrightness(hex, percent) {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = (num >> 16) + amt;
+  const G = (num >> 8 & 0x00FF) + amt;
+  const B = (num & 0x0000FF) + amt;
+  return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
 }
 
 function maybeCoachLine(){
@@ -5741,19 +5893,24 @@ document.querySelectorAll("[data-env]").forEach(btn => {
 </div>
 
 <!-- Widget Mode Container -->
-<div id="bb-widget" class="hidden" role="region" aria-label="Widget Mode - Compact exercise viewer" style="position: fixed; bottom: 16px; right: 16px; width: 320px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); z-index: 80; padding: 16px; cursor: move;">
+<div id="bb-widget" class="hidden" role="dialog" aria-label="BreakBreath widget" aria-modal="false" style="position: fixed; bottom: 16px; right: 16px; width: 320px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); z-index: 80; padding: 16px; cursor: move; transition: opacity 0.3s ease;">
   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-    <div style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Widget Mode</div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="font-size: 13px; font-weight: 600; color: #1e293b;">Quick reset</div>
+      <div id="bb-widget-snooze-badge" class="hidden" style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #fef3c7; color: #92400e; font-weight: 500; cursor: pointer;" title="Click to end snooze"></div>
+    </div>
     <button id="bb-widget-exit" style="padding: 4px 8px; border-radius: 4px; border: none; background: transparent; cursor: pointer; font-size: 16px; color: #64748b;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" aria-label="Exit widget mode">✕</button>
   </div>
+  <div id="bb-widget-first-run" class="hidden" style="padding: 8px 12px; margin-bottom: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 12px; color: #1e40af;">First run may take ~5s to load</div>
   <div id="bb-widget-title" style="font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 8px;">Next move</div>
   <div id="bb-widget-timer" style="font-size: 24px; font-weight: 700; color: #6366f1; margin-bottom: 12px; display: none;" aria-live="polite">--:--</div>
   <div id="bb-widget-steps" style="font-size: 13px; line-height: 1.4; color: #475569; max-height: 120px; overflow-y: auto; margin-bottom: 12px;"></div>
-  <div style="display: flex; align-items: center; gap: 6px;">
+  <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
     <button id="bb-widget-start" style="flex: 1; padding: 8px; font-size: 13px; font-weight: 500; border-radius: 6px; background: #6366f1; color: white; border: none; cursor: pointer;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'" aria-label="Start nudges">Start</button>
     <button id="bb-widget-prev" style="padding: 8px 12px; font-size: 13px; border-radius: 6px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'" aria-label="Previous exercise">←</button>
     <button id="bb-widget-next" style="padding: 8px 12px; font-size: 13px; border-radius: 6px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'" aria-label="Next exercise">→</button>
   </div>
+  <div style="padding: 6px 8px; background: #f8fafc; border-radius: 6px; font-size: 11px; color: #64748b; text-align: center; font-family: monospace;">Z Snooze · S Start/Stop · Esc Close</div>
 </div>
 
 <!-- Audio Elements -->
@@ -6168,6 +6325,27 @@ function updateSnoozeUI() {
   } else {
     snoozeBadge.style.display = 'none';
     localStorage.removeItem('bb_snooze_until');
+  }
+
+  // Update widget snooze badge
+  updateWidgetSnoozeBadge();
+}
+
+function updateWidgetSnoozeBadge() {
+  const widgetBadge = document.getElementById('bb-widget-snooze-badge');
+  if (!widgetBadge) return;
+
+  const snoozeUntil = localStorage.getItem('bb_snooze_until');
+
+  if (snoozeUntil && Date.now() < parseInt(snoozeUntil)) {
+    const remaining = parseInt(snoozeUntil) - Date.now();
+    const minutes = Math.floor(remaining / 60000);
+    const seconds = Math.floor((remaining % 60000) / 1000);
+    const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    widgetBadge.textContent = `Snoozed · ${timeStr}`;
+    widgetBadge.classList.remove('hidden');
+  } else {
+    widgetBadge.classList.add('hidden');
   }
 }
 
@@ -6587,6 +6765,19 @@ if (bbToggleWidgetBtn && typeof enterWidgetMode === 'function' && typeof exitWid
     exitFn: typeof exitWidgetMode === 'function'
   });
 }
+
+// Widget snooze badge click handler
+const widgetSnoozeBadge = document.getElementById('bb-widget-snooze-badge');
+if (widgetSnoozeBadge) {
+  widgetSnoozeBadge.addEventListener('click', () => {
+    localStorage.removeItem('bb_snooze_until');
+    updateSnoozeUI();
+    showToast('Snooze ended');
+  });
+}
+
+// Update widget snooze badge every second
+setInterval(updateWidgetSnoozeBadge, 1000);
 </script>
 
 </body>
