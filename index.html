@@ -5115,69 +5115,7 @@ function updateSnoozeDisplay() {
   }
 }
 
-// Update snooze display on page load and every 15 seconds
-let snoozeUpdateInterval = null;
-if (typeof updateSnoozeDisplay === 'function') {
-  updateSnoozeDisplay();
-  if (snoozeUpdateInterval) clearInterval(snoozeUpdateInterval);
-  snoozeUpdateInterval = setInterval(updateSnoozeDisplay, 15000); // Check every 15 seconds
-}
-
-// Cross-tab synchronization via storage events
-window.addEventListener('storage', (e) => {
-  // Sync BB.state settings
-  if (e.key === 'bb_settings_v1' && e.newValue) {
-    try {
-      const newSettings = JSON.parse(e.newValue);
-      BB.state = { ...BB.state, ...newSettings };
-
-      // Update UI components that depend on BB.state
-      updateSnoozeDisplay();
-      if (typeof updateQuietHoursBadge === 'function') {
-        updateQuietHoursBadge();
-      }
-
-      // Refresh widget pool if widget is open
-      if (bbWidget && !bbWidget.classList.contains('hidden')) {
-        refreshWidgetPool();
-        loadWidgetExercise();
-      }
-
-      console.log('Settings synced from another tab');
-    } catch (err) {
-      console.error('Failed to sync settings:', err);
-    }
-  }
-
-  // Sync active state
-  if (e.key === 'breakbreath_active' && e.newValue) {
-    isActive = e.newValue === 'true';
-
-    // Update widget button if widget is open
-    if (bbWidgetStart) {
-      bbWidgetStart.textContent = isActive ? 'Pause' : 'Start';
-    }
-
-    console.log('Active state synced from another tab:', isActive);
-  }
-
-  // Sync streak
-  if (e.key === 'bb_streak' && e.newValue) {
-    streakCount = Number(e.newValue);
-    console.log('Streak synced from another tab:', streakCount);
-  }
-
-  // Sync widget mode state
-  if (e.key === 'bb_widget_mode') {
-    if (e.newValue === '1' && bbWidget?.classList.contains('hidden')) {
-      // Another tab opened widget mode
-      console.log('Widget mode activated in another tab');
-    } else if (!e.newValue && !bbWidget?.classList.contains('hidden')) {
-      // Another tab closed widget mode
-      console.log('Widget mode deactivated in another tab');
-    }
-  }
-});
+// Initialization moved after BB is defined - see after initBBCore()
 
 // .ics Export
 document.querySelectorAll('.bb-ics').forEach(btn => {
@@ -5826,6 +5764,68 @@ if (isActive) {
   if (btn) btn.textContent = 'Stop nudges';
   startCountdown();
 }
+
+// Update snooze display on page load and every 15 seconds
+let snoozeUpdateInterval = null;
+if (typeof updateSnoozeDisplay === 'function') {
+  updateSnoozeDisplay();
+  if (snoozeUpdateInterval) clearInterval(snoozeUpdateInterval);
+  snoozeUpdateInterval = setInterval(updateSnoozeDisplay, 15000);
+}
+
+// Cross-tab synchronization via storage events
+window.addEventListener('storage', (e) => {
+  // Sync BB.state settings
+  if (e.key === 'bb_settings_v1' && e.newValue) {
+    try {
+      const newSettings = JSON.parse(e.newValue);
+      BB.state = { ...BB.state, ...newSettings };
+
+      // Update UI components that depend on BB.state
+      updateSnoozeDisplay();
+      if (typeof updateQuietHoursBadge === 'function') {
+        updateQuietHoursBadge();
+      }
+
+      // Refresh widget pool if widget is open
+      if (bbWidget && !bbWidget.classList.contains('hidden')) {
+        refreshWidgetPool();
+        loadWidgetExercise();
+      }
+
+      console.log('Settings synced from another tab');
+    } catch (err) {
+      console.error('Failed to sync settings:', err);
+    }
+  }
+
+  // Sync active state
+  if (e.key === 'breakbreath_active' && e.newValue) {
+    isActive = e.newValue === 'true';
+
+    // Update widget button if widget is open
+    if (bbWidgetStart) {
+      bbWidgetStart.textContent = isActive ? 'Pause' : 'Start';
+    }
+
+    console.log('Active state synced from another tab:', isActive);
+  }
+
+  // Sync streak
+  if (e.key === 'bb_streak' && e.newValue) {
+    streakCount = Number(e.newValue);
+    console.log('Streak synced from another tab:', streakCount);
+  }
+
+  // Sync widget mode state
+  if (e.key === 'bb_widget_mode') {
+    if (e.newValue === '1' && bbWidget?.classList.contains('hidden')) {
+      console.log('Widget mode activated in another tab');
+    } else if (!e.newValue && !bbWidget?.classList.contains('hidden')) {
+      console.log('Widget mode deactivated in another tab');
+    }
+  }
+});
 
 // Set environment button states
 document.querySelectorAll("[data-env]").forEach(btn => {
