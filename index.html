@@ -6040,44 +6040,6 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
     });
   });
 
-  // Widget shortcut
-  document.getElementById('bb-widget-shortcut')?.addEventListener('click', () => {
-    const widget = document.getElementById('bb-widget');
-    const isWidgetVisible = widget && !widget.classList.contains('hidden');
-
-    if (isWidgetVisible) {
-      if (typeof exitWidgetMode === 'function') {
-        exitWidgetMode();
-      }
-    } else {
-      if (typeof enterWidgetMode === 'function') {
-        enterWidgetMode();
-      }
-    }
-    closeBBSettings();
-  });
-
-  // Snooze shortcut
-  document.getElementById('bb-snooze-shortcut')?.addEventListener('click', () => {
-    const snoozeMinutes = 20;
-    const newSnoozeUntil = Date.now() + (snoozeMinutes * 60 * 1000);
-
-    if (typeof snoozeUntil !== 'undefined') {
-      snoozeUntil = newSnoozeUntil;
-    }
-    localStorage.setItem('bb_snooze_until', newSnoozeUntil);
-
-    if (typeof updateSnoozeUI === 'function') {
-      updateSnoozeUI();
-    }
-    if (typeof stopNudges === 'function') {
-      stopNudges();
-    }
-
-    showToast('Snoozed for 20 minutes');
-    closeBBSettings();
-  });
-
   // Restore defaults
   document.getElementById('bb-restore-defaults')?.addEventListener('click', () => {
     if (confirm('Reset all settings to defaults?')) {
@@ -6176,6 +6138,38 @@ document.querySelectorAll('[data-snooze]').forEach(btn => {
     updateSnoozeUI();
     stopNudges();
   });
+});
+
+// Widget shortcut button in settings
+document.getElementById('bb-widget-shortcut')?.addEventListener('click', () => {
+  const widget = document.getElementById('bb-widget');
+  const isWidgetVisible = widget && !widget.classList.contains('hidden');
+
+  if (isWidgetVisible) {
+    exitWidgetMode();
+  } else {
+    enterWidgetMode();
+  }
+
+  const modal = document.getElementById('bb-settings-modal');
+  const overlay = document.getElementById('bb-settings-overlay');
+  if (modal) modal.classList.add('hidden');
+  if (overlay) overlay.classList.add('hidden');
+});
+
+// Snooze shortcut button in settings
+document.getElementById('bb-snooze-shortcut')?.addEventListener('click', () => {
+  const snoozeMinutes = 20;
+  snoozeUntil = Date.now() + (snoozeMinutes * 60 * 1000);
+  localStorage.setItem('bb_snooze_until', snoozeUntil);
+  updateSnoozeUI();
+  stopNudges();
+  showToast('Snoozed for 20 minutes');
+
+  const modal = document.getElementById('bb-settings-modal');
+  const overlay = document.getElementById('bb-settings-overlay');
+  if (modal) modal.classList.add('hidden');
+  if (overlay) overlay.classList.add('hidden');
 });
 </script>
 
