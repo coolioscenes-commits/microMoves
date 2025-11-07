@@ -2707,13 +2707,19 @@ function matchesFilters(exerciseKey) {
   const ex = EXERCISE_LIBRARY[exerciseKey];
   if (!ex) return false;
 
+  // Check if exercise category matches active filters
   const cat = ex.category;
   if (cat && !filters[cat]) {
     return false;
   }
 
-  if (!filters.quiet && !ex.quiet_alt) {
-    return false;
+  // Quiet filter is special: when enabled, require exercises to have quiet alternatives
+  // When disabled, it doesn't exclude anything
+  if (filters.quiet === true) {
+    // Quiet mode is ON: only show exercises with quiet alternatives
+    if (!ex.quiet_alt && !ex.tags?.includes('quiet') && !ex.tags?.includes('seated')) {
+      return false;
+    }
   }
 
   return true;
