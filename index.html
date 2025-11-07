@@ -60,7 +60,7 @@
       --ring: rgba(37, 99, 235, 0.55);
     }
     * { box-sizing: border-box; }
-    .hidden:not(#bb-settings-modal):not(#bb-settings-overlay) { display: none !important; }
+    .hidden:not(#bb-settings-modal):not(#bb-settings-overlay):not(#bb-snooze-toast) { display: none !important; }
     *[tabindex]:focus-visible,
     button:focus-visible,
     a:focus-visible,
@@ -69,6 +69,27 @@
     [role="button"]:focus-visible {
       outline: 3px solid #6366f1;
       outline-offset: 2px;
+    }
+    .bb-snooze-chip:hover {
+      background: rgba(71, 85, 105, 0.9) !important;
+    }
+    .bb-snooze-chip:focus {
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
+    }
+    .bb-snooze-chip[aria-pressed="true"] {
+      background: rgba(99, 102, 241, 0.4) !important;
+      border-color: rgba(99, 102, 241, 0.6) !important;
+    }
+    #snoozeGo:not(:disabled) {
+      opacity: 1;
+      cursor: pointer;
+    }
+    #snoozeGo:not(:disabled):hover {
+      background: #4f46e5 !important;
+    }
+    #snoozeGo:disabled {
+      cursor: not-allowed;
     }
 
     /* Visible focus rings for Settings modal */
@@ -5551,22 +5572,52 @@ document.querySelectorAll("[data-env]").forEach(btn => {
     <button id="bb-snooze-btn"
       style="padding: 10px 16px; border-radius: 8px; background: #f1f5f9; color: #1e293b; font-size: 14px; font-weight: 500; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.2s;"
       aria-label="Snooze menu, pause nudges"
-      aria-haspopup="true"
+      aria-haspopup="dialog"
       aria-expanded="false">
-      Snooze
+      <span id="bb-snooze-btn-text">Snooze</span>
     </button>
-    <div id="bb-snooze-pop" class="hidden" role="menu" aria-label="Snooze duration options" style="position: absolute; bottom: calc(100% + 8px); right: 0; width: 192px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); padding: 8px;">
-      <div role="group" aria-label="Snooze options">
-        <div style="font-size: 12px; color: #64748b; padding: 4px 8px;">I'm in a meeting…</div>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px;">
-          <button class="bb-snooze-opt" data-mins="15" role="menuitem" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 15 minutes">15m</button>
-          <button class="bb-snooze-opt" data-mins="30" role="menuitem" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 30 minutes">30m</button>
-          <button class="bb-snooze-opt" data-mins="60" role="menuitem" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 60 minutes">60m</button>
-          <button class="bb-snooze-opt" data-mins="90" role="menuitem" style="font-size: 12px; padding: 6px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" aria-label="Snooze for 90 minutes">90m</button>
+    <div id="bb-snooze-pop" class="hidden" role="dialog" aria-modal="true" aria-labelledby="snoozeTitle" style="position: fixed; bottom: 20px; right: 20px; width: 288px; border-radius: 12px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); padding: 16px; z-index: 85; border: 1px solid rgba(148, 163, 184, 0.2);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px;">
+        <h2 id="snoozeTitle" style="font-size: 14px; font-weight: 600; color: #f1f5f9;">Snooze nudges</h2>
+        <button id="bb-snooze-close" style="padding: 4px; border-radius: 4px; background: transparent; border: none; cursor: pointer; font-size: 16px; color: #94a3b8; line-height: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(148, 163, 184, 0.2)'" onmouseout="this.style.background='transparent'" aria-label="Close snooze">✕</button>
+      </div>
+      <p id="snoozeHelp" style="margin-bottom: 12px; font-size: 12px; color: #cbd5e1;">Pause hourly reminders for a bit. They'll auto-resume.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
+        <button class="bb-snooze-chip" data-mins="15" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false">15m</button>
+        <button class="bb-snooze-chip" data-mins="30" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false">30m</button>
+        <button class="bb-snooze-chip" data-mins="60" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false">60m</button>
+        <button class="bb-snooze-chip" data-mins="120" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false">2h</button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <label for="snoozeCustom" style="font-size: 12px; color: #cbd5e1;">Custom</label>
+        <input id="snoozeCustom" type="number" inputmode="numeric" pattern="[0-9]*" min="1" max="480" placeholder="min" style="width: 64px; padding: 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; text-align: right; min-height: 44px;">
+        <span style="font-size: 12px; color: #94a3b8;">min</span>
+      </div>
+
+      <p id="resumeAt" class="hidden" role="status" aria-live="polite" style="margin-bottom: 8px; font-size: 12px; color: #94a3b8;"></p>
+      <p id="quietHoursWarning" class="hidden" style="margin-bottom: 8px; font-size: 12px; color: #fbbf24;"></p>
+      <div id="alreadySnoozed" class="hidden" style="margin-bottom: 12px;">
+        <p style="font-size: 12px; color: #fbbf24; margin-bottom: 8px;">Already snoozed. End or extend?</p>
+        <div style="display: flex; gap: 6px;">
+          <button id="endSnoozeNow" style="flex: 1; padding: 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; font-size: 13px; font-weight: 500; cursor: pointer; min-height: 44px;">End now</button>
+          <button class="bb-extend-snooze" data-mins="15" style="flex: 1; padding: 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; min-height: 44px;">+15m</button>
+          <button class="bb-extend-snooze" data-mins="30" style="flex: 1; padding: 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; min-height: 44px;">+30m</button>
         </div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button id="snoozeGo" disabled style="flex: 1; padding: 10px; border-radius: 8px; background: #6366f1; color: white; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; min-height: 44px; opacity: 0.5;">Snooze</button>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Snooze Toast -->
+<div id="bb-snooze-toast" class="hidden" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); color: #f1f5f9; padding: 12px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); z-index: 90; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(148, 163, 184, 0.2);">
+  <span id="bb-snooze-toast-text" style="font-size: 14px;"></span>
+  <button id="bb-snooze-undo" style="padding: 4px 12px; border-radius: 4px; background: rgba(99, 102, 241, 0.3); border: 1px solid rgba(99, 102, 241, 0.5); color: #c7d2fe; font-size: 13px; font-weight: 500; cursor: pointer;">Undo</button>
 </div>
 
 <!-- Settings Modal Overlay -->
@@ -6113,47 +6164,284 @@ function updateSnoozeUI() {
 }
 
 const bbSnoozeBtn = document.getElementById('bb-snooze-btn');
+const bbSnoozeBtnText = document.getElementById('bb-snooze-btn-text');
 const bbSnoozePop = document.getElementById('bb-snooze-pop');
+const bbSnoozeClose = document.getElementById('bb-snooze-close');
+const snoozeGo = document.getElementById('snoozeGo');
+const snoozeCustomInput = document.getElementById('snoozeCustom');
+const resumeAt = document.getElementById('resumeAt');
+const quietHoursWarning = document.getElementById('quietHoursWarning');
+const alreadySnoozed = document.getElementById('alreadySnoozed');
+const endSnoozeNow = document.getElementById('endSnoozeNow');
+const bbSnoozeToast = document.getElementById('bb-snooze-toast');
+const bbSnoozeToastText = document.getElementById('bb-snooze-toast-text');
+const bbSnoozeUndo = document.getElementById('bb-snooze-undo');
+
+let selectedSnoozeMinutes = 0;
+let snoozeToastTimer = null;
+let undoSnoozeData = null;
+let snoozeCountdownInterval = null;
+
+function openSnoozePopup() {
+  const currentSnooze = Number(localStorage.getItem('bb_snooze_until') || 0);
+  const isSnoozed = Date.now() < currentSnooze;
+
+  if (isSnoozed) {
+    alreadySnoozed?.classList.remove('hidden');
+    document.querySelectorAll('.bb-snooze-chip').forEach(chip => {
+      chip.disabled = true;
+      chip.style.opacity = '0.5';
+    });
+    snoozeCustomInput.disabled = true;
+    snoozeCustomInput.style.opacity = '0.5';
+    snoozeGo.disabled = true;
+  } else {
+    alreadySnoozed?.classList.add('hidden');
+    document.querySelectorAll('.bb-snooze-chip').forEach(chip => {
+      chip.disabled = false;
+      chip.style.opacity = '1';
+    });
+    snoozeCustomInput.disabled = false;
+    snoozeCustomInput.style.opacity = '1';
+  }
+
+  bbSnoozePop?.classList.remove('hidden');
+  bbSnoozeBtn?.setAttribute('aria-expanded', 'true');
+
+  setTimeout(() => {
+    document.getElementById('snoozeTitle')?.focus();
+  }, 100);
+}
+
+function closeSnoozePopup() {
+  bbSnoozePop?.classList.add('hidden');
+  bbSnoozeBtn?.setAttribute('aria-expanded', 'false');
+  resetSnoozeSelection();
+  bbSnoozeBtn?.focus();
+}
+
+function resetSnoozeSelection() {
+  selectedSnoozeMinutes = 0;
+  document.querySelectorAll('.bb-snooze-chip').forEach(chip => {
+    chip.setAttribute('aria-pressed', 'false');
+  });
+  snoozeCustomInput.value = '';
+  snoozeGo.disabled = true;
+  snoozeGo.textContent = 'Snooze';
+  resumeAt?.classList.add('hidden');
+  quietHoursWarning?.classList.add('hidden');
+}
+
+function selectSnoozeMinutes(minutes) {
+  selectedSnoozeMinutes = minutes;
+
+  document.querySelectorAll('.bb-snooze-chip').forEach(chip => {
+    chip.setAttribute('aria-pressed', 'false');
+  });
+
+  snoozeGo.disabled = false;
+  const label = minutes >= 60 ? `${Math.round(minutes / 60)}h` : `${minutes}m`;
+  snoozeGo.textContent = `Snooze ${label}`;
+
+  const resumeTime = new Date(Date.now() + minutes * 60 * 1000);
+  const hours = resumeTime.getHours();
+  const mins = resumeTime.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const displayHours = hours % 12 || 12;
+  resumeAt.textContent = `Resumes ${displayHours}:${mins} ${ampm}`;
+  resumeAt?.classList.remove('hidden');
+
+  checkQuietHoursOverlap(resumeTime);
+}
+
+function checkQuietHoursOverlap(resumeTime) {
+  const quietStart = parseInt(localStorage.getItem('bb_quiet_start') || '22');
+  const quietEnd = parseInt(localStorage.getItem('bb_quiet_end') || '7');
+  const enabled = localStorage.getItem('bb_quiet_enabled') === 'true';
+
+  if (!enabled) {
+    quietHoursWarning?.classList.add('hidden');
+    return;
+  }
+
+  const resumeHour = resumeTime.getHours();
+  const isInQuietHours = quietStart > quietEnd
+    ? (resumeHour >= quietStart || resumeHour < quietEnd)
+    : (resumeHour >= quietStart && resumeHour < quietEnd);
+
+  if (isInQuietHours) {
+    const endHours = quietEnd % 12 || 12;
+    const endAmPm = quietEnd >= 12 ? 'PM' : 'AM';
+    quietHoursWarning.textContent = `Snooze ends after quiet hours at ${endHours}:00 ${endAmPm}.`;
+    quietHoursWarning?.classList.remove('hidden');
+  } else {
+    quietHoursWarning?.classList.add('hidden');
+  }
+}
+
+function applySnooze() {
+  if (selectedSnoozeMinutes <= 0) return;
+
+  const snoozeUntil = Date.now() + selectedSnoozeMinutes * 60 * 1000;
+  undoSnoozeData = {
+    previousSnooze: localStorage.getItem('bb_snooze_until'),
+    minutes: selectedSnoozeMinutes
+  };
+
+  localStorage.setItem('bb_snooze_until', String(snoozeUntil));
+  updateSnoozeUI();
+  stopNudges();
+  closeSnoozePopup();
+
+  const label = selectedSnoozeMinutes >= 60 ? `${Math.round(selectedSnoozeMinutes / 60)}h` : `${selectedSnoozeMinutes}m`;
+  showSnoozeToast(`Snoozed for ${label}`);
+}
+
+function showSnoozeToast(message) {
+  bbSnoozeToastText.textContent = message;
+  bbSnoozeToast?.classList.remove('hidden');
+
+  if (snoozeToastTimer) clearTimeout(snoozeToastTimer);
+  snoozeToastTimer = setTimeout(() => {
+    bbSnoozeToast?.classList.add('hidden');
+    undoSnoozeData = null;
+  }, 10000);
+}
+
+function undoSnooze() {
+  if (!undoSnoozeData) return;
+
+  if (undoSnoozeData.previousSnooze) {
+    localStorage.setItem('bb_snooze_until', undoSnoozeData.previousSnooze);
+  } else {
+    localStorage.removeItem('bb_snooze_until');
+    if (lastMode) startNudges();
+  }
+
+  updateSnoozeUI();
+  bbSnoozeToast?.classList.add('hidden');
+  if (snoozeToastTimer) clearTimeout(snoozeToastTimer);
+  undoSnoozeData = null;
+}
+
+function endSnooze() {
+  localStorage.removeItem('bb_snooze_until');
+  updateSnoozeUI();
+  closeSnoozePopup();
+  if (lastMode) startNudges();
+}
+
+function extendSnooze(additionalMinutes) {
+  const currentSnooze = Number(localStorage.getItem('bb_snooze_until') || Date.now());
+  const newSnooze = Math.max(Date.now(), currentSnooze) + additionalMinutes * 60 * 1000;
+  localStorage.setItem('bb_snooze_until', String(newSnooze));
+  updateSnoozeUI();
+  closeSnoozePopup();
+  showSnoozeToast(`Extended snooze by ${additionalMinutes}m`);
+}
+
+function updateSnoozeCountdown() {
+  const snoozeUntil = Number(localStorage.getItem('bb_snooze_until') || 0);
+  const now = Date.now();
+
+  if (now < snoozeUntil) {
+    const remaining = Math.ceil((snoozeUntil - now) / 60000);
+    const hours = Math.floor(remaining / 60);
+    const mins = remaining % 60;
+
+    let text = 'Snoozed';
+    if (hours > 0) {
+      text += ` • ${hours}h ${mins}m left`;
+    } else {
+      text += ` • ${mins}m left`;
+    }
+    bbSnoozeBtnText.textContent = text;
+    bbSnoozeBtn.style.background = 'rgba(251, 191, 36, 0.2)';
+    bbSnoozeBtn.style.border = '1px solid rgba(251, 191, 36, 0.4)';
+    bbSnoozeBtn.style.color = '#f59e0b';
+  } else {
+    bbSnoozeBtnText.textContent = 'Snooze';
+    bbSnoozeBtn.style.background = '#f1f5f9';
+    bbSnoozeBtn.style.border = 'none';
+    bbSnoozeBtn.style.color = '#1e293b';
+    if (snoozeUntil > 0) {
+      localStorage.removeItem('bb_snooze_until');
+      if (lastMode) startNudges();
+    }
+  }
+}
 
 bbSnoozeBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
-  const isOpen = !bbSnoozePop.classList.contains('hidden');
-  bbSnoozePop.classList.toggle('hidden');
-  bbSnoozeBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+  const isOpen = !bbSnoozePop?.classList.contains('hidden');
+  if (isOpen) {
+    closeSnoozePopup();
+  } else {
+    openSnoozePopup();
+  }
 });
 
-document.addEventListener('click', () => {
-  if (bbSnoozePop) bbSnoozePop.classList.add('hidden');
+bbSnoozeClose?.addEventListener('click', closeSnoozePopup);
+
+document.addEventListener('click', (e) => {
+  if (bbSnoozePop && !bbSnoozePop.classList.contains('hidden')) {
+    if (!bbSnoozePop.contains(e.target) && e.target !== bbSnoozeBtn) {
+      closeSnoozePopup();
+    }
+  }
 });
+
 bbSnoozePop?.addEventListener('click', (e) => e.stopPropagation());
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && bbSnoozePop && !bbSnoozePop.classList.contains('hidden')) {
-    bbSnoozePop.classList.add('hidden');
+    closeSnoozePopup();
   }
 });
 
-document.querySelectorAll('.bb-snooze-opt').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const mins = parseInt(btn.dataset.mins);
-    snoozeUntil = Date.now() + (mins * 60 * 1000);
-    localStorage.setItem('bb_snooze_until', snoozeUntil);
-    if (bbSnoozePop) bbSnoozePop.classList.add('hidden');
-    updateSnoozeUI();
-    stopNudges();
+document.querySelectorAll('.bb-snooze-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const minutes = parseInt(chip.dataset.mins);
+    chip.setAttribute('aria-pressed', 'true');
+    snoozeCustomInput.value = '';
+    selectSnoozeMinutes(minutes);
   });
 });
 
-document.querySelectorAll('[data-snooze]').forEach(btn => {
+snoozeCustomInput?.addEventListener('input', () => {
+  const value = parseInt(snoozeCustomInput.value);
+  if (value > 0 && value <= 480) {
+    document.querySelectorAll('.bb-snooze-chip').forEach(chip => {
+      chip.setAttribute('aria-pressed', 'false');
+    });
+    selectSnoozeMinutes(value);
+  } else {
+    resetSnoozeSelection();
+  }
+});
+
+snoozeGo?.addEventListener('click', applySnooze);
+
+endSnoozeNow?.addEventListener('click', endSnooze);
+
+document.querySelectorAll('.bb-extend-snooze').forEach(btn => {
   btn.addEventListener('click', () => {
-    const mins = parseInt(btn.dataset.snooze);
-    snoozeUntil = Date.now() + (mins * 60 * 1000);
-    localStorage.setItem('bb_snooze_until', snoozeUntil);
-    if (bbSnoozePop) bbSnoozePop.classList.add('hidden');
-    updateSnoozeUI();
-    stopNudges();
+    const minutes = parseInt(btn.dataset.mins);
+    extendSnooze(minutes);
   });
 });
+
+bbSnoozeUndo?.addEventListener('click', undoSnooze);
+
+window.addEventListener('storage', (e) => {
+  if (e.key === 'bb_snooze_until') {
+    updateSnoozeUI();
+    updateSnoozeCountdown();
+  }
+});
+
+snoozeCountdownInterval = setInterval(updateSnoozeCountdown, 30000);
+updateSnoozeCountdown();
 
 // Widget shortcut button in settings
 document.getElementById('bb-widget-shortcut')?.addEventListener('click', () => {
