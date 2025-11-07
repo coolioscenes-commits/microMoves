@@ -3346,6 +3346,11 @@ function startNudges(){
 
   updateShareButton();
   showToast(`Nice! See you in ${intervalMins} minutes. You've kept a ${streakCount}-hour streak.`);
+
+  // Update widget button
+  if (bbWidgetStart) {
+    bbWidgetStart.textContent = 'Pause';
+  }
 }
 
 function stopNudges(){
@@ -3357,6 +3362,11 @@ function stopNudges(){
   localStorage.setItem('breakbreath_active', 'false');
   isActive = false;
   appendLog("Nudges stopped.");
+
+  // Update widget button
+  if (bbWidgetStart) {
+    bbWidgetStart.textContent = 'Start';
+  }
 }
 
 function setNextNudgeTimer(){
@@ -5107,10 +5117,15 @@ function downloadFile(filename, content, type) {
 const bbToggleWidget = document.getElementById('bb-toggle-widget');
 const bbWidget = document.getElementById('bb-widget');
 const bbWidgetExit = document.getElementById('bb-widget-exit');
+const bbWidgetStart = document.getElementById('bb-widget-start');
+const bbWidgetTimer = document.getElementById('bb-widget-timer');
 
 let widgetExerciseIndex = 0;
 let widgetExercisePool = [];
 let widgetRotationInterval = null;
+let widgetTimerInterval = null;
+let widgetDragging = false;
+let widgetDragOffset = { x: 0, y: 0 };
 
 function refreshWidgetPool() {
   // Get all exercise keys
@@ -5134,13 +5149,39 @@ function refreshWidgetPool() {
   widgetExerciseIndex = 0;
 }
 
+function updateWidgetTimer() {
+  if (!bbWidgetTimer) return;
+
+  if (nextResetTime && isActive) {
+    const remaining = Math.max(0, Math.floor((nextResetTime - Date.now()) / 1000));
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+    bbWidgetTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    bbWidgetTimer.style.display = 'block';
+  } else {
+    bbWidgetTimer.style.display = 'none';
+  }
+}
+
+function startWidgetTimerSync() {
+  if (widgetTimerInterval) clearInterval(widgetTimerInterval);
+  widgetTimerInterval = setInterval(updateWidgetTimer, 1000);
+  updateWidgetTimer();
+}
+
+function stopWidgetTimerSync() {
+  if (widgetTimerInterval) {
+    clearInterval(widgetTimerInterval);
+    widgetTimerInterval = null;
+  }
+}
+
 function startWidgetRotation() {
-  // Auto-rotate every 30 seconds
+  // Sync with main suggestion
   if (widgetRotationInterval) clearInterval(widgetRotationInterval);
   widgetRotationInterval = setInterval(() => {
-    widgetExerciseIndex = (widgetExerciseIndex + 1) % widgetExercisePool.length;
     loadWidgetExercise();
-  }, 30000);
+  }, 5000); // Update every 5 seconds to check for changes
 }
 
 function stopWidgetRotation() {
@@ -5150,17 +5191,126 @@ function stopWidgetRotation() {
   }
 }
 
-bbToggleWidget?.addEventListener('click', () => {
+function enterWidgetMode() {
+  document.body.dataset.widget = '1';
   refreshWidgetPool();
   bbWidget?.classList.remove('hidden');
   loadWidgetExercise();
   startWidgetRotation();
-});
+  startWidgetTimerSync();
 
-bbWidgetExit?.addEventListener('click', () => {
+  // Save state
+  localStorage.setItem('bb_widget_mode', '1');
+
+  // Focus management
+  setTimeout(() => {
+    const firstButton = bbWidget?.querySelector('button');
+    if (firstButton) firstButton.focus();
+  }, 50);
+
+  // Add keyboard listener
+  bbWidget?.addEventListener('keydown', handleWidgetKeydown);
+}
+
+function exitWidgetMode() {
+  document.body.removeAttribute('data-widget');
   bbWidget?.classList.add('hidden');
   stopWidgetRotation();
+  stopWidgetTimerSync();
+
+  // Save state
+  localStorage.removeItem('bb_widget_mode');
+
+  // Remove keyboard listener
+  bbWidget?.removeEventListener('keydown', handleWidgetKeydown);
+
+  // Return focus
+  if (bbToggleWidget) bbToggleWidget.focus();
+}
+
+function handleWidgetKeydown(e) {
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    exitWidgetMode();
+  }
+}
+
+bbToggleWidget?.addEventListener('click', () => {
+  if (bbWidget?.classList.contains('hidden')) {
+    enterWidgetMode();
+  } else {
+    exitWidgetMode();
+  }
 });
+
+bbWidgetExit?.addEventListener('click', exitWidgetMode);
+
+bbWidgetStart?.addEventListener('click', () => {
+  if (isActive) {
+    stopNudges();
+    bbWidgetStart.textContent = 'Start';
+  } else {
+    startNudges();
+    bbWidgetStart.textContent = 'Pause';
+  }
+});
+
+// Make widget draggable
+if (bbWidget) {
+  bbWidget.addEventListener('mousedown', (e) => {
+    if (e.target === bbWidget || e.target.closest('#bb-widget-title')) {
+      widgetDragging = true;
+      widgetDragOffset.x = e.clientX - bbWidget.offsetLeft;
+      widgetDragOffset.y = e.clientY - bbWidget.offsetTop;
+      bbWidget.style.cursor = 'grabbing';
+    }
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (widgetDragging && bbWidget) {
+      let newLeft = e.clientX - widgetDragOffset.x;
+      let newTop = e.clientY - widgetDragOffset.y;
+
+      // Keep within viewport
+      const maxX = window.innerWidth - bbWidget.offsetWidth;
+      const maxY = window.innerHeight - bbWidget.offsetHeight;
+      newLeft = Math.max(0, Math.min(newLeft, maxX));
+      newTop = Math.max(0, Math.min(newTop, maxY));
+
+      bbWidget.style.left = `${newLeft}px`;
+      bbWidget.style.top = `${newTop}px`;
+      bbWidget.style.right = 'auto';
+      bbWidget.style.bottom = 'auto';
+
+      // Save position
+      localStorage.setItem('bb_widget_position', JSON.stringify({ left: newLeft, top: newTop }));
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (widgetDragging && bbWidget) {
+      widgetDragging = false;
+      bbWidget.style.cursor = 'move';
+    }
+  });
+}
+
+// Restore widget state on load
+if (localStorage.getItem('bb_widget_mode') === '1') {
+  enterWidgetMode();
+
+  // Restore position
+  const savedPos = localStorage.getItem('bb_widget_position');
+  if (savedPos && bbWidget) {
+    try {
+      const pos = JSON.parse(savedPos);
+      bbWidget.style.left = `${pos.left}px`;
+      bbWidget.style.top = `${pos.top}px`;
+      bbWidget.style.right = 'auto';
+      bbWidget.style.bottom = 'auto';
+    } catch (e) {}
+  }
+}
 
 function loadWidgetExercise() {
   if (widgetExercisePool.length === 0) {
@@ -5583,7 +5733,8 @@ document.querySelectorAll("[data-env]").forEach(btn => {
   <button id="bb-toggle-widget"
     style="padding: 10px 16px; border-radius: 8px; background: #f1f5f9; color: #1e293b; font-size: 14px; font-weight: 500; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.2s;"
     onmouseover="this.style.background='#e2e8f0'"
-    onmouseout="this.style.background='#f1f5f9'">
+    onmouseout="this.style.background='#f1f5f9'"
+    aria-label="Widget Mode, toggle compact view">
     Widget Mode
   </button>
 
@@ -5710,18 +5861,18 @@ document.querySelectorAll("[data-env]").forEach(btn => {
 </div>
 
 <!-- Widget Mode Container -->
-<div id="bb-widget" class="hidden" style="position: fixed; inset: 0; background: white; padding: 24px; z-index: 80;">
-  <div style="max-width: 512px; margin: 0 auto;">
-    <div style="font-size: 14px; color: #64748b; margin-bottom: 8px;">Widget Mode</div>
-    <div id="bb-widget-card" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 16px;">
-      <div id="bb-widget-title" style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Next move</div>
-      <div id="bb-widget-steps" style="font-size: 14px; line-height: 1.5; white-space: pre-line;"></div>
-      <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
-        <button id="bb-widget-prev" style="padding: 6px 12px; font-size: 14px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Prev</button>
-        <button id="bb-widget-next" style="padding: 6px 12px; font-size: 14px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Next</button>
-        <button id="bb-widget-exit" style="margin-left: auto; padding: 6px 12px; font-size: 14px; border-radius: 4px; background: #6366f1; color: white; border: none; cursor: pointer;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'">Exit</button>
-      </div>
-    </div>
+<div id="bb-widget" class="hidden" role="region" aria-label="Widget Mode - Compact exercise viewer" style="position: fixed; bottom: 16px; right: 16px; width: 320px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); z-index: 80; padding: 16px; cursor: move;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+    <div style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Widget Mode</div>
+    <button id="bb-widget-exit" style="padding: 4px 8px; border-radius: 4px; border: none; background: transparent; cursor: pointer; font-size: 16px; color: #64748b;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" aria-label="Exit widget mode">✕</button>
+  </div>
+  <div id="bb-widget-title" style="font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 8px;">Next move</div>
+  <div id="bb-widget-timer" style="font-size: 24px; font-weight: 700; color: #6366f1; margin-bottom: 12px; display: none;" aria-live="polite">--:--</div>
+  <div id="bb-widget-steps" style="font-size: 13px; line-height: 1.4; color: #475569; max-height: 120px; overflow-y: auto; margin-bottom: 12px;"></div>
+  <div style="display: flex; align-items: center; gap: 6px;">
+    <button id="bb-widget-start" style="flex: 1; padding: 8px; font-size: 13px; font-weight: 500; border-radius: 6px; background: #6366f1; color: white; border: none; cursor: pointer;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'" aria-label="Start nudges">Start</button>
+    <button id="bb-widget-prev" style="padding: 8px 12px; font-size: 13px; border-radius: 6px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'" aria-label="Previous exercise">←</button>
+    <button id="bb-widget-next" style="padding: 8px 12px; font-size: 13px; border-radius: 6px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'" aria-label="Next exercise">→</button>
   </div>
 </div>
 
