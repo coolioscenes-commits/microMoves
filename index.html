@@ -5763,8 +5763,12 @@ const bbSaveSettings = document.getElementById('bb-save-settings');
 const bbSettingsModal = document.getElementById('bb-settings-modal');
 const bbSettingsOverlay = document.getElementById('bb-settings-overlay');
 
+console.log('BB Elements:', { bbOpenSettings, bbCloseSettings, bbSaveSettings, bbSettingsModal, bbSettingsOverlay });
+
 if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
+  console.log('Adding Settings event listeners...');
   bbOpenSettings.addEventListener('click', () => {
+    console.log('Settings button clicked!');
     bbSettingsModal.classList.remove('hidden');
     bbSettingsOverlay.classList.remove('hidden');
     loadBBSettings();
