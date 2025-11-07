@@ -4879,11 +4879,12 @@ function updateUIWithTranslations() {
 
 
 // Widget Mode
-const bbToggleWidget = document.getElementById('bb-toggle-widget');
-const bbWidget = document.getElementById('bb-widget');
-const bbWidgetExit = document.getElementById('bb-widget-exit');
-const bbWidgetStart = document.getElementById('bb-widget-start');
-const bbWidgetTimer = document.getElementById('bb-widget-timer');
+// Widget element references - will be initialized in second script block after DOM loads
+let bbToggleWidget = null;
+let bbWidget = null;
+let bbWidgetExit = null;
+let bbWidgetStart = null;
+let bbWidgetTimer = null;
 
 let widgetExerciseIndex = 0;
 let widgetExercisePool = [];
@@ -4957,9 +4958,14 @@ function stopWidgetRotation() {
 }
 
 function enterWidgetMode() {
+  if (!bbWidget) {
+    console.error('Widget element not found!');
+    return;
+  }
+
   document.body.dataset.widget = '1';
   refreshWidgetPool();
-  bbWidget?.classList.remove('hidden');
+  bbWidget.classList.remove('hidden');
   loadWidgetExercise();
   startWidgetRotation();
   startWidgetTimerSync();
@@ -4974,7 +4980,7 @@ function enterWidgetMode() {
   }, 50);
 
   // Add keyboard listener
-  bbWidget?.addEventListener('keydown', handleWidgetKeydown);
+  bbWidget.addEventListener('keydown', handleWidgetKeydown);
 }
 
 function exitWidgetMode() {
@@ -6542,6 +6548,21 @@ document.getElementById('bb-snooze-shortcut')?.addEventListener('click', () => {
   const overlay = document.getElementById('bb-settings-overlay');
   if (modal) modal.classList.add('hidden');
   if (overlay) overlay.classList.add('hidden');
+});
+
+// Initialize widget element references (now that HTML elements exist)
+bbToggleWidget = document.getElementById('bb-toggle-widget');
+bbWidget = document.getElementById('bb-widget');
+bbWidgetExit = document.getElementById('bb-widget-exit');
+bbWidgetStart = document.getElementById('bb-widget-start');
+bbWidgetTimer = document.getElementById('bb-widget-timer');
+
+console.log('Widget elements initialized:', {
+  toggle: !!bbToggleWidget,
+  widget: !!bbWidget,
+  exit: !!bbWidgetExit,
+  start: !!bbWidgetStart,
+  timer: !!bbWidgetTimer
 });
 
 // Initialize Widget button (now that HTML elements exist)
