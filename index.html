@@ -6505,10 +6505,14 @@ function resetSnoozeSelection() {
   selectedSnoozeMinutes = 0;
   document.querySelectorAll('.bb-snooze-chip').forEach(chip => {
     chip.setAttribute('aria-pressed', 'false');
+    chip.style.background = 'rgba(51, 65, 85, 0.8)';
+    chip.style.borderColor = 'rgba(148, 163, 184, 0.3)';
+    chip.textContent = chip.dataset.mins + 'm';
   });
   snoozeCustomInput.value = '';
   snoozeGo.disabled = true;
-  snoozeGo.textContent = 'Snooze';
+  snoozeGo.textContent = 'Snooze now';
+  snoozeGo.style.opacity = '0.5';
   resumeAt?.classList.add('hidden');
   quietHoursWarning?.classList.add('hidden');
 }
@@ -6732,12 +6736,26 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.querySelectorAll('.bb-snooze-chip').forEach(chip => {
+  const originalText = chip.textContent;
+
   const handleChipSelect = () => {
     const minutes = parseInt(chip.dataset.mins);
+
+    // Reset all chips first
+    document.querySelectorAll('.bb-snooze-chip').forEach(c => {
+      const origText = c.dataset.mins + 'm';
+      c.textContent = origText;
+      c.setAttribute('aria-pressed', 'false');
+      c.style.background = 'rgba(51, 65, 85, 0.8)';
+      c.style.borderColor = 'rgba(148, 163, 184, 0.3)';
+    });
+
+    // Set selected state
     chip.setAttribute('aria-pressed', 'true');
     chip.style.background = 'rgba(99, 102, 241, 0.3)';
     chip.style.borderColor = 'rgba(99, 102, 241, 0.6)';
-    chip.innerHTML = chip.textContent + ' <span style="margin-left: 4px;">✓</span>';
+    chip.textContent = originalText + ' ✓';
+
     snoozeCustomInput.value = '';
     selectSnoozeMinutes(minutes);
   };
