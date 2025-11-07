@@ -178,7 +178,10 @@
     }
     .icon { width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px; }
     .icon svg { width: 100%; height: 100%; }
-    main { max-width: 680px; margin: 24px auto; padding: 0 16px 100px; }
+    main { max-width: 840px; margin: 32px auto; padding: 0 16px 100px; }
+    @media (min-width: 1400px) {
+      main { max-width: 900px; }
+    }
     h1 { font-size: 32px; font-weight: 600; margin: 0; color: var(--text-bright); letter-spacing: -0.04em; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
     @media (min-width: 640px) {
       h1 { font-size: 48px; }
@@ -310,6 +313,7 @@
     }
     .next-card {
       position: relative;
+      margin-top: 48px;
     }
     .next-card::after {
       content: "";
@@ -629,8 +633,12 @@
       transition: all 0.2s;
     }
     .why-link:hover {
-      color: var(--primary);
-      background: rgba(37, 99, 235, 0.1);
+      color: #2563EB;
+      background: rgba(37, 99, 235, 0.12);
+    }
+    .why-link:focus-visible {
+      outline: 3px solid #2563EB;
+      outline-offset: 2px;
     }
     .why-explanation {
       margin-top: 12px;
@@ -661,11 +669,12 @@
       vertical-align: middle;
     }
     .help-chip:hover {
-      background: rgba(59, 130, 246, 0.3);
+      background: rgba(37, 99, 235, 0.35);
+      border-color: rgba(37, 99, 235, 0.6);
       transform: scale(1.1);
     }
     .help-chip:focus {
-      outline: 2px solid var(--primary);
+      outline: 3px solid #2563EB;
       outline-offset: 2px;
     }
     .howto-card {
@@ -1179,9 +1188,9 @@
       <span>📴 Offline-friendly</span>
       <span>🌏 Works worldwide</span>
     </div>
-    <div class="row" role="group" aria-label="Reminder actions" style="margin-top: 24px;">
-      <button id="startBtn" type="button" tabindex="1" style="min-height: 44px;">Start hourly nudges</button>
-      <button id="quickDemoBtn" type="button" class="tertiary" tabindex="2" style="min-height: 44px; background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: var(--text);">Try a 60-sec exercise</button>
+    <div class="row" role="group" aria-label="Reminder actions" style="margin-top: 24px; gap: 12px;">
+      <button id="startBtn" type="button" tabindex="1" style="min-height: 48px; font-size: 16px; font-weight: 600; background: var(--primary); color: white; border: none; flex: 1;">Start nudges</button>
+      <button id="quickDemoBtn" type="button" class="secondary" tabindex="2" style="min-height: 48px; background: transparent; border: 1px solid rgba(255, 255, 255, 0.25); color: var(--text); font-weight: 500;">Try a 60-sec exercise</button>
     </div>
     <ul class="day-dots" id="dayDots" aria-label="Weekly activity" style="margin-top: 24px;"></ul>
   </header>
@@ -1613,6 +1622,17 @@
   </section>
 
   <footer style="text-align: center; padding: 40px 20px 20px; color: var(--muted); font-size: 13px; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 0; background: rgba(11, 18, 32, 0.5);">
+    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+      <button type="button" tabindex="0" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 6px 12px; color: var(--text); font-size: 12px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;" title="All data stays on your device. No cloud storage." onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'" aria-describedby="trustChip1">
+        📴 Works offline
+      </button>
+      <button type="button" tabindex="0" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 6px 12px; color: var(--text); font-size: 12px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;" title="No account or login required. Start immediately." onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'" aria-describedby="trustChip2">
+        🔓 No login
+      </button>
+      <button type="button" tabindex="0" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 6px 12px; color: var(--text); font-size: 12px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;" title="Full keyboard navigation with Space, Enter, Esc shortcuts." onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'" aria-describedby="trustChip3">
+        ⌨️ Keyboard friendly
+      </button>
+    </div>
     <p style="margin: 0 0 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
       <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
@@ -1673,13 +1693,12 @@
       }
     </style>
     <div class="cta-text">
-      <button onclick="document.getElementById('startBtn').click()" style="background: #2563EB; border: none; border-radius: 6px; padding: 10px 16px; color: white; font-weight: 500; cursor: pointer; transition: background 0.2s; font-size: 14px;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563EB'">
-        Start hourly reminders
+      <button onclick="document.getElementById('startBtn').click(); trackEvent('cta_start_nudges', {location: 'sticky_footer'})" style="background: #2563EB; border: none; border-radius: 6px; padding: 10px 18px; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 14px;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563EB'" aria-label="Start nudges">
+        Start nudges
       </button>
-      <span class="cta-separator">·</span>
-      <a href="/pro" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 10px 16px; color: var(--text); font-weight: 500; text-decoration: none; transition: all 0.2s; font-size: 14px; display: inline-block;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">
-        Pro (A$12/yr)
-      </a>
+      <button onclick="downloadICS(60); trackEvent('cta_add_ics', {location: 'sticky_footer'})" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 10px 18px; color: var(--text); font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 14px;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.25)'" aria-label="Add .ics calendar file">
+        Add .ics
+      </button>
     </div>
   </div>
 
@@ -3085,7 +3104,7 @@ function setSuggestion(){
       <button class="help-chip" onclick="toggleHowtoCard()" type="button" aria-expanded="false" aria-controls="howtoCard" aria-label="Show exercise instructions" tabindex="0" id="helpChipBtn">?</button>
     </div>
     <div style="font-size: 0.85em; color: var(--muted); margin-top: 6px;">${duration > 0 ? `0:${duration.toString().padStart(2, '0')}` : '1:00'} • ${isBeginnerFriendly ? 'Beginner-friendly' : 'All levels'}</div>
-    ${item.quiet_alt ? `<div style="font-size: 0.85em; color: #666; margin-top: 4px;"><strong>No-noise option:</strong> ${item.quiet_alt}</div>` : ''}
+    ${item.quiet_alt ? `<div style="font-size: 0.85em; color: #666; margin-top: 4px;"><strong>Quiet alternative:</strong> ${item.quiet_alt}</div>` : ''}
     <button class="why-link" onclick="toggleWhyExplanation(event)" type="button">
       <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
@@ -3411,6 +3430,8 @@ function isInQuietHours() {
 }
 
 function startNudges(){
+  trackEvent('cta_start_nudges', {location: 'hero'});
+
   if (timerId) clearTimeout(timerId);
   if (intervalId) clearInterval(intervalId);
 
@@ -3577,6 +3598,8 @@ function getUserTimezone(){
 }
 
 function downloadICS(){
+  trackEvent('cta_add_ics', {location: 'header'});
+
   const uid = `micromoves-${Date.now()}@local`;
   const dtstamp = toICSDateUTC(new Date());
   const dtstart = toICSDateLocal(nextTopOfHourLocal());
@@ -3844,7 +3867,7 @@ function renderHowtoCard() {
 
     <div class="howto-section">
       <div class="howto-alternate">
-        <strong>No-noise option:</strong> ${currentExercise.quiet_alt}
+        <strong>Quiet alternative:</strong> ${currentExercise.quiet_alt}
       </div>
     </div>
 
