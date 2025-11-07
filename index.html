@@ -5077,18 +5077,6 @@ function handleWidgetKeydown(e) {
 
 // Widget button initialization moved to second script block (after HTML elements)
 
-bbWidgetExit?.addEventListener('click', exitWidgetMode);
-
-bbWidgetStart?.addEventListener('click', () => {
-  if (isActive) {
-    stopNudges();
-    bbWidgetStart.textContent = 'Start';
-  } else {
-    startNudges();
-    bbWidgetStart.textContent = 'Pause';
-  }
-});
-
 // Make widget draggable
 if (bbWidget) {
   bbWidget.addEventListener('mousedown', (e) => {
@@ -6763,6 +6751,24 @@ if (bbToggleWidgetBtn && typeof enterWidgetMode === 'function' && typeof exitWid
     container: !!bbWidgetContainer,
     enterFn: typeof enterWidgetMode === 'function',
     exitFn: typeof exitWidgetMode === 'function'
+  });
+}
+
+// Widget close button
+if (bbWidgetExit) {
+  bbWidgetExit.addEventListener('click', exitWidgetMode);
+}
+
+// Widget start/pause button
+if (bbWidgetStart) {
+  bbWidgetStart.addEventListener('click', () => {
+    if (isActive) {
+      stopNudges();
+      bbWidgetStart.textContent = 'Start';
+    } else {
+      startNudges();
+      bbWidgetStart.textContent = 'Pause';
+    }
   });
 }
 
