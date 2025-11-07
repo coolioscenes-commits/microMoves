@@ -60,7 +60,7 @@
       --ring: rgba(37, 99, 235, 0.55);
     }
     * { box-sizing: border-box; }
-    .hidden { display: none !important; }
+    .hidden:not(#bb-settings-modal):not(#bb-settings-overlay) { display: none !important; }
     *[tabindex]:focus-visible,
     button:focus-visible,
     a:focus-visible,
@@ -68,6 +68,52 @@
       outline: 3px solid var(--ring);
       outline-offset: 3px;
       border-radius: 10px;
+    }
+
+    /* Toggle Switch Styles */
+    .toggle-slider::before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    #bb-seated-only:checked + .toggle-slider {
+      background-color: #6366f1;
+    }
+    #bb-seated-only:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+    #bb-seated-only:focus + .toggle-slider {
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Modal Animation */
+    #bb-settings-modal {
+      transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+    }
+    #bb-settings-modal.hidden {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.95);
+      pointer-events: none;
+    }
+    #bb-settings-modal:not(.hidden) {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    #bb-settings-overlay {
+      transition: opacity 150ms ease-in-out;
+    }
+    #bb-settings-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #bb-settings-overlay:not(.hidden) {
+      opacity: 1;
     }
     body {
       margin: 0;
@@ -1260,6 +1306,7 @@
         </span>
         Next 60-sec reset
         <span id="countdownPill" class="countdown-pill" role="timer" aria-live="polite" style="display: none;"></span>
+        <span id="quietHoursBadge" style="display: none; margin-left: 8px; padding: 4px 10px; background: #fef3c7; color: #92400e; border-radius: 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px;" role="status" aria-live="polite">🌙 QUIET HOURS</span>
         <svg id="countdownRing" class="countdown-ring" viewBox="0 0 24 24" style="display: none;" aria-hidden="true">
           <circle class="ring-bg" cx="12" cy="12" r="10" />
           <circle class="ring-progress" cx="12" cy="12" r="10" stroke-dasharray="62.83" stroke-dashoffset="62.83" />
@@ -2953,17 +3000,30 @@ function setSuggestion(){
   return item.title;
 }
 
+function updateQuietHoursBadge() {
+  const badge = document.getElementById('quietHoursBadge');
+  if (badge) {
+    if (isInQuietHours()) {
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+}
+
 function startCountdown() {
   if (countdownInterval) clearInterval(countdownInterval);
 
   nextResetTime = Date.now() + nextTopOfHour();
   countdownEl.style.display = 'inline-flex';
+  updateQuietHoursBadge();
 
   const countdownRing = $('countdownRing');
   const ringProgress = countdownRing ? countdownRing.querySelector('.ring-progress') : null;
   const circumference = 62.83; // 2 * PI * 10
 
   const updateCountdown = () => {
+    updateQuietHoursBadge();
     const remaining = Math.max(0, Math.floor((nextResetTime - Date.now()) / 1000));
     const minutes = Math.floor(remaining / 60);
     const seconds = remaining % 60;
@@ -4828,6 +4888,12 @@ function loadBBSettings() {
     checkbox.checked = BB.state.packs.includes(checkbox.value);
   });
 
+  // Seated-only
+  const seatedOnlyCheckbox = document.getElementById('bb-seated-only');
+  if (seatedOnlyCheckbox) {
+    seatedOnlyCheckbox.checked = BB.state.seatedOnly || false;
+  }
+
   // Quiet hours - convert from BB.state.quietRanges format
   const quietHours = (BB.state.quietRanges || []).map(r => ({start: r.start, end: r.end}));
   renderQuietHours(quietHours);
@@ -4844,6 +4910,7 @@ function saveBBSettings() {
   BB.state.intervalMins = parseInt(document.getElementById('bb-interval')?.value || '60', 10);
   BB.state.audio = document.getElementById('bb-audio')?.value || 'none';
   BB.state.packs = Array.from(document.querySelectorAll('.bb-pack:checked')).map(cb => cb.value);
+  BB.state.seatedOnly = document.getElementById('bb-seated-only')?.checked || false;
   BB.state.quietRanges = Array.from(document.querySelectorAll('.bb-quiet-item')).map(item => ({
     start: item.querySelector('.bb-quiet-start')?.value || '22:00',
     end: item.querySelector('.bb-quiet-end')?.value || '07:00'
@@ -4856,6 +4923,11 @@ function saveBBSettings() {
   // If interval changed and nudges are active, restart countdown
   if (oldInterval !== BB.state.intervalMins && isActive) {
     startCountdown();
+  }
+
+  // If seated-only changed, refresh suggestion
+  if (isActive) {
+    setSuggestion();
   }
 
   console.log('BB settings saved:', BB.state);
@@ -5141,6 +5213,7 @@ const BB = {
     intervalMins: 60,
     quietRanges: [],
     packs: ["desk","eyes"],
+    seatedOnly: false,
     audio: "none",
     theme: "ocean",
     snoozeUntil: 0,
@@ -5311,6 +5384,14 @@ function filterPool(exerciseKeys) {
     filtered = filtered.filter(key => {
       const ex = EXERCISE_LIBRARY[key];
       return ex && (ex.quiet_alt || ex.tags?.includes('quiet') || ex.tags?.includes('seated'));
+    });
+  }
+
+  // Apply seated-only filter
+  if (BB.state.seatedOnly) {
+    filtered = filtered.filter(key => {
+      const ex = EXERCISE_LIBRARY[key];
+      return ex && ex.tags?.includes('seated');
     });
   }
 
@@ -5565,6 +5646,20 @@ document.querySelectorAll("[data-env]").forEach(btn => {
         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="eyes" class="bb-pack" style="cursor: pointer;"> Eye-care (free)</label>
         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="commute" class="bb-pack" style="cursor: pointer;"> Commute (Pro)</label>
         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="stretch" class="bb-pack" style="cursor: pointer;"> Stretch (Pro)</label>
+      </div>
+    </section>
+
+    <!-- Seated-only Filter -->
+    <section>
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #475569;">Seated-only mode</label>
+          <p style="font-size: 12px; color: #64748b; margin-top: 4px; margin-bottom: 0;">Show only exercises you can do while sitting.</p>
+        </div>
+        <label class="toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+          <input type="checkbox" id="bb-seated-only" style="opacity: 0; width: 0; height: 0;">
+          <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; transition: 0.3s; border-radius: 24px;" class="toggle-slider"></span>
+        </label>
       </div>
     </section>
 
