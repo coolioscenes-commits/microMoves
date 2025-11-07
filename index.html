@@ -5000,18 +5000,7 @@ function handleWidgetKeydown(e) {
   }
 }
 
-if (bbToggleWidget) {
-  bbToggleWidget.addEventListener('click', () => {
-    console.log('Widget button clicked');
-    if (bbWidget?.classList.contains('hidden')) {
-      enterWidgetMode();
-    } else {
-      exitWidgetMode();
-    }
-  });
-} else {
-  console.error('Widget button not found! Check DOM order.');
-}
+// Widget button initialization moved to second script block (after HTML elements)
 
 bbWidgetExit?.addEventListener('click', exitWidgetMode);
 
@@ -6554,6 +6543,29 @@ document.getElementById('bb-snooze-shortcut')?.addEventListener('click', () => {
   if (modal) modal.classList.add('hidden');
   if (overlay) overlay.classList.add('hidden');
 });
+
+// Initialize Widget button (now that HTML elements exist)
+const bbToggleWidgetBtn = document.getElementById('bb-toggle-widget');
+const bbWidgetContainer = document.getElementById('bb-widget');
+
+if (bbToggleWidgetBtn && typeof enterWidgetMode === 'function' && typeof exitWidgetMode === 'function') {
+  console.log('Widget button found! Setting up event listener.');
+  bbToggleWidgetBtn.addEventListener('click', () => {
+    console.log('Widget button clicked');
+    if (bbWidgetContainer?.classList.contains('hidden')) {
+      enterWidgetMode();
+    } else {
+      exitWidgetMode();
+    }
+  });
+} else {
+  console.error('Widget initialization failed:', {
+    button: !!bbToggleWidgetBtn,
+    container: !!bbWidgetContainer,
+    enterFn: typeof enterWidgetMode === 'function',
+    exitFn: typeof exitWidgetMode === 'function'
+  });
+}
 </script>
 
 </body>
