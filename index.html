@@ -5663,6 +5663,94 @@ document.querySelectorAll("[data-env]").forEach(btn => {
 <audio id="bb-audio-ping" preload="auto" src="/audio/ping.mp3"></audio>
 
 <script>
+// Global snooze variable
+let snoozeUntil = null;
+
+// Settings functions
+function loadBBSettings() {
+  // Load interval
+  const interval = localStorage.getItem('bb_interval') || '60';
+  const intervalSelect = document.getElementById('bb-interval');
+  if (intervalSelect) intervalSelect.value = interval;
+
+  // Load seated-only
+  const seatedOnly = localStorage.getItem('bb_seated_only') === '1';
+  const seatedCheckbox = document.getElementById('bb-seated-only');
+  if (seatedCheckbox) seatedCheckbox.checked = seatedOnly;
+
+  // Load packs
+  const packs = JSON.parse(localStorage.getItem('bb_packs') || '["desk","eyes"]');
+  document.querySelectorAll('.bb-pack').forEach(checkbox => {
+    checkbox.checked = packs.includes(checkbox.value);
+  });
+
+  // Load quiet hours
+  loadQuietHours();
+}
+
+function saveBBSettings() {
+  // Save interval
+  const intervalSelect = document.getElementById('bb-interval');
+  if (intervalSelect) {
+    localStorage.setItem('bb_interval', intervalSelect.value);
+  }
+
+  // Save seated-only
+  const seatedCheckbox = document.getElementById('bb-seated-only');
+  if (seatedCheckbox) {
+    localStorage.setItem('bb_seated_only', seatedCheckbox.checked ? '1' : '0');
+  }
+
+  // Save packs
+  const selectedPacks = Array.from(document.querySelectorAll('.bb-pack:checked')).map(cb => cb.value);
+  localStorage.setItem('bb_packs', JSON.stringify(selectedPacks));
+
+  // Save quiet hours
+  const quietHours = [];
+  document.querySelectorAll('.bb-quiet-item').forEach(item => {
+    const start = item.querySelector('.bb-quiet-start')?.value;
+    const end = item.querySelector('.bb-quiet-end')?.value;
+    if (start && end) {
+      quietHours.push({ start, end });
+    }
+  });
+  localStorage.setItem('bb_quiet_hours', JSON.stringify(quietHours));
+}
+
+function loadQuietHours() {
+  const quietList = document.getElementById('bb-quiet-list');
+  if (!quietList) return;
+
+  const quietHours = JSON.parse(localStorage.getItem('bb_quiet_hours') || '[]');
+  quietList.innerHTML = '';
+
+  quietHours.forEach((range, idx) => {
+    addQuietHourRow(range.start, range.end);
+  });
+}
+
+function addQuietHourRow(start = '09:00', end = '17:00') {
+  const quietList = document.getElementById('bb-quiet-list');
+  if (!quietList) return;
+
+  const row = document.createElement('div');
+  row.className = 'bb-quiet-item';
+  row.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+
+  row.innerHTML = `
+    <input type="time" class="bb-quiet-start" value="${start}" style="flex: 1; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px; font-size: 13px;">
+    <span style="color: #64748b;">to</span>
+    <input type="time" class="bb-quiet-end" value="${end}" style="flex: 1; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px; font-size: 13px;">
+    <button class="bb-quiet-remove" style="padding: 4px 8px; border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; cursor: pointer; font-size: 12px;" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">Remove</button>
+  `;
+
+  quietList.appendChild(row);
+
+  row.querySelector('.bb-quiet-remove')?.addEventListener('click', () => {
+    row.remove();
+  });
+}
+
 // Initialize BB Settings, Widget, and Snooze after DOM elements are loaded
 const bbOpenSettings = document.getElementById('bb-open-settings');
 const bbCloseSettings = document.getElementById('bb-close-settings');
@@ -5715,6 +5803,33 @@ function handleSettingsKeydown(e) {
       firstFocusable.focus();
       e.preventDefault();
     }
+  }
+}
+
+// Add quiet hours button handler
+const bbAddQuiet = document.getElementById('bb-add-quiet');
+bbAddQuiet?.addEventListener('click', () => {
+  addQuietHourRow();
+});
+
+// Snooze UI update function
+function updateSnoozeUI() {
+  const snoozeBadge = document.getElementById('snoozeBadge');
+  const snoozeTimeDisplay = document.getElementById('snoozeTimeDisplay');
+
+  if (!snoozeBadge || !snoozeTimeDisplay) return;
+
+  const snoozeUntil = localStorage.getItem('bb_snooze_until');
+
+  if (snoozeUntil && Date.now() < parseInt(snoozeUntil)) {
+    const untilTime = new Date(parseInt(snoozeUntil));
+    const hours = untilTime.getHours().toString().padStart(2, '0');
+    const mins = untilTime.getMinutes().toString().padStart(2, '0');
+    snoozeTimeDisplay.textContent = `${hours}:${mins}`;
+    snoozeBadge.style.display = 'inline-block';
+  } else {
+    snoozeBadge.style.display = 'none';
+    localStorage.removeItem('bb_snooze_until');
   }
 }
 
