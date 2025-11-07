@@ -2940,9 +2940,28 @@ function setSuggestion(){
     }
   }
 
-  // Fallback if no exercises match filters
+  // Fallback if no exercises match filters in current environment
+  // Search across all environments for exercises matching the filters
   if (pool.length === 0) {
-    pool = BANK[currentEnv];
+    const allExercises = Object.keys(EXERCISE_LIBRARY);
+    pool = allExercises.filter(key => {
+      const ex = EXERCISE_LIBRARY[key];
+      // Check if exercise matches selected filters
+      if (!matchesFilters(key)) return false;
+      // Check if exercise is compatible with current environment
+      if (ex.env && !ex.env.includes(currentEnv)) return false;
+      return true;
+    });
+
+    // If still no matches, expand to all environments
+    if (pool.length === 0) {
+      pool = allExercises.filter(key => matchesFilters(key));
+    }
+
+    // Final fallback: show environment default (this should rarely happen)
+    if (pool.length === 0) {
+      pool = BANK[currentEnv];
+    }
   }
 
   // Check if last 3 exercises are same category
