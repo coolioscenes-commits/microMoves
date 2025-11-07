@@ -5576,7 +5576,7 @@ document.querySelectorAll("[data-env]").forEach(btn => {
       aria-expanded="false">
       <span id="bb-snooze-btn-text">Snooze</span>
     </button>
-    <div id="bb-snooze-pop" class="hidden" role="dialog" aria-modal="true" aria-labelledby="snoozeTitle" style="position: fixed; bottom: 20px; right: 20px; width: 288px; border-radius: 12px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); padding: 16px; z-index: 85; border: 1px solid rgba(148, 163, 184, 0.2);">
+    <div id="bb-snooze-pop" class="hidden" role="dialog" aria-modal="true" aria-labelledby="snoozeTitle" aria-describedby="snoozeHelp" style="position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); right: max(20px, env(safe-area-inset-right)); width: min(288px, calc(100vw - 40px)); max-width: 288px; border-radius: 12px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); padding: 16px; z-index: 85; border: 1px solid rgba(148, 163, 184, 0.2);">
       <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px;">
         <h2 id="snoozeTitle" style="font-size: 14px; font-weight: 600; color: #f1f5f9;">Snooze nudges</h2>
         <button id="bb-snooze-close" style="padding: 4px; border-radius: 4px; background: transparent; border: none; cursor: pointer; font-size: 16px; color: #94a3b8; line-height: 1; transition: all 0.2s;" onmouseover="this.style.background='rgba(148, 163, 184, 0.2)'" onmouseout="this.style.background='transparent'" aria-label="Close snooze">✕</button>
@@ -5584,10 +5584,10 @@ document.querySelectorAll("[data-env]").forEach(btn => {
       <p id="snoozeHelp" style="margin-bottom: 12px; font-size: 12px; color: #cbd5e1;">Pause hourly reminders for a bit. They'll auto-resume.</p>
 
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
-        <button class="bb-snooze-chip" data-mins="15" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false">15m</button>
-        <button class="bb-snooze-chip" data-mins="30" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false">30m</button>
-        <button class="bb-snooze-chip" data-mins="60" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false">60m</button>
-        <button class="bb-snooze-chip" data-mins="120" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false">2h</button>
+        <button class="bb-snooze-chip" data-mins="15" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false" aria-label="Snooze for 15 minutes">15m</button>
+        <button class="bb-snooze-chip" data-mins="30" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false" aria-label="Snooze for 30 minutes">30m</button>
+        <button class="bb-snooze-chip" data-mins="60" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false" aria-label="Snooze for 60 minutes">60m</button>
+        <button class="bb-snooze-chip" data-mins="120" style="padding: 10px 8px; border-radius: 6px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); color: #f1f5f9; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; min-height: 44px;" aria-pressed="false" aria-label="Snooze for 2 hours">2h</button>
       </div>
 
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
@@ -5615,9 +5615,9 @@ document.querySelectorAll("[data-env]").forEach(btn => {
 </div>
 
 <!-- Snooze Toast -->
-<div id="bb-snooze-toast" class="hidden" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); color: #f1f5f9; padding: 12px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); z-index: 90; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(148, 163, 184, 0.2);">
+<div id="bb-snooze-toast" class="hidden" role="status" aria-live="polite" style="position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); color: #f1f5f9; padding: 12px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); z-index: 90; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(148, 163, 184, 0.2); max-width: calc(100vw - 40px);">
   <span id="bb-snooze-toast-text" style="font-size: 14px;"></span>
-  <button id="bb-snooze-undo" style="padding: 4px 12px; border-radius: 4px; background: rgba(99, 102, 241, 0.3); border: 1px solid rgba(99, 102, 241, 0.5); color: #c7d2fe; font-size: 13px; font-weight: 500; cursor: pointer;">Undo</button>
+  <button id="bb-snooze-undo" style="padding: 4px 12px; border-radius: 4px; background: rgba(99, 102, 241, 0.3); border: 1px solid rgba(99, 102, 241, 0.5); color: #c7d2fe; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap;">Undo</button>
 </div>
 
 <!-- Settings Modal Overlay -->
@@ -6393,18 +6393,49 @@ document.addEventListener('click', (e) => {
 
 bbSnoozePop?.addEventListener('click', (e) => e.stopPropagation());
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && bbSnoozePop && !bbSnoozePop.classList.contains('hidden')) {
+function handleSnoozeDialogKeydown(e) {
+  if (e.key === 'Escape') {
     closeSnoozePopup();
+    return;
+  }
+
+  if (e.key === 'Tab') {
+    const focusableElements = bbSnoozePop.querySelectorAll(
+      'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey && document.activeElement === firstFocusable) {
+      lastFocusable.focus();
+      e.preventDefault();
+    } else if (!e.shiftKey && document.activeElement === lastFocusable) {
+      firstFocusable.focus();
+      e.preventDefault();
+    }
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if (bbSnoozePop && !bbSnoozePop.classList.contains('hidden')) {
+    handleSnoozeDialogKeydown(e);
   }
 });
 
 document.querySelectorAll('.bb-snooze-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
+  const handleChipSelect = () => {
     const minutes = parseInt(chip.dataset.mins);
     chip.setAttribute('aria-pressed', 'true');
     snoozeCustomInput.value = '';
     selectSnoozeMinutes(minutes);
+  };
+
+  chip.addEventListener('click', handleChipSelect);
+  chip.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleChipSelect();
+    }
   });
 });
 
@@ -6421,17 +6452,43 @@ snoozeCustomInput?.addEventListener('input', () => {
 });
 
 snoozeGo?.addEventListener('click', applySnooze);
+snoozeGo?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    applySnooze();
+  }
+});
 
 endSnoozeNow?.addEventListener('click', endSnooze);
+endSnoozeNow?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    endSnooze();
+  }
+});
 
 document.querySelectorAll('.bb-extend-snooze').forEach(btn => {
-  btn.addEventListener('click', () => {
+  const handleExtend = () => {
     const minutes = parseInt(btn.dataset.mins);
     extendSnooze(minutes);
+  };
+
+  btn.addEventListener('click', handleExtend);
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleExtend();
+    }
   });
 });
 
 bbSnoozeUndo?.addEventListener('click', undoSnooze);
+bbSnoozeUndo?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    undoSnooze();
+  }
+});
 
 window.addEventListener('storage', (e) => {
   if (e.key === 'bb_snooze_until') {
