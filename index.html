@@ -4828,371 +4828,6 @@ function updateUIWithTranslations() {
   });
 }
 
-// ========================= BB SETTINGS & FEATURES =========================
-// Settings Modal Controls
-const bbOpenSettings = document.getElementById('bb-open-settings');
-const bbCloseSettings = document.getElementById('bb-close-settings');
-const bbSaveSettings = document.getElementById('bb-save-settings');
-const bbSettingsModal = document.getElementById('bb-settings-modal');
-const bbSettingsOverlay = document.getElementById('bb-settings-overlay');
-
-if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
-  bbOpenSettings.addEventListener('click', () => {
-    bbSettingsModal.classList.remove('hidden');
-    bbSettingsOverlay.classList.remove('hidden');
-    loadBBSettings();
-
-    // Focus management: Focus first focusable element
-    setTimeout(() => {
-      const firstFocusable = bbSettingsModal.querySelector('button, input, select, [tabindex]:not([tabindex="-1"])');
-      if (firstFocusable) {
-        firstFocusable.focus();
-      }
-    }, 50);
-
-    // Add keyboard event listener for ESC and focus trap
-    bbSettingsModal.addEventListener('keydown', handleSettingsKeydown);
-  });
-
-  bbCloseSettings?.addEventListener('click', closeBBSettings);
-  bbSettingsOverlay.addEventListener('click', closeBBSettings);
-
-  bbSaveSettings?.addEventListener('click', () => {
-    saveBBSettings();
-    closeBBSettings();
-  });
-}
-
-function handleSettingsKeydown(e) {
-  // ESC to close
-  if (e.key === 'Escape') {
-    e.preventDefault();
-    closeBBSettings();
-    return;
-  }
-
-  // Focus trap: TAB cycling
-  if (e.key === 'Tab') {
-    const focusableElements = bbSettingsModal.querySelectorAll(
-      'button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])'
-    );
-    const firstFocusable = focusableElements[0];
-    const lastFocusable = focusableElements[focusableElements.length - 1];
-
-    if (e.shiftKey) {
-      // SHIFT+TAB: if on first element, wrap to last
-      if (document.activeElement === firstFocusable) {
-        e.preventDefault();
-        lastFocusable.focus();
-      }
-    } else {
-      // TAB: if on last element, wrap to first
-      if (document.activeElement === lastFocusable) {
-        e.preventDefault();
-        firstFocusable.focus();
-      }
-    }
-  }
-}
-
-function closeBBSettings() {
-  bbSettingsModal?.classList.add('hidden');
-  bbSettingsOverlay?.classList.add('hidden');
-
-  // Remove keyboard listener
-  bbSettingsModal?.removeEventListener('keydown', handleSettingsKeydown);
-
-  // Return focus to Settings button
-  if (bbOpenSettings) {
-    bbOpenSettings.focus();
-  }
-}
-
-function loadBBSettings() {
-  // Load from BB.state (unified settings)
-  const intervalSelect = document.getElementById('bb-interval');
-  if (intervalSelect) {
-    intervalSelect.value = String(BB.state.intervalMins);
-  }
-
-  // Audio
-  const audioSelect = document.getElementById('bb-audio');
-  if (audioSelect) {
-    audioSelect.value = BB.state.audio;
-  }
-
-  // Packs
-  document.querySelectorAll('.bb-pack').forEach(checkbox => {
-    checkbox.checked = BB.state.packs.includes(checkbox.value);
-  });
-
-  // Seated-only
-  const seatedOnlyCheckbox = document.getElementById('bb-seated-only');
-  if (seatedOnlyCheckbox) {
-    seatedOnlyCheckbox.checked = BB.state.seatedOnly || false;
-  }
-
-  // Quiet hours - convert from BB.state.quietRanges format
-  const quietHours = (BB.state.quietRanges || []).map(r => ({start: r.start, end: r.end}));
-  renderQuietHours(quietHours);
-
-  // Theme
-  document.querySelectorAll('.bb-theme').forEach(btn => {
-    btn.classList.toggle('ring-indigo-500', btn.dataset.theme === BB.state.theme);
-  });
-}
-
-function saveBBSettings() {
-  // Save to BB.state and persist
-  const oldInterval = BB.state.intervalMins;
-  BB.state.intervalMins = parseInt(document.getElementById('bb-interval')?.value || '60', 10);
-  BB.state.audio = document.getElementById('bb-audio')?.value || 'none';
-  BB.state.packs = Array.from(document.querySelectorAll('.bb-pack:checked')).map(cb => cb.value);
-  BB.state.seatedOnly = document.getElementById('bb-seated-only')?.checked || false;
-  BB.state.quietRanges = Array.from(document.querySelectorAll('.bb-quiet-item')).map(item => ({
-    start: item.querySelector('.bb-quiet-start')?.value || '22:00',
-    end: item.querySelector('.bb-quiet-end')?.value || '07:00'
-  }));
-  BB.state.theme = document.querySelector('.bb-theme.ring-indigo-500')?.dataset.theme || 'ocean';
-
-  persistBBSettings();
-  applyTheme(BB.state.theme);
-
-  // If interval changed and nudges are active, restart countdown
-  if (oldInterval !== BB.state.intervalMins && isActive) {
-    startCountdown();
-  }
-
-  // If seated-only changed, refresh suggestion
-  if (isActive) {
-    setSuggestion();
-  }
-
-  console.log('BB settings saved:', BB.state);
-}
-
-// Quiet Hours Management
-const bbAddQuiet = document.getElementById('bb-add-quiet');
-const bbQuietList = document.getElementById('bb-quiet-list');
-
-bbAddQuiet?.addEventListener('click', () => {
-  addQuietHour();
-});
-
-function addQuietHour(start = '09:00', end = '17:00') {
-  const item = document.createElement('div');
-  item.className = 'bb-quiet-item flex items-center gap-2';
-  item.innerHTML = `
-    <input type="time" class="bb-quiet-start text-xs px-2 py-1 rounded border" value="${start}">
-    <span class="text-xs">to</span>
-    <input type="time" class="bb-quiet-end text-xs px-2 py-1 rounded border" value="${end}">
-    <button class="bb-quiet-remove text-xs px-2 py-1 rounded bg-red-50 hover:bg-red-100 text-red-600">×</button>
-  `;
-  bbQuietList?.appendChild(item);
-
-  item.querySelector('.bb-quiet-remove')?.addEventListener('click', () => {
-    item.remove();
-  });
-}
-
-function renderQuietHours(hours) {
-  bbQuietList.innerHTML = '';
-  hours.forEach(h => addQuietHour(h.start, h.end));
-}
-
-// Theme Selection
-document.querySelectorAll('.bb-theme').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.bb-theme').forEach(b => b.classList.remove('ring-indigo-500'));
-    btn.classList.add('ring-indigo-500');
-  });
-});
-
-// Snooze Popover
-const bbSnoozeBtn = document.getElementById('bb-snooze-btn');
-const bbSnoozePop = document.getElementById('bb-snooze-pop');
-const snoozeBadge = document.getElementById('snoozeBadge');
-const snoozeTimeDisplay = document.getElementById('snoozeTimeDisplay');
-
-function closeSnoozePopover() {
-  bbSnoozePop?.classList.add('hidden');
-  if (bbSnoozeBtn) {
-    bbSnoozeBtn.setAttribute('aria-expanded', 'false');
-  }
-}
-
-function openSnoozePopover() {
-  bbSnoozePop?.classList.remove('hidden');
-  if (bbSnoozeBtn) {
-    bbSnoozeBtn.setAttribute('aria-expanded', 'true');
-  }
-  // Focus first option
-  setTimeout(() => {
-    const firstOption = bbSnoozePop?.querySelector('.bb-snooze-opt');
-    if (firstOption) firstOption.focus();
-  }, 50);
-}
-
-bbSnoozeBtn?.addEventListener('click', (e) => {
-  e.stopPropagation();
-
-  // If already snoozed, offer to clear it
-  const isSnoozed = BB.state.snoozeUntil && BB.now() < BB.state.snoozeUntil;
-  if (isSnoozed) {
-    BB.state.snoozeUntil = 0;
-    persistBBSettings();
-    updateSnoozeDisplay();
-    if (typeof showToast === 'function') {
-      showToast('Snooze cleared - nudges resumed');
-    }
-    if (typeof appendLog === 'function') {
-      appendLog('Snooze cleared');
-    }
-    return;
-  }
-
-  if (bbSnoozePop?.classList.contains('hidden')) {
-    openSnoozePopover();
-  } else {
-    closeSnoozePopover();
-  }
-});
-
-document.addEventListener('click', () => {
-  closeSnoozePopover();
-});
-
-bbSnoozePop?.addEventListener('click', (e) => e.stopPropagation());
-
-// ESC key handler for snooze popover
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && bbSnoozePop && !bbSnoozePop.classList.contains('hidden')) {
-    e.preventDefault();
-    closeSnoozePopover();
-    if (bbSnoozeBtn) bbSnoozeBtn.focus();
-  }
-});
-
-document.querySelectorAll('.bb-snooze-opt').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const mins = parseInt(btn.dataset.mins, 10);
-    const until = Date.now() + mins * 60000;
-    BB.state.snoozeUntil = until;
-    persistBBSettings();
-    closeSnoozePopover();
-
-    const untilDate = new Date(until);
-    const timeStr = untilDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    if (typeof showToast === 'function') {
-      showToast(`Snoozed until ${timeStr} (${mins} min)`);
-    }
-    if (typeof appendLog === 'function') {
-      appendLog(`Snoozed for ${mins} minutes until ${timeStr}`);
-    }
-    updateSnoozeDisplay();
-  });
-});
-
-function updateSnoozeDisplay() {
-  // Clear expired snooze
-  if (BB.state.snoozeUntil && BB.now() >= BB.state.snoozeUntil) {
-    BB.state.snoozeUntil = 0;
-    persistBBSettings();
-  }
-
-  const isSnoozed = BB.state.snoozeUntil && BB.now() < BB.state.snoozeUntil;
-
-  // Update button
-  if (bbSnoozeBtn) {
-    if (isSnoozed) {
-      const untilDate = new Date(BB.state.snoozeUntil);
-      const timeStr = untilDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      bbSnoozeBtn.textContent = `Snoozed (${timeStr})`;
-      bbSnoozeBtn.style.setProperty('background', '#fef3c7', 'important');
-      bbSnoozeBtn.style.setProperty('color', '#92400e', 'important');
-      bbSnoozeBtn.setAttribute('aria-label', `Snoozed until ${timeStr}, click to clear`);
-    } else {
-      bbSnoozeBtn.textContent = 'Snooze';
-      bbSnoozeBtn.style.removeProperty('background');
-      bbSnoozeBtn.style.removeProperty('color');
-      bbSnoozeBtn.style.background = '#f1f5f9';
-      bbSnoozeBtn.style.color = '#1e293b';
-      bbSnoozeBtn.setAttribute('aria-label', 'Snooze menu, pause nudges');
-    }
-  }
-
-  // Update badge
-  if (snoozeBadge && snoozeTimeDisplay) {
-    if (isSnoozed) {
-      const untilDate = new Date(BB.state.snoozeUntil);
-      const timeStr = untilDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      snoozeTimeDisplay.textContent = timeStr;
-      snoozeBadge.style.display = 'inline-block';
-    } else {
-      snoozeBadge.style.display = 'none';
-    }
-  }
-
-  // Update countdown to show "Snoozed" when active
-  if (countdownEl && isSnoozed) {
-    countdownEl.textContent = 'Snoozed';
-    countdownEl.style.display = 'inline-flex';
-  }
-}
-
-// Initialization moved after BB is defined - see after initBBCore()
-
-// .ics Export
-document.querySelectorAll('.bb-ics').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const mins = parseInt(btn.dataset.mins);
-    generateICS(mins);
-  });
-});
-
-function generateICS(intervalMins) {
-  const now = new Date();
-  const events = [];
-
-  for (let i = 0; i < 168; i++) { // 1 week of events
-    const start = new Date(now.getTime() + i * intervalMins * 60000);
-    const end = new Date(start.getTime() + 5 * 60000); // 5 min duration
-
-    events.push(`BEGIN:VEVENT
-UID:bb-${start.getTime()}@breakbreath.app
-DTSTAMP:${formatICSDate(now)}
-DTSTART:${formatICSDate(start)}
-DTEND:${formatICSDate(end)}
-SUMMARY:BreakBreath Movement Break
-DESCRIPTION:Time for a gentle movement break
-END:VEVENT`);
-  }
-
-  const ics = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//BreakBreath//EN
-CALNAME:BreakBreath Reminders
-${events.join('\n')}
-END:VCALENDAR`;
-
-  downloadFile(`breakbreath-${intervalMins}min.ics`, ics, 'text/calendar');
-}
-
-function formatICSDate(date) {
-  return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-}
-
-function downloadFile(filename, content, type) {
-  const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-// Weekly Recap - handled below with proper weeklyRecap() function
 
 // Widget Mode
 const bbToggleWidget = document.getElementById('bb-toggle-widget');
@@ -5860,6 +5495,8 @@ document.querySelectorAll("[data-env]").forEach(btn => {
     btn.setAttribute("aria-pressed", "false");
   }
 });
+
+// Note: BB Settings, Widget, and Snooze initialization moved to after HTML elements
 </script>
 
 <!-- ========================= BB SETTINGS & FEATURES HTML ========================= -->
@@ -6025,6 +5662,160 @@ document.querySelectorAll("[data-env]").forEach(btn => {
 <audio id="bb-audio-calm" preload="auto" src="/audio/calm.mp3"></audio>
 <audio id="bb-audio-ping" preload="auto" src="/audio/ping.mp3"></audio>
 
+<script>
+// Initialize BB Settings, Widget, and Snooze after DOM elements are loaded
+const bbOpenSettings = document.getElementById('bb-open-settings');
+const bbCloseSettings = document.getElementById('bb-close-settings');
+const bbSaveSettings = document.getElementById('bb-save-settings');
+const bbSettingsModal = document.getElementById('bb-settings-modal');
+const bbSettingsOverlay = document.getElementById('bb-settings-overlay');
+
+if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
+  bbOpenSettings.addEventListener('click', () => {
+    bbSettingsModal.classList.remove('hidden');
+    bbSettingsOverlay.classList.remove('hidden');
+    loadBBSettings();
+
+    setTimeout(() => {
+      const firstFocusable = bbSettingsModal.querySelector('button, input, select, [tabindex]:not([tabindex="-1"])');
+      if (firstFocusable) firstFocusable.focus();
+    }, 50);
+
+    bbSettingsModal.addEventListener('keydown', handleSettingsKeydown);
+  });
+
+  bbCloseSettings?.addEventListener('click', closeBBSettings);
+  bbSettingsOverlay.addEventListener('click', closeBBSettings);
+  bbSaveSettings?.addEventListener('click', () => {
+    saveBBSettings();
+    closeBBSettings();
+  });
+}
+
+function closeBBSettings() {
+  bbSettingsModal?.classList.add('hidden');
+  bbSettingsOverlay?.classList.add('hidden');
+  bbSettingsModal?.removeEventListener('keydown', handleSettingsKeydown);
+  if (bbOpenSettings) bbOpenSettings.focus();
+}
+
+function handleSettingsKeydown(e) {
+  if (e.key === 'Escape') {
+    closeBBSettings();
+    return;
+  }
+  if (e.key === 'Tab') {
+    const focusableElements = bbSettingsModal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+    if (e.shiftKey && document.activeElement === firstFocusable) {
+      lastFocusable.focus();
+      e.preventDefault();
+    } else if (!e.shiftKey && document.activeElement === lastFocusable) {
+      firstFocusable.focus();
+      e.preventDefault();
+    }
+  }
+}
+
+const bbSnoozeBtn = document.getElementById('bb-snooze-btn');
+const bbSnoozePop = document.getElementById('bb-snooze-pop');
+
+bbSnoozeBtn?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const isOpen = bbSnoozePop.style.display === 'block';
+  bbSnoozePop.style.display = isOpen ? 'none' : 'block';
+  bbSnoozeBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+});
+
+document.addEventListener('click', () => {
+  if (bbSnoozePop) bbSnoozePop.style.display = 'none';
+});
+bbSnoozePop?.addEventListener('click', (e) => e.stopPropagation());
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && bbSnoozePop && bbSnoozePop.style.display === 'block') {
+    bbSnoozePop.style.display = 'none';
+  }
+});
+
+document.querySelectorAll('[data-snooze]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mins = parseInt(btn.dataset.snooze);
+    snoozeUntil = Date.now() + (mins * 60 * 1000);
+    localStorage.setItem('bb_snooze_until', snoozeUntil);
+    if (bbSnoozePop) bbSnoozePop.style.display = 'none';
+    updateSnoozeUI();
+    stopNudges();
+  });
+});
+
+const bbToggleWidget = document.getElementById('bb-toggle-widget');
+const bbWidget = document.getElementById('bb-widget');
+const bbWidgetExit = document.getElementById('bb-widget-exit');
+const bbWidgetStart = document.getElementById('bb-widget-start');
+const bbWidgetTimer = document.getElementById('bb-widget-timer');
+
+bbToggleWidget?.addEventListener('click', () => {
+  const isWidget = localStorage.getItem('bb_widget_mode') === '1';
+  if (isWidget) {
+    exitWidgetMode();
+  } else {
+    enterWidgetMode();
+  }
+});
+
+let widgetDragging = false;
+const widgetDragOffset = { x: 0, y: 0 };
+
+if (bbWidget) {
+  bbWidget.addEventListener('mousedown', (e) => {
+    if (e.target === bbWidget || e.target.closest('#bb-widget-title')) {
+      widgetDragging = true;
+      widgetDragOffset.x = e.clientX - bbWidget.offsetLeft;
+      widgetDragOffset.y = e.clientY - bbWidget.offsetTop;
+      bbWidget.style.cursor = 'grabbing';
+    }
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (widgetDragging && bbWidget) {
+      let newLeft = e.clientX - widgetDragOffset.x;
+      let newTop = e.clientY - widgetDragOffset.y;
+      const maxX = window.innerWidth - bbWidget.offsetWidth;
+      const maxY = window.innerHeight - bbWidget.offsetHeight;
+      newLeft = Math.max(0, Math.min(newLeft, maxX));
+      newTop = Math.max(0, Math.min(newTop, maxY));
+      bbWidget.style.left = `${newLeft}px`;
+      bbWidget.style.top = `${newTop}px`;
+      bbWidget.style.right = 'auto';
+      bbWidget.style.bottom = 'auto';
+      localStorage.setItem('bb_widget_position', JSON.stringify({ left: newLeft, top: newTop }));
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (widgetDragging && bbWidget) {
+      widgetDragging = false;
+      bbWidget.style.cursor = 'move';
+    }
+  });
+}
+
+if (localStorage.getItem('bb_widget_mode') === '1') {
+  enterWidgetMode();
+  const savedPos = localStorage.getItem('bb_widget_position');
+  if (savedPos && bbWidget) {
+    try {
+      const pos = JSON.parse(savedPos);
+      bbWidget.style.left = `${pos.left}px`;
+      bbWidget.style.top = `${pos.top}px`;
+      bbWidget.style.right = 'auto';
+      bbWidget.style.bottom = 'auto';
+    } catch (e) {}
+  }
+}
 </script>
+
 </body>
 </html>
