@@ -4447,23 +4447,25 @@ const installBtn = $("installBtn");
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  installBtn.classList.add('show');
+  if (installBtn) installBtn.classList.add('show');
 });
 
-installBtn.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') {
-    showToast('BreakBreath installed! Access it from your home screen.');
-  }
-  deferredPrompt = null;
-  installBtn.classList.remove('show');
-});
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      showToast('BreakBreath installed! Access it from your home screen.');
+    }
+    deferredPrompt = null;
+    installBtn.classList.remove('show');
+  });
+}
 
 window.addEventListener('appinstalled', () => {
   showToast('BreakBreath is now installed on your device!');
-  installBtn.classList.remove('show');
+  if (installBtn) installBtn.classList.remove('show');
 });
 
 // Sticky bar scroll behavior
