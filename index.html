@@ -3216,6 +3216,37 @@ function nextTopOfHour() {
   return next.getTime() - now.getTime();
 }
 
+function isInQuietHours() {
+  if (!BB.state.quietRanges || BB.state.quietRanges.length === 0) {
+    return false;
+  }
+
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+
+  for (const range of BB.state.quietRanges) {
+    const [startH, startM] = range.start.split(':').map(Number);
+    const [endH, endM] = range.end.split(':').map(Number);
+    const startMins = startH * 60 + startM;
+    const endMins = endH * 60 + endM;
+
+    // Handle ranges that cross midnight
+    if (startMins > endMins) {
+      // e.g., 22:00 to 07:00
+      if (currentTime >= startMins || currentTime <= endMins) {
+        return true;
+      }
+    } else {
+      // Normal range within same day
+      if (currentTime >= startMins && currentTime <= endMins) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 function startNudges(){
   if (timerId) clearTimeout(timerId);
   if (intervalId) clearInterval(intervalId);
@@ -4712,6 +4743,17 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
     bbSettingsModal.classList.remove('hidden');
     bbSettingsOverlay.classList.remove('hidden');
     loadBBSettings();
+
+    // Focus management: Focus first focusable element
+    setTimeout(() => {
+      const firstFocusable = bbSettingsModal.querySelector('button, input, select, [tabindex]:not([tabindex="-1"])');
+      if (firstFocusable) {
+        firstFocusable.focus();
+      }
+    }, 50);
+
+    // Add keyboard event listener for ESC and focus trap
+    bbSettingsModal.addEventListener('keydown', handleSettingsKeydown);
   });
 
   bbCloseSettings?.addEventListener('click', closeBBSettings);
@@ -4723,9 +4765,49 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
   });
 }
 
+function handleSettingsKeydown(e) {
+  // ESC to close
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    closeBBSettings();
+    return;
+  }
+
+  // Focus trap: TAB cycling
+  if (e.key === 'Tab') {
+    const focusableElements = bbSettingsModal.querySelectorAll(
+      'button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])'
+    );
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey) {
+      // SHIFT+TAB: if on first element, wrap to last
+      if (document.activeElement === firstFocusable) {
+        e.preventDefault();
+        lastFocusable.focus();
+      }
+    } else {
+      // TAB: if on last element, wrap to first
+      if (document.activeElement === lastFocusable) {
+        e.preventDefault();
+        firstFocusable.focus();
+      }
+    }
+  }
+}
+
 function closeBBSettings() {
   bbSettingsModal?.classList.add('hidden');
   bbSettingsOverlay?.classList.add('hidden');
+
+  // Remove keyboard listener
+  bbSettingsModal?.removeEventListener('keydown', handleSettingsKeydown);
+
+  // Return focus to Settings button
+  if (bbOpenSettings) {
+    bbOpenSettings.focus();
+  }
 }
 
 function loadBBSettings() {
@@ -4758,6 +4840,7 @@ function loadBBSettings() {
 
 function saveBBSettings() {
   // Save to BB.state and persist
+  const oldInterval = BB.state.intervalMins;
   BB.state.intervalMins = parseInt(document.getElementById('bb-interval')?.value || '60', 10);
   BB.state.audio = document.getElementById('bb-audio')?.value || 'none';
   BB.state.packs = Array.from(document.querySelectorAll('.bb-pack:checked')).map(cb => cb.value);
@@ -4769,6 +4852,12 @@ function saveBBSettings() {
 
   persistBBSettings();
   applyTheme(BB.state.theme);
+
+  // If interval changed and nudges are active, restart countdown
+  if (oldInterval !== BB.state.intervalMins && isActive) {
+    startCountdown();
+  }
+
   console.log('BB settings saved:', BB.state);
 }
 
@@ -5440,9 +5529,9 @@ document.querySelectorAll("[data-env]").forEach(btn => {
 <div id="bb-settings-overlay" class="hidden" style="position: fixed; inset: 0; z-index: 70; background: rgba(0, 0, 0, 0.5);"></div>
 
 <!-- Settings Modal -->
-<div id="bb-settings-modal" class="hidden" style="position: fixed; z-index: 71; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 92vw; max-width: 576px; border-radius: 12px; background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.1);">
+<div id="bb-settings-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="settings-heading" style="position: fixed; z-index: 71; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 92vw; max-width: 576px; border-radius: 12px; background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.1);">
   <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
-    <h3 style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0;">BreakBreath Settings</h3>
+    <h3 id="settings-heading" style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0;">BreakBreath Settings</h3>
     <button id="bb-close-settings" style="padding: 8px; border-radius: 4px; border: none; background: transparent; cursor: pointer; font-size: 18px; color: #64748b;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" aria-label="Close">✕</button>
   </div>
 
@@ -5520,7 +5609,7 @@ document.querySelectorAll("[data-env]").forEach(btn => {
     </div>
     <div style="display: flex; align-items: center; gap: 8px;">
       <button id="bb-weekly-recap" style="padding: 8px 12px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Download recap</button>
-      <button id="bb-save-settings" style="padding: 8px 12px; border-radius: 4px; background: #6366f1; color: white; border: none; cursor: pointer; font-size: 13px; font-weight: 500;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'">Save</button>
+      <button id="bb-save-settings" style="padding: 8px 12px; border-radius: 4px; background: #6366f1; color: white; border: none; cursor: pointer; font-size: 13px; font-weight: 500;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'" aria-label="Save settings">Save</button>
     </div>
   </div>
 </div>
