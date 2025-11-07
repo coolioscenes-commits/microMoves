@@ -6117,20 +6117,31 @@ const bbSnoozePop = document.getElementById('bb-snooze-pop');
 
 bbSnoozeBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
-  const isOpen = bbSnoozePop.style.display === 'block';
-  bbSnoozePop.style.display = isOpen ? 'none' : 'block';
+  const isOpen = !bbSnoozePop.classList.contains('hidden');
+  bbSnoozePop.classList.toggle('hidden');
   bbSnoozeBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
 });
 
 document.addEventListener('click', () => {
-  if (bbSnoozePop) bbSnoozePop.style.display = 'none';
+  if (bbSnoozePop) bbSnoozePop.classList.add('hidden');
 });
 bbSnoozePop?.addEventListener('click', (e) => e.stopPropagation());
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && bbSnoozePop && bbSnoozePop.style.display === 'block') {
-    bbSnoozePop.style.display = 'none';
+  if (e.key === 'Escape' && bbSnoozePop && !bbSnoozePop.classList.contains('hidden')) {
+    bbSnoozePop.classList.add('hidden');
   }
+});
+
+document.querySelectorAll('.bb-snooze-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mins = parseInt(btn.dataset.mins);
+    snoozeUntil = Date.now() + (mins * 60 * 1000);
+    localStorage.setItem('bb_snooze_until', snoozeUntil);
+    if (bbSnoozePop) bbSnoozePop.classList.add('hidden');
+    updateSnoozeUI();
+    stopNudges();
+  });
 });
 
 document.querySelectorAll('[data-snooze]').forEach(btn => {
@@ -6138,7 +6149,7 @@ document.querySelectorAll('[data-snooze]').forEach(btn => {
     const mins = parseInt(btn.dataset.snooze);
     snoozeUntil = Date.now() + (mins * 60 * 1000);
     localStorage.setItem('bb_snooze_until', snoozeUntil);
-    if (bbSnoozePop) bbSnoozePop.style.display = 'none';
+    if (bbSnoozePop) bbSnoozePop.classList.add('hidden');
     updateSnoozeUI();
     stopNudges();
   });
