@@ -5397,10 +5397,18 @@ async function enableNotificationsCore(){
 
 function updateNotificationButton() {
   const btn = document.getElementById('bb-enable-notify');
+  const blockedMsg = document.getElementById('bb-notify-blocked');
   if (!btn) return;
 
   const enabled = BB.lsGet('bb_notifications_enabled', false);
   const hasPermission = 'Notification' in window && Notification.permission === 'granted';
+  const isBlocked = 'Notification' in window && Notification.permission === 'denied';
+
+  if (isBlocked && blockedMsg) {
+    blockedMsg.classList.remove('hidden');
+  } else if (blockedMsg) {
+    blockedMsg.classList.add('hidden');
+  }
 
   if (enabled && hasPermission) {
     btn.textContent = '✓ Enabled';
@@ -5567,7 +5575,7 @@ document.querySelectorAll("[data-env]").forEach(btn => {
   <div style="display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
     <div>
       <h3 id="settings-heading" style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0 0 4px 0;">Settings</h3>
-      <p style="font-size: 13px; color: #64748b; margin: 0; line-height: 1.4;">Make BreakBreath fit your day. Changes save automatically.</p>
+      <p style="font-size: 13px; color: #64748b; margin: 0; line-height: 1.4;">Make it yours. Changes save automatically.</p>
     </div>
     <button id="bb-close-settings" style="padding: 8px; border-radius: 4px; border: none; background: transparent; cursor: pointer; font-size: 20px; color: #64748b; line-height: 1; flex-shrink: 0;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" aria-label="Close settings">×</button>
   </div>
@@ -5578,8 +5586,8 @@ document.querySelectorAll("[data-env]").forEach(btn => {
       <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Reminder interval</label>
       <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
         <label style="position: relative;"><input type="radio" name="bb-interval" value="60" tabindex="0" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="60" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s;">60m</span></label>
-        <label style="position: relative;"><input type="radio" name="bb-interval" value="45" tabindex="0" class="pro-locked" data-pro-feature="45m interval" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="45" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">45m <span style="font-size: 12px;">🔒</span></span></label>
-        <label style="position: relative;"><input type="radio" name="bb-interval" value="30" tabindex="0" class="pro-locked" data-pro-feature="30m interval" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="30" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">30m <span style="font-size: 12px;">🔒</span></span></label>
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="45" tabindex="0" class="pro-locked" data-pro-feature="45m interval" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="45" title="Pro feature — unlock to use" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">45m <span style="font-size: 12px;">🔒</span></span></label>
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="30" tabindex="0" class="pro-locked" data-pro-feature="30m interval" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="30" title="Pro feature — unlock to use" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">30m <span style="font-size: 12px;">🔒</span></span></label>
         <label style="position: relative;"><input type="radio" name="bb-interval" value="custom" tabindex="0" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="custom" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s;">Custom</span></label>
       </div>
       <div id="bb-custom-interval" class="hidden" style="margin-top: 8px;">
@@ -5595,7 +5603,7 @@ document.querySelectorAll("[data-env]").forEach(btn => {
         <span style="color: #64748b; font-size: 13px;">to</span>
         <input type="time" id="bb-quiet-end" tabindex="0" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" value="07:00" aria-label="Quiet hours end time">
       </div>
-      <p style="font-size: 12px; color: #64748b; margin: 0;">Applies nightly, including past midnight</p>
+      <p style="font-size: 12px; color: #64748b; margin: 0;">Applies every night, including past midnight</p>
     </section>
 
     <!-- Seated-only mode (moved up) -->
@@ -5616,10 +5624,10 @@ document.querySelectorAll("[data-env]").forEach(btn => {
     <section>
       <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Color theme</label>
       <div style="display: flex; gap: 10px; align-items: center;">
-        <button data-theme="system" class="bb-theme" style="min-width: 44px; min-height: 44px; padding: 8px 12px; border-radius: 8px; background: linear-gradient(135deg, #1e293b 50%, #f8fafc 50%); border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s; font-size: 11px; color: #64748b; font-weight: 500;" aria-label="System theme" title="System"></button>
-        <button data-theme="ocean" class="bb-theme ring-indigo-500" style="min-width: 44px; min-height: 44px; border-radius: 8px; background: #0ea5e9; border: 2px solid #0ea5e9; cursor: pointer; transition: all 0.15s;" aria-label="Ocean theme" title="Ocean"></button>
-        <button data-theme="sunrise" class="bb-theme" style="min-width: 44px; min-height: 44px; border-radius: 8px; background: #f59e0b; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s;" aria-label="Sunrise theme" title="Sunrise"></button>
-        <button data-theme="forest" class="bb-theme" style="min-width: 44px; min-height: 44px; border-radius: 8px; background: #10b981; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s;" aria-label="Forest theme" title="Forest"></button>
+        <button data-theme="system" class="bb-theme" tabindex="0" style="min-width: 44px; min-height: 44px; padding: 8px 12px; border-radius: 8px; background: linear-gradient(135deg, #1e293b 50%, #f8fafc 50%); border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s; font-size: 11px; color: #64748b; font-weight: 500;" aria-label="System theme" aria-pressed="false" title="System"></button>
+        <button data-theme="ocean" class="bb-theme ring-indigo-500" tabindex="0" style="min-width: 44px; min-height: 44px; border-radius: 8px; background: #0ea5e9; border: 2px solid #0ea5e9; cursor: pointer; transition: all 0.15s;" aria-label="Ocean theme" aria-pressed="true" title="Ocean"></button>
+        <button data-theme="sunrise" class="bb-theme" tabindex="0" style="min-width: 44px; min-height: 44px; border-radius: 8px; background: #f59e0b; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s;" aria-label="Sunrise theme" aria-pressed="false" title="Sunrise"></button>
+        <button data-theme="forest" class="bb-theme" tabindex="0" style="min-width: 44px; min-height: 44px; border-radius: 8px; background: #10b981; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s;" aria-label="Forest theme" aria-pressed="false" title="Forest"></button>
       </div>
     </section>
 
@@ -5632,6 +5640,7 @@ document.querySelectorAll("[data-env]").forEach(btn => {
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px; opacity: 0.6;"><input type="checkbox" value="commute" class="bb-pack pro-locked" tabindex="0" data-pro-feature="Commute pack" style="cursor: pointer; width: 18px; height: 18px;" disabled> <span style="font-size: 14px;">Commute <span style="font-size: 12px;">🔒</span></span></label>
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px; opacity: 0.6;"><input type="checkbox" value="stretch" class="bb-pack pro-locked" tabindex="0" data-pro-feature="Full stretch pack" style="cursor: pointer; width: 18px; height: 18px;" disabled> <span style="font-size: 14px;">Full stretch <span style="font-size: 12px;">🔒</span></span></label>
       </div>
+      <p style="font-size: 12px; color: #64748b; margin: 8px 0 0 0;">Commute and Full stretch are part of <a href="#" id="bb-pro-link" style="color: #6366f1; text-decoration: underline;">Pro</a>.</p>
     </section>
 
     <!-- Browser Notifications -->
@@ -5641,17 +5650,19 @@ document.querySelectorAll("[data-env]").forEach(btn => {
           <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a;">Browser notifications</label>
           <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Gentle nudges when tab isn't focused</p>
         </div>
-        <button id="bb-enable-notify" style="padding: 8px 16px; min-height: 44px; border-radius: 6px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Enable</button>
+        <button id="bb-enable-notify" tabindex="0" style="padding: 8px 16px; min-height: 44px; border-radius: 6px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Enable</button>
       </div>
+      <div id="bb-notify-blocked" class="hidden" style="margin-top: 8px; padding: 8px 12px; background: #fef3c7; border-radius: 6px; font-size: 12px; color: #92400e;">Notifications blocked by your browser. <a href="#" id="bb-notify-help" style="color: #92400e; text-decoration: underline; font-weight: 500;">Learn how to enable</a>.</div>
     </section>
 
     <!-- Audio Theme -->
     <section>
       <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Sound</label>
-      <select id="bb-audio" style="width: 100%; border-radius: 6px; border: 1px solid #cbd5e1; padding: 10px 12px; background: white; cursor: pointer; font-size: 14px;">
+      <select id="bb-audio" tabindex="0" style="width: 100%; border-radius: 6px; border: 1px solid #cbd5e1; padding: 10px 12px; background: white; cursor: pointer; font-size: 14px;">
         <option value="none">None</option>
-        <option value="calm">Calm chime</option>
-        <option value="ping">Quick ping</option>
+        <option value="calm">Soft chime</option>
+        <option value="ping">Bell</option>
+        <option value="tick">Tick</option>
       </select>
     </section>
   </div>
@@ -5685,6 +5696,7 @@ document.querySelectorAll("[data-env]").forEach(btn => {
 <!-- Audio Elements -->
 <audio id="bb-audio-calm" preload="auto" src="/audio/calm.mp3"></audio>
 <audio id="bb-audio-ping" preload="auto" src="/audio/ping.mp3"></audio>
+<audio id="bb-audio-tick" preload="auto" src="/audio/tick.mp3"></audio>
 
 <script>
 console.log('=== BB SCRIPT STARTING ===');
@@ -5761,8 +5773,10 @@ function loadBBSettings() {
   // Load theme
   const theme = localStorage.getItem('bb_theme') || 'ocean';
   document.querySelectorAll('.bb-theme').forEach(btn => {
-    btn.classList.toggle('ring-indigo-500', btn.dataset.theme === theme);
-    if (btn.dataset.theme === theme) {
+    const isSelected = btn.dataset.theme === theme;
+    btn.classList.toggle('ring-indigo-500', isSelected);
+    btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+    if (isSelected) {
       btn.style.borderColor = btn.style.background;
       btn.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.2)';
     }
@@ -5877,14 +5891,15 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
     }
   });
 
-  // Interval radio chips
-  document.querySelectorAll('input[name="bb-interval"]').forEach(radio => {
+  // Interval radio chips with keyboard navigation
+  const intervalRadios = document.querySelectorAll('input[name="bb-interval"]');
+  intervalRadios.forEach((radio, index) => {
     radio.addEventListener('change', (e) => {
       // Check if Pro-locked
       if (e.target.classList.contains('pro-locked')) {
         e.preventDefault();
         const feature = e.target.dataset.proFeature || 'This feature';
-        alert(`${feature} requires Pro • A$12/yr\n\nUpgrade to unlock all interval options.`);
+        showToast(`Pro feature. ${feature} requires Pro — A$12/yr`);
         // Revert to previous selection
         const currentInterval = localStorage.getItem('bb_interval') || '60';
         const currentRadio = document.querySelector(`input[name="bb-interval"][value="${currentInterval}"]`);
@@ -5900,6 +5915,26 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
         document.getElementById('bb-custom-interval')?.classList.add('hidden');
       }
       autoSaveBBSettings();
+    });
+
+    // Arrow key navigation
+    radio.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        const radiosArray = Array.from(intervalRadios);
+        const currentIndex = radiosArray.indexOf(radio);
+        let nextIndex;
+        if (e.key === 'ArrowLeft') {
+          nextIndex = currentIndex > 0 ? currentIndex - 1 : radiosArray.length - 1;
+        } else {
+          nextIndex = currentIndex < radiosArray.length - 1 ? currentIndex + 1 : 0;
+        }
+        radiosArray[nextIndex].focus();
+        radiosArray[nextIndex].click();
+      } else if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        radio.click();
+      }
     });
   });
 
@@ -5918,7 +5953,7 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
     });
   }
 
-  // Theme buttons with live preview
+  // Theme buttons with live preview and aria-pressed
   document.querySelectorAll('.bb-theme').forEach(btn => {
     btn.addEventListener('click', () => {
       const theme = btn.dataset.theme;
@@ -5926,12 +5961,82 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
         b.classList.remove('ring-indigo-500');
         b.style.borderColor = '#e2e8f0';
         b.style.boxShadow = 'none';
+        b.setAttribute('aria-pressed', 'false');
       });
       btn.classList.add('ring-indigo-500');
       btn.style.borderColor = btn.style.background;
       btn.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.2)';
+      btn.setAttribute('aria-pressed', 'true');
       localStorage.setItem('bb_theme', theme);
       showToast('Saved');
+    });
+  });
+
+  // Pro link handler
+  document.getElementById('bb-pro-link')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('Pro features — A$12/yr\n\nUnlock:\n• 45m and 30m intervals\n• Commute exercise pack\n• Full stretch pack\n• Advanced customization');
+  });
+
+  // Notification help link
+  document.getElementById('bb-notify-help')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('To enable notifications:\n\n1. Click the lock icon in your browser address bar\n2. Find "Notifications" settings\n3. Change to "Allow"\n4. Refresh the page and try again');
+  });
+
+  // Sound preview
+  document.getElementById('bb-audio')?.addEventListener('change', (e) => {
+    const sound = e.target.value;
+    if (sound !== 'none' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const audioEl = document.getElementById(`bb-audio-${sound}`);
+      if (audioEl) {
+        audioEl.currentTime = 0;
+        audioEl.play().catch(() => {});
+      }
+    }
+  });
+
+  // Time inputs - enhanced keyboard support
+  const quietStartInput = document.getElementById('bb-quiet-start');
+  const quietEndInput = document.getElementById('bb-quiet-end');
+
+  function adjustTime(input, minutes) {
+    const [hours, mins] = input.value.split(':').map(Number);
+    let totalMins = hours * 60 + mins + minutes;
+    if (totalMins < 0) totalMins += 24 * 60;
+    if (totalMins >= 24 * 60) totalMins -= 24 * 60;
+    const newHours = Math.floor(totalMins / 60);
+    const newMins = totalMins % 60;
+    input.value = `${String(newHours).padStart(2, '0')}:${String(newMins).padStart(2, '0')}`;
+  }
+
+  [quietStartInput, quietEndInput].forEach(input => {
+    if (!input) return;
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        adjustTime(input, 5);
+        autoSaveBBSettings();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        adjustTime(input, -5);
+        autoSaveBBSettings();
+      } else if (e.key === 'PageUp') {
+        e.preventDefault();
+        adjustTime(input, 30);
+        autoSaveBBSettings();
+      } else if (e.key === 'PageDown') {
+        e.preventDefault();
+        adjustTime(input, -30);
+        autoSaveBBSettings();
+      }
+    });
+
+    // Same-time validation
+    input.addEventListener('change', () => {
+      if (quietStartInput.value === quietEndInput.value) {
+        showToast('Warning: Same start and end time = quiet all day');
+      }
     });
   });
 
