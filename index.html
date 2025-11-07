@@ -2061,13 +2061,13 @@ const EXERCISE_LIBRARY = {
     "category": "posture",
     "env": ["queue", "office", "commute", "home"],
     "equipment": "None",
-    "duration": 20,
+    "duration": 30,
     "steps": [
       "Imagine string pulling crown of head up.",
       "Roll shoulders back and down.",
       "Unclench jaw, tongue off roof of mouth.",
       "Take 3 deep breaths.",
-      "Maintain for 10 seconds."
+      "Maintain for {{DURATION}} seconds."
     ],
     "safety": ["Safety: Don't arch back excessively.", "Safety: Keep it comfortable."],
     "mistake": "Common mistake: Forcing stiffness—aim for relaxed alignment.",
@@ -2080,13 +2080,13 @@ const EXERCISE_LIBRARY = {
     "category": "upper",
     "env": ["commute", "queue", "office"],
     "equipment": "None",
-    "duration": 40,
+    "duration": 30,
     "steps": [
       "Let tongue drop from roof of mouth.",
       "Unclench jaw, teeth apart.",
       "Soften forehead and eyebrows.",
       "Breathe naturally.",
-      "Hold for 60 seconds."
+      "Hold for {{DURATION}} seconds."
     ],
     "safety": ["Safety: Close mouth, but teeth don't touch.", "Safety: No forcing."],
     "mistake": "Common mistake: Holding breath—remember to breathe.",
@@ -2673,7 +2673,35 @@ function validateExerciseLibrary() {
     if (missing.length > 0) {
       warnings.push(`Exercise "${key}" missing: ${missing.join(', ')}`);
     }
+
+    // Validate duration consistency
+    if (exercise.duration && exercise.steps) {
+      exercise.steps.forEach((step, i) => {
+        // Check for hardcoded durations that don't match
+        const durationMatch = step.match(/(\d+)\s*seconds?/i);
+        if (durationMatch && !step.includes('{{DURATION}}')) {
+          const hardcodedDuration = parseInt(durationMatch[1]);
+          if (hardcodedDuration !== exercise.duration) {
+            warnings.push(`⚠️ Exercise "${key}" step ${i+1} mentions ${hardcodedDuration}s but duration is ${exercise.duration}s`);
+          }
+        }
+      });
+
+      // Check title badge vs duration
+      const titleMatch = exercise.title.match(/\((\d+)s\)/);
+      if (titleMatch) {
+        const titleDuration = parseInt(titleMatch[1]);
+        if (titleDuration !== exercise.duration) {
+          warnings.push(`⚠️ Exercise "${key}" title shows ${titleDuration}s but duration is ${exercise.duration}s`);
+        }
+      }
+    }
   });
+
+  if (warnings.length > 0) {
+    console.warn('Exercise Library Validation Warnings:');
+    warnings.forEach(w => console.warn(w));
+  }
 
   return warnings.length === 0;
 }
@@ -3051,7 +3079,7 @@ function setSuggestion(){
   const isBeginnerFriendly = duration <= 30 || (item.tags && item.tags.includes('seated'));
 
   sugEl.innerHTML = `
-    <div style="font-size: 0.75em; color: var(--muted); font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Next 60-sec reset</div>
+    <div style="font-size: 0.75em; color: var(--muted); font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Next Micro Reset</div>
     <div>
       <span class="env-badge">${getEnvIcon(currentEnv)}${currentEnv}</span> ${item.title}
       <button class="help-chip" onclick="toggleHowtoCard()" type="button" aria-expanded="false" aria-controls="howtoCard" aria-label="Show exercise instructions" tabindex="0" id="helpChipBtn">?</button>
@@ -3780,6 +3808,11 @@ function renderHowtoCard() {
 
   howtoTimeRemaining = currentExercise.duration;
 
+  // Replace {{DURATION}} token with actual duration
+  const processedSteps = currentExercise.steps.map(step =>
+    step.replace(/\{\{DURATION\}\}/g, currentExercise.duration)
+  );
+
   card.innerHTML = `
     <h3 id="howtoTitle">${currentExercise.title}</h3>
 
@@ -3794,7 +3827,7 @@ function renderHowtoCard() {
     <div class="howto-section">
       <h4>Steps</h4>
       <ol>
-        ${currentExercise.steps.map(step => `<li>${step}</li>`).join('')}
+        ${processedSteps.map(step => `<li>${step}</li>`).join('')}
       </ol>
     </div>
 
@@ -4225,12 +4258,17 @@ async function copyExercisePermalink(event) {
   const permalink = `${window.location.origin}/move/${exerciseKey}`;
   const duration = currentExercise.duration || 30;
 
+  // Replace {{DURATION}} token in steps
+  const processedSteps = currentExercise.steps.map(step =>
+    step.replace(/\{\{DURATION\}\}/g, duration)
+  );
+
   // Build exercise details text
   let copyText = `${currentExercise.title}\n\n`;
 
-  if (currentExercise.steps && currentExercise.steps.length > 0) {
+  if (processedSteps && processedSteps.length > 0) {
     copyText += 'Steps:\n';
-    currentExercise.steps.forEach((step, i) => {
+    processedSteps.forEach((step, i) => {
       copyText += `${i + 1}. ${step}\n`;
     });
     copyText += '\n';
