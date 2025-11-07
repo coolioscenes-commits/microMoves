@@ -5548,102 +5548,103 @@ document.querySelectorAll("[data-env]").forEach(btn => {
 <div id="bb-settings-overlay" class="hidden" style="position: fixed; inset: 0; z-index: 70; background: rgba(0, 0, 0, 0.5);"></div>
 
 <!-- Settings Modal -->
-<div id="bb-settings-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="settings-heading" style="position: fixed; z-index: 71; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 92vw; max-width: 576px; border-radius: 12px; background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.1);">
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
-    <h3 id="settings-heading" style="font-size: 16px; font-weight: 600; color: #0f172a; margin: 0;">BreakBreath Settings</h3>
-    <button id="bb-close-settings" style="padding: 8px; border-radius: 4px; border: none; background: transparent; cursor: pointer; font-size: 18px; color: #64748b;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" aria-label="Close">✕</button>
+<div id="bb-settings-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="settings-heading" style="position: fixed; z-index: 71; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 92vw; max-width: 440px; border-radius: 12px; background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid rgba(0, 0, 0, 0.1);">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
+    <h3 id="settings-heading" style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0;">Settings</h3>
+    <button id="bb-close-settings" style="padding: 8px; border-radius: 4px; border: none; background: transparent; cursor: pointer; font-size: 20px; color: #64748b; line-height: 1;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'" aria-label="Close settings">×</button>
   </div>
 
-  <div style="padding: 16px; display: flex; flex-direction: column; gap: 24px; font-size: 14px; color: #1e293b; max-height: 70vh; overflow-y: auto;">
-    <!-- Interval -->
+  <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px; font-size: 14px; color: #1e293b; max-height: 65vh; overflow-y: auto;">
+    <!-- Interval (moved to top) -->
     <section>
-      <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">Remind me every</label>
-      <select id="bb-interval" style="width: 100%; border-radius: 4px; border: 1px solid #cbd5e1; padding: 8px 12px; background: white; cursor: pointer;">
-        <option value="60">60 minutes (free)</option>
-        <option value="45">45 minutes (Pro)</option>
-        <option value="30">30 minutes (Pro)</option>
-        <option value="90">90 minutes (Pro)</option>
-      </select>
-    </section>
-
-    <!-- Quiet Hours -->
-    <section>
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-        <label style="font-size: 12px; font-weight: 600; color: #475569;">Quiet Hours</label>
-        <button id="bb-add-quiet" style="font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">+ Add</button>
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Reminder interval</label>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="60" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="60" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s;">60m</span></label>
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="45" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="45" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">45m <span style="font-size: 12px;">🔒</span></span></label>
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="30" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="30" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s; opacity: 0.6;">30m <span style="font-size: 12px;">🔒</span></span></label>
+        <label style="position: relative;"><input type="radio" name="bb-interval" value="custom" style="position: absolute; opacity: 0;"><span class="interval-chip" data-value="custom" style="display: inline-block; padding: 8px 16px; border-radius: 20px; background: #f1f5f9; border: 2px solid #e2e8f0; cursor: pointer; font-size: 14px; transition: all 0.15s;">Custom</span></label>
       </div>
-      <div id="bb-quiet-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
-      <p style="font-size: 12px; color: #64748b; margin-top: 8px; margin-bottom: 0;">No nudges during these ranges.</p>
-    </section>
-
-    <!-- Move Packs -->
-    <section>
-      <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 8px;">Move Packs</label>
-      <div id="bb-packs" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="desk" class="bb-pack" style="cursor: pointer;"> Desk (free)</label>
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="eyes" class="bb-pack" style="cursor: pointer;"> Eye-care (free)</label>
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="commute" class="bb-pack" style="cursor: pointer;"> Commute (Pro)</label>
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;"><input type="checkbox" value="stretch" class="bb-pack" style="cursor: pointer;"> Stretch (Pro)</label>
+      <div id="bb-custom-interval" class="hidden" style="margin-top: 8px;">
+        <input type="number" id="bb-custom-minutes" min="15" max="120" value="60" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" placeholder="15-120 minutes">
       </div>
     </section>
 
-    <!-- Seated-only Filter -->
+    <!-- Quiet Hours (improved) -->
     <section>
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #475569;">Seated-only mode</label>
-          <p style="font-size: 12px; color: #64748b; margin-top: 4px; margin-bottom: 0;">Show only exercises you can do while sitting.</p>
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Quiet hours</label>
+      <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+        <input type="time" id="bb-quiet-start" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" value="21:00">
+        <span style="color: #64748b; font-size: 13px;">to</span>
+        <input type="time" id="bb-quiet-end" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;" value="07:00">
+      </div>
+      <p style="font-size: 12px; color: #64748b; margin: 0;">Applies nightly, including past midnight</p>
+    </section>
+
+    <!-- Seated-only mode (moved up) -->
+    <section>
+      <div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px;">
+        <div style="flex: 1;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a;">Seated-only mode</label>
+          <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Only suggest quiet, upper-body moves</p>
         </div>
-        <label class="toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+        <label class="toggle-switch" style="position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0;">
           <input type="checkbox" id="bb-seated-only" style="opacity: 0; width: 0; height: 0;">
           <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; transition: 0.3s; border-radius: 24px;" class="toggle-slider"></span>
         </label>
       </div>
     </section>
 
-    <!-- Audio Theme -->
+    <!-- Theme picker (improved) -->
     <section>
-      <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">Audio Theme</label>
-      <select id="bb-audio" style="width: 100%; border-radius: 4px; border: 1px solid #cbd5e1; padding: 8px 12px; background: white; cursor: pointer;">
-        <option value="none">None</option>
-        <option value="calm">Calm</option>
-        <option value="ping">Ping</option>
-      </select>
-      <p style="font-size: 12px; color: #64748b; margin-top: 8px; margin-bottom: 0;">Respects system reduced-motion/sound settings.</p>
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Color theme</label>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button data-theme="system" class="bb-theme" style="min-width: 44px; min-height: 44px; padding: 8px 12px; border-radius: 8px; background: linear-gradient(135deg, #1e293b 50%, #f8fafc 50%); border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s; font-size: 11px; color: #64748b; font-weight: 500;" aria-label="System theme" title="System"></button>
+        <button data-theme="ocean" class="bb-theme ring-indigo-500" style="min-width: 44px; min-height: 44px; border-radius: 8px; background: #0ea5e9; border: 2px solid #0ea5e9; cursor: pointer; transition: all 0.15s;" aria-label="Ocean theme" title="Ocean"></button>
+        <button data-theme="sunrise" class="bb-theme" style="min-width: 44px; min-height: 44px; border-radius: 8px; background: #f59e0b; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s;" aria-label="Sunrise theme" title="Sunrise"></button>
+        <button data-theme="forest" class="bb-theme" style="min-width: 44px; min-height: 44px; border-radius: 8px; background: #10b981; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.15s;" aria-label="Forest theme" title="Forest"></button>
+      </div>
+    </section>
+
+    <!-- Move Packs -->
+    <section>
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Exercise packs</label>
+      <div id="bb-packs" style="display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px;"><input type="checkbox" value="desk" class="bb-pack" style="cursor: pointer; width: 18px; height: 18px;"> <span style="font-size: 14px;">Desk exercises</span></label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px;"><input type="checkbox" value="eyes" class="bb-pack" style="cursor: pointer; width: 18px; height: 18px;"> <span style="font-size: 14px;">Eye care</span></label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px; opacity: 0.6;"><input type="checkbox" value="commute" class="bb-pack" style="cursor: pointer; width: 18px; height: 18px;" disabled> <span style="font-size: 14px;">Commute <span style="font-size: 12px;">🔒</span></span></label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 32px; opacity: 0.6;"><input type="checkbox" value="stretch" class="bb-pack" style="cursor: pointer; width: 18px; height: 18px;" disabled> <span style="font-size: 14px;">Full stretch <span style="font-size: 12px;">🔒</span></span></label>
+      </div>
     </section>
 
     <!-- Browser Notifications -->
     <section>
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <label style="font-size: 12px; font-weight: 600; color: #475569;">Browser Notifications</label>
-        <button id="bb-enable-notify" style="font-size: 12px; padding: 4px 8px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Enable</button>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="flex: 1;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a;">Browser notifications</label>
+          <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Gentle nudges when tab isn't focused</p>
+        </div>
+        <button id="bb-enable-notify" style="padding: 8px 16px; min-height: 44px; border-radius: 6px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Enable</button>
       </div>
-      <p style="font-size: 12px; color: #64748b; margin-top: 8px; margin-bottom: 0;">Shows a gentle nudge even if the tab isn't focused.</p>
     </section>
 
-    <!-- Accent Theme -->
+    <!-- Audio Theme -->
     <section>
-      <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 8px;">Accent Theme</label>
-      <div style="display: flex; gap: 8px;">
-        <button data-theme="ocean" class="bb-theme ring-indigo-500" style="width: 28px; height: 28px; border-radius: 50%; background: #0ea5e9; border: 2px solid transparent; cursor: pointer; transition: all 0.2s;" aria-label="Ocean"></button>
-        <button data-theme="sunrise" class="bb-theme" style="width: 28px; height: 28px; border-radius: 50%; background: #f59e0b; border: 2px solid transparent; cursor: pointer; transition: all 0.2s;" aria-label="Sunrise"></button>
-        <button data-theme="forest" class="bb-theme" style="width: 28px; height: 28px; border-radius: 50%; background: #10b981; border: 2px solid transparent; cursor: pointer; transition: all 0.2s;" aria-label="Forest"></button>
-      </div>
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 8px;">Sound</label>
+      <select id="bb-audio" style="width: 100%; border-radius: 6px; border: 1px solid #cbd5e1; padding: 10px 12px; background: white; cursor: pointer; font-size: 14px;">
+        <option value="none">None</option>
+        <option value="calm">Calm chime</option>
+        <option value="ping">Quick ping</option>
+      </select>
     </section>
-
-    <p style="font-size: 12px; color: #64748b; margin: 0;">Some options are Pro. Your data stays on your device.</p>
   </div>
 
-  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-top: 1px solid #e2e8f0; flex-wrap: wrap;">
-    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
-      <button class="bb-ics" data-mins="60" style="padding: 8px 12px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">.ics Hourly</button>
-      <button class="bb-ics" data-mins="45" style="padding: 8px 12px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">.ics 45-min (Pro)</button>
-      <button class="bb-ics" data-mins="30" style="padding: 8px 12px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">.ics 30-min (Pro)</button>
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-top: 1px solid #e2e8f0; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <button id="bb-widget-shortcut" style="padding: 8px 14px; min-height: 44px; border-radius: 6px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px; font-weight: 500;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Widget mode</button>
+      <button id="bb-snooze-shortcut" style="padding: 8px 14px; min-height: 44px; border-radius: 6px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px; font-weight: 500;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Snooze 20m</button>
+      <button id="bb-shortcuts-help" style="padding: 8px 12px; min-height: 44px; border-radius: 6px; background: transparent; border: none; cursor: pointer; font-size: 16px; color: #64748b;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#64748b'" aria-label="Keyboard shortcuts" title="Keyboard shortcuts">?</button>
     </div>
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <button id="bb-weekly-recap" style="padding: 8px 12px; border-radius: 4px; background: #f1f5f9; border: none; cursor: pointer; font-size: 13px;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Download recap</button>
-      <button id="bb-save-settings" style="padding: 8px 12px; border-radius: 4px; background: #6366f1; color: white; border: none; cursor: pointer; font-size: 13px; font-weight: 500;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'" aria-label="Save settings">Save</button>
-    </div>
+    <button id="bb-restore-defaults" style="padding: 8px 14px; min-height: 44px; border-radius: 6px; background: transparent; border: none; cursor: pointer; font-size: 13px; color: #64748b; text-decoration: underline;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#64748b'">Restore defaults</button>
   </div>
 </div>
 
@@ -5673,17 +5674,76 @@ console.log('=== BB SCRIPT STARTING ===');
 // Global snooze variable
 let snoozeUntil = null;
 
-// Settings functions
+// Toast notification
+function showToast(message) {
+  const existingToast = document.getElementById('bb-toast');
+  if (existingToast) existingToast.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'bb-toast';
+  toast.textContent = message;
+  toast.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideUp 0.3s ease;';
+
+  const style = document.createElement('style');
+  style.textContent = '@keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }';
+  document.head.appendChild(style);
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
+}
+
+// Settings functions with autosave
+function autoSaveBBSettings() {
+  saveBBSettings();
+  showToast('Saved');
+}
+
 function loadBBSettings() {
-  // Load interval
+  // Load interval (radio chips)
   const interval = localStorage.getItem('bb_interval') || '60';
-  const intervalSelect = document.getElementById('bb-interval');
-  if (intervalSelect) intervalSelect.value = interval;
+  const intervalRadio = document.querySelector(`input[name="bb-interval"][value="${interval}"]`);
+  if (intervalRadio) {
+    intervalRadio.checked = true;
+    updateIntervalChips(interval);
+  } else {
+    // Custom interval
+    const customRadio = document.querySelector('input[name="bb-interval"][value="custom"]');
+    if (customRadio) {
+      customRadio.checked = true;
+      updateIntervalChips('custom');
+      document.getElementById('bb-custom-interval')?.classList.remove('hidden');
+      const customInput = document.getElementById('bb-custom-minutes');
+      if (customInput) customInput.value = interval;
+    }
+  }
+
+  // Load quiet hours (single range)
+  const quietStart = localStorage.getItem('bb_quiet_start') || '21:00';
+  const quietEnd = localStorage.getItem('bb_quiet_end') || '07:00';
+  const quietStartInput = document.getElementById('bb-quiet-start');
+  const quietEndInput = document.getElementById('bb-quiet-end');
+  if (quietStartInput) quietStartInput.value = quietStart;
+  if (quietEndInput) quietEndInput.value = quietEnd;
 
   // Load seated-only
   const seatedOnly = localStorage.getItem('bb_seated_only') === '1';
   const seatedCheckbox = document.getElementById('bb-seated-only');
   if (seatedCheckbox) seatedCheckbox.checked = seatedOnly;
+
+  // Load theme
+  const theme = localStorage.getItem('bb_theme') || 'ocean';
+  document.querySelectorAll('.bb-theme').forEach(btn => {
+    btn.classList.toggle('ring-indigo-500', btn.dataset.theme === theme);
+    if (btn.dataset.theme === theme) {
+      btn.style.borderColor = btn.style.background;
+      btn.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.2)';
+    }
+  });
 
   // Load packs
   const packs = JSON.parse(localStorage.getItem('bb_packs') || '["desk","eyes"]');
@@ -5691,16 +5751,29 @@ function loadBBSettings() {
     checkbox.checked = packs.includes(checkbox.value);
   });
 
-  // Load quiet hours
-  loadQuietHours();
+  // Load audio
+  const audio = localStorage.getItem('bb_audio') || 'none';
+  const audioSelect = document.getElementById('bb-audio');
+  if (audioSelect) audioSelect.value = audio;
 }
 
 function saveBBSettings() {
   // Save interval
-  const intervalSelect = document.getElementById('bb-interval');
-  if (intervalSelect) {
-    localStorage.setItem('bb_interval', intervalSelect.value);
+  const selectedInterval = document.querySelector('input[name="bb-interval"]:checked');
+  if (selectedInterval) {
+    if (selectedInterval.value === 'custom') {
+      const customMinutes = document.getElementById('bb-custom-minutes')?.value || '60';
+      localStorage.setItem('bb_interval', customMinutes);
+    } else {
+      localStorage.setItem('bb_interval', selectedInterval.value);
+    }
   }
+
+  // Save quiet hours
+  const quietStart = document.getElementById('bb-quiet-start')?.value;
+  const quietEnd = document.getElementById('bb-quiet-end')?.value;
+  if (quietStart) localStorage.setItem('bb_quiet_start', quietStart);
+  if (quietEnd) localStorage.setItem('bb_quiet_end', quietEnd);
 
   // Save seated-only
   const seatedCheckbox = document.getElementById('bb-seated-only');
@@ -5712,60 +5785,37 @@ function saveBBSettings() {
   const selectedPacks = Array.from(document.querySelectorAll('.bb-pack:checked')).map(cb => cb.value);
   localStorage.setItem('bb_packs', JSON.stringify(selectedPacks));
 
-  // Save quiet hours
-  const quietHours = [];
-  document.querySelectorAll('.bb-quiet-item').forEach(item => {
-    const start = item.querySelector('.bb-quiet-start')?.value;
-    const end = item.querySelector('.bb-quiet-end')?.value;
-    if (start && end) {
-      quietHours.push({ start, end });
+  // Save audio
+  const audioSelect = document.getElementById('bb-audio');
+  if (audioSelect) {
+    localStorage.setItem('bb_audio', audioSelect.value);
+  }
+}
+
+function updateIntervalChips(selectedValue) {
+  document.querySelectorAll('.interval-chip').forEach(chip => {
+    const chipValue = chip.dataset.value;
+    const isSelected = chipValue === selectedValue;
+
+    if (isSelected) {
+      chip.style.background = '#6366f1';
+      chip.style.color = 'white';
+      chip.style.borderColor = '#6366f1';
+    } else {
+      chip.style.background = '#f1f5f9';
+      chip.style.color = '#1e293b';
+      chip.style.borderColor = '#e2e8f0';
     }
-  });
-  localStorage.setItem('bb_quiet_hours', JSON.stringify(quietHours));
-}
-
-function loadQuietHours() {
-  const quietList = document.getElementById('bb-quiet-list');
-  if (!quietList) return;
-
-  const quietHours = JSON.parse(localStorage.getItem('bb_quiet_hours') || '[]');
-  quietList.innerHTML = '';
-
-  quietHours.forEach((range, idx) => {
-    addQuietHourRow(range.start, range.end);
-  });
-}
-
-function addQuietHourRow(start = '09:00', end = '17:00') {
-  const quietList = document.getElementById('bb-quiet-list');
-  if (!quietList) return;
-
-  const row = document.createElement('div');
-  row.className = 'bb-quiet-item';
-  row.style.cssText = 'display: flex; gap: 8px; align-items: center;';
-
-  row.innerHTML = `
-    <input type="time" class="bb-quiet-start" value="${start}" style="flex: 1; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px; font-size: 13px;">
-    <span style="color: #64748b;">to</span>
-    <input type="time" class="bb-quiet-end" value="${end}" style="flex: 1; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px; font-size: 13px;">
-    <button class="bb-quiet-remove" style="padding: 4px 8px; border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; cursor: pointer; font-size: 12px;" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">Remove</button>
-  `;
-
-  quietList.appendChild(row);
-
-  row.querySelector('.bb-quiet-remove')?.addEventListener('click', () => {
-    row.remove();
   });
 }
 
 // Initialize BB Settings, Widget, and Snooze after DOM elements are loaded
 const bbOpenSettings = document.getElementById('bb-open-settings');
 const bbCloseSettings = document.getElementById('bb-close-settings');
-const bbSaveSettings = document.getElementById('bb-save-settings');
 const bbSettingsModal = document.getElementById('bb-settings-modal');
 const bbSettingsOverlay = document.getElementById('bb-settings-overlay');
 
-console.log('BB Elements:', { bbOpenSettings, bbCloseSettings, bbSaveSettings, bbSettingsModal, bbSettingsOverlay });
+console.log('BB Elements:', { bbOpenSettings, bbCloseSettings, bbSettingsModal, bbSettingsOverlay });
 
 if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
   console.log('Adding Settings event listeners...');
@@ -5776,7 +5826,7 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
     loadBBSettings();
 
     setTimeout(() => {
-      const firstFocusable = bbSettingsModal.querySelector('button, input, select, [tabindex]:not([tabindex="-1"])');
+      const firstFocusable = bbSettingsModal.querySelector('button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])');
       if (firstFocusable) firstFocusable.focus();
     }, 50);
 
@@ -5785,9 +5835,83 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
 
   bbCloseSettings?.addEventListener('click', closeBBSettings);
   bbSettingsOverlay.addEventListener('click', closeBBSettings);
-  bbSaveSettings?.addEventListener('click', () => {
-    saveBBSettings();
+
+  // Autosave listeners
+  bbSettingsModal.addEventListener('change', (e) => {
+    if (e.target.matches('input, select')) {
+      autoSaveBBSettings();
+    }
+  });
+
+  // Interval radio chips
+  document.querySelectorAll('input[name="bb-interval"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      updateIntervalChips(e.target.value);
+      if (e.target.value === 'custom') {
+        document.getElementById('bb-custom-interval')?.classList.remove('hidden');
+      } else {
+        document.getElementById('bb-custom-interval')?.classList.add('hidden');
+      }
+      autoSaveBBSettings();
+    });
+  });
+
+  // Theme buttons with live preview
+  document.querySelectorAll('.bb-theme').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const theme = btn.dataset.theme;
+      document.querySelectorAll('.bb-theme').forEach(b => {
+        b.classList.remove('ring-indigo-500');
+        b.style.borderColor = '#e2e8f0';
+        b.style.boxShadow = 'none';
+      });
+      btn.classList.add('ring-indigo-500');
+      btn.style.borderColor = btn.style.background;
+      btn.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.2)';
+      localStorage.setItem('bb_theme', theme);
+      showToast('Saved');
+    });
+  });
+
+  // Widget shortcut
+  document.getElementById('bb-widget-shortcut')?.addEventListener('click', () => {
+    const isWidget = localStorage.getItem('bb_widget_mode') === '1';
+    if (isWidget) {
+      exitWidgetMode();
+    } else {
+      enterWidgetMode();
+    }
     closeBBSettings();
+  });
+
+  // Snooze shortcut
+  document.getElementById('bb-snooze-shortcut')?.addEventListener('click', () => {
+    snoozeUntil = Date.now() + (20 * 60 * 1000);
+    localStorage.setItem('bb_snooze_until', snoozeUntil);
+    updateSnoozeUI();
+    stopNudges();
+    showToast('Snoozed for 20 minutes');
+    closeBBSettings();
+  });
+
+  // Restore defaults
+  document.getElementById('bb-restore-defaults')?.addEventListener('click', () => {
+    if (confirm('Reset all settings to defaults?')) {
+      localStorage.removeItem('bb_interval');
+      localStorage.removeItem('bb_quiet_start');
+      localStorage.removeItem('bb_quiet_end');
+      localStorage.removeItem('bb_seated_only');
+      localStorage.removeItem('bb_theme');
+      localStorage.removeItem('bb_packs');
+      localStorage.removeItem('bb_audio');
+      loadBBSettings();
+      showToast('Settings restored to defaults');
+    }
+  });
+
+  // Keyboard shortcuts help
+  document.getElementById('bb-shortcuts-help')?.addEventListener('click', () => {
+    alert('Keyboard Shortcuts:\n\n• Esc - Close settings\n• Tab / Shift+Tab - Navigate\n• Space - Start/stop timer\n• Enter - Confirm actions');
   });
 }
 
@@ -5816,12 +5940,6 @@ function handleSettingsKeydown(e) {
     }
   }
 }
-
-// Add quiet hours button handler
-const bbAddQuiet = document.getElementById('bb-add-quiet');
-bbAddQuiet?.addEventListener('click', () => {
-  addQuietHourRow();
-});
 
 // Snooze UI update function
 function updateSnoozeUI() {
