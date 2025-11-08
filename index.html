@@ -556,6 +556,16 @@
         transform: translateY(0);
       }
     }
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
     .action-bar {
       position: fixed;
       left: 0;
@@ -1224,6 +1234,19 @@
       </div>
     </div>
 
+    <div id="envCoachmark" style="display: none; position: relative; margin-top: -12px; margin-bottom: 24px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 8px; padding: 12px 16px; font-size: 13px; color: var(--text); animation: slideDown 0.3s ease-out;">
+      <button type="button" onclick="dismissEnvCoachmark()" style="position: absolute; top: 8px; right: 8px; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 18px; line-height: 1; padding: 2px 6px; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'" aria-label="Dismiss tip">&times;</button>
+      <div style="display: flex; align-items: start; gap: 10px;">
+        <svg style="width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; color: #818cf8;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+        </svg>
+        <div>
+          <strong style="display: block; margin-bottom: 4px;">Tip: Pick where you are</strong>
+          <span style="color: var(--muted);">Selecting your environment helps us suggest exercises that work for your space—quiet options for public places, energizing moves for home.</span>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="label">
         <span class="icon">
@@ -1268,12 +1291,27 @@
         </div>
       </div>
       <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-        <button id="buyProBtn" type="button" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); min-height: 44px;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'">
+        <button id="buyProBtn" type="button" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); min-height: 44px;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'" aria-describedby="proTooltip">
           Unlock Pro — A$12/year
         </button>
         <span id="proStatus" style="font-size: 13px; color: var(--muted);"></span>
       </div>
+      <ul style="margin: 12px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+        <li style="display: flex; align-items: center; gap: 6px;">
+          <svg style="width: 14px; height: 14px; color: #10b981;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          Quiet hours
+        </li>
+        <li style="display: flex; align-items: center; gap: 6px;">
+          <svg style="width: 14px; height: 14px; color: #10b981;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          Custom intervals
+        </li>
+        <li style="display: flex; align-items: center; gap: 6px;">
+          <svg style="width: 14px; height: 14px; color: #10b981;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          Extra move packs
+        </li>
+      </ul>
       <p style="margin: 8px 0 0; font-size: 12px; color: var(--muted); text-align: center;">7-day free trial. Cancel anytime.</p>
+      <span id="proTooltip" role="tooltip" style="display: none;">Pro unlocks advanced features like custom intervals, quiet hours scheduling, and premium exercise packs</span>
       <div>
       <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--muted);">
@@ -3104,7 +3142,7 @@ function setSuggestion(){
       <button class="help-chip" onclick="toggleHowtoCard()" type="button" aria-expanded="false" aria-controls="howtoCard" aria-label="Show exercise instructions" tabindex="0" id="helpChipBtn">?</button>
     </div>
     <div style="font-size: 0.85em; color: var(--muted); margin-top: 6px;">${duration > 0 ? `0:${duration.toString().padStart(2, '0')}` : '1:00'} • ${isBeginnerFriendly ? 'Beginner-friendly' : 'All levels'}</div>
-    ${item.quiet_alt ? `<div style="font-size: 0.85em; color: #666; margin-top: 4px;"><strong>Quiet alternative:</strong> ${item.quiet_alt}</div>` : ''}
+    ${item.quiet_alt ? `<div style="font-size: 0.85em; color: #666; margin-top: 4px;"><strong>Quiet alternative:</strong> ${item.quiet_alt} <button class="info-dot" type="button" aria-label="About quiet alternatives" aria-describedby="quietTooltip" tabindex="0" style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 50%; color: #818cf8; font-size: 9px; font-weight: 700; cursor: help; transition: all 0.2s; vertical-align: middle; margin-left: 4px;" onmouseover="this.style.background='rgba(99, 102, 241, 0.3)'; this.style.borderColor='rgba(99, 102, 241, 0.5)'" onmouseout="this.style.background='rgba(99, 102, 241, 0.2)'; this.style.borderColor='rgba(99, 102, 241, 0.3)'">i</button><span id="quietTooltip" role="tooltip" style="position: absolute; opacity: 0; pointer-events: none; font-size: 12px; background: rgba(17, 24, 39, 0.95); color: white; padding: 6px 10px; border-radius: 6px; white-space: nowrap; z-index: 1000;">Discreet options for public spaces</span></div>` : ''}
     <button class="why-link" onclick="toggleWhyExplanation(event)" type="button">
       <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
@@ -4827,8 +4865,31 @@ if ("serviceWorker" in navigator) {
 }
 
 
+// First-run coachmark
+function showEnvCoachmark() {
+  const coachmark = document.getElementById('envCoachmark');
+  const dismissed = localStorage.getItem('bb_env_coachmark_dismissed');
+
+  if (!dismissed && coachmark) {
+    setTimeout(() => {
+      coachmark.style.display = 'block';
+      trackEvent('coachmark_shown', { type: 'env_tip' });
+    }, 800);
+  }
+}
+
+function dismissEnvCoachmark() {
+  const coachmark = document.getElementById('envCoachmark');
+  if (coachmark) {
+    coachmark.style.display = 'none';
+    localStorage.setItem('bb_env_coachmark_dismissed', 'true');
+    trackEvent('coachmark_dismissed', { type: 'env_tip' });
+  }
+}
+
 loadI18n().then(() => {
   updateUIWithTranslations();
+  showEnvCoachmark();
 }).catch(err => {
   console.error('Failed to load i18n:', err);
 });
