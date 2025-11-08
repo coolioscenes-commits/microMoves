@@ -1192,15 +1192,24 @@
       <span>BreakBreath</span>
       <span id="streakChip" class="streak-chip" style="display: none;"></span>
     </h1>
-    <p class="sub">Micro-breaks that fit anywhere. BreakBreath gives you 60-second moves every hour—quiet when you need it, energising when you want it.</p>
-    <div class="privacy-badge" style="margin-top: 12px;">
-      <span>🔒 Private</span>
-      <span>📴 Offline-friendly</span>
-      <span>🌏 Works worldwide</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; justify-content: center;">
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 20px; font-size: 13px; color: #86efac; font-weight: 500;">
+        <svg style="width: 12px; height: 12px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        Works offline
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 20px; font-size: 13px; color: #86efac; font-weight: 500;">
+        <svg style="width: 12px; height: 12px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        No login
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 20px; font-size: 13px; color: #86efac; font-weight: 500;">
+        <svg style="width: 12px; height: 12px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        Privacy-first
+      </span>
     </div>
+    <p class="sub">Micro-breaks that fit anywhere. BreakBreath gives you 60-second moves every hour—quiet when you need it, energising when you want it.</p>
     <div class="row" role="group" aria-label="Reminder actions" style="margin-top: 24px; gap: 12px;">
-      <button id="startBtn" type="button" tabindex="1" style="min-height: 48px; font-size: 16px; font-weight: 600; background: var(--primary); color: white; border: none; flex: 1;">Start nudges</button>
-      <button id="quickDemoBtn" type="button" class="secondary" tabindex="2" style="min-height: 48px; background: transparent; border: 1px solid rgba(255, 255, 255, 0.25); color: var(--text); font-weight: 500;">Try a 60-sec exercise</button>
+      <button id="startBtn" type="button" tabindex="1" style="min-height: 48px; font-size: 16px; font-weight: 600; background: var(--primary); color: white; border: none; flex: 1; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(37, 99, 235, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(37, 99, 235, 0.4)'">Start nudges</button>
+      <button id="quickDemoBtn" type="button" class="secondary" tabindex="2" style="min-height: 48px; background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.7); font-weight: 500; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.color='var(--text)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.color='rgba(255, 255, 255, 0.7)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">Try a 60-sec exercise</button>
     </div>
     <ul class="day-dots" id="dayDots" aria-label="Weekly activity" style="margin-top: 24px;"></ul>
   </header>
@@ -1548,9 +1557,10 @@
           }
         </style>
         <div class="tip-buttons" style="display: flex; flex-direction: column; gap: 12px;">
-          <a href="/support?amt=5" style="display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">Tip A$5</a>
-          <a href="/support?amt=9" style="display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">Tip A$9</a>
-          <a href="/support?amt=15" style="display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">Tip A$15</a>
+          <a href="/support?amt=5" onclick="trackEvent('tip_clicked_5')" style="display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">Tip A$5</a>
+          <a href="/support?amt=9" onclick="trackEvent('tip_clicked_9')" style="display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">Tip A$9</a>
+          <a href="/support?amt=15" onclick="trackEvent('tip_clicked_15')" style="display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">Tip A$15</a>
+          <a href="/support" onclick="trackEvent('tip_clicked_custom')" style="display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 14px; color: rgba(255, 255, 255, 0.6); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='rgba(255, 255, 255, 0.6)'">Custom amount</a>
         </div>
       </div>
       <p style="margin: 8px 0 0; font-size: 14px; color: var(--muted);">Funds hosting & new micro-moves.</p>
@@ -1569,11 +1579,13 @@
         </style>
         <div class="teams-card">
           <h2 style="font-size: 24px; font-weight: 600; margin: 0; color: var(--text-bright);">Teams (from A$99/year)</h2>
+          <p style="margin: 8px 0 0; font-size: 13px; color: rgba(34, 197, 94, 0.8); font-weight: 500;">Used by remote and office teams in AU</p>
           <p style="margin: 12px 0 0; color: #9CA3AF; font-size: 16px; line-height: 1.6;">
             Bring healthy micro-breaks to your workplace with BreakBreath Teams—AU-hosted, privacy-first. Set company-wide break times, share a team .ics calendar, add simple branding, and view lightweight adoption stats (no personal tracking). Perfect for remote, hybrid, or office teams who want to encourage movement without intrusive wellness platforms. Pricing starts at A$99/year for small teams.
           </p>
-          <a href="/teams" style="margin-top: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">
-            Learn more about Teams
+          <a href="/teams" onclick="trackEvent('teams_learn_more_clicked')" style="margin-top: 24px; display: inline-flex; align-items: center; gap: 8px; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">
+            <span>Learn more about Teams</span>
+            <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
           </a>
         </div>
       </div>
@@ -3655,12 +3667,15 @@ END:VCALENDAR`.replace(/\n/g, "\r\n");
   showToast(`Calendar file downloaded for ${userTz} timezone`);
 }
 
-$("startBtn").addEventListener("click", startNudges);
+$("startBtn").addEventListener("click", () => {
+  trackEvent('cta_start_nudges', { source: 'hero' });
+  startNudges();
+});
 
 const quickDemoBtn = document.getElementById("quickDemoBtn");
 if (quickDemoBtn) {
   quickDemoBtn.addEventListener("click", () => {
-    trackEvent('cta_try_exercise', { source: 'hero' });
+    trackEvent('cta_try_60s', { source: 'hero' });
     notifyNow();
     showToast("Try the suggested exercise!");
   });
