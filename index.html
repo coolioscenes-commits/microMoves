@@ -1271,55 +1271,7 @@
       </div>
     </div>
 
-    <div id="proUnlockCard" class="pro-unlock-card" style="display: none;">
-      <div style="display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 16px;">
-        <div style="flex: 1;">
-          <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 600; color: var(--text-bright); display: flex; align-items: center; gap: 8px;">
-            <span>Unlock Pro</span>
-            <span class="pro-badge">✨ Pro</span>
-          </h3>
-          <p style="margin: 0 0 12px; font-size: 14px; color: var(--muted); line-height: 1.6;">
-            Custom intervals, quiet hours, personalized reminders, and more.
-          </p>
-          <ul style="margin: 0 0 16px; padding-left: 20px; font-size: 13px; color: var(--text); line-height: 1.8;">
-            <li>Set custom intervals (10-180 min)</li>
-            <li>Schedule quiet hours</li>
-            <li>Customize reminder messages</li>
-            <li>Filter by context & accessibility</li>
-            <li>Priority support</li>
-          </ul>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-        <button id="buyProBtn" type="button" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); min-height: 44px;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'" aria-describedby="proTooltip">
-          Unlock Pro — A$12/year
-        </button>
-        <span id="proStatus" style="font-size: 13px; color: var(--muted);"></span>
-      </div>
-      <ul style="margin: 12px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
-        <li style="display: flex; align-items: center; gap: 6px;">
-          <svg style="width: 14px; height: 14px; color: #10b981;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          Quiet hours
-        </li>
-        <li style="display: flex; align-items: center; gap: 6px;">
-          <svg style="width: 14px; height: 14px; color: #10b981;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          Custom intervals
-        </li>
-        <li style="display: flex; align-items: center; gap: 6px;">
-          <svg style="width: 14px; height: 14px; color: #10b981;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          Extra move packs
-        </li>
-      </ul>
-      <p style="margin: 8px 0 0; font-size: 12px; color: var(--muted); text-align: center;">7-day free trial. Cancel anytime.</p>
-      <span id="proTooltip" role="tooltip" style="display: none;">Pro unlocks advanced features like custom intervals, quiet hours scheduling, and premium exercise packs</span>
-      <div>
-      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--muted);">
-          <input type="checkbox" id="restoreProToggle" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary);">
-          <span>I already purchased</span>
-        </label>
-      </div>
-    </div>
+    <div id="proUnlockCard" class="pro-unlock-card" style="display: none;" data-pro-block="widget">
 
     <div class="card">
       <div class="label">
@@ -1512,7 +1464,7 @@
             </svg>
           </button>
           <div class="faq-answer" id="faq-answer-2">
-            Yes! Free users get hourly (60-min) reminders. Pro unlocks 30-min and 45-min intervals. You can also set Quiet Hours to pause nudges during meetings or focus time.
+            Yes! Free users get hourly (60-min) reminders. Pro unlocks custom intervals (10–180 min), quiet hours scheduling, extra move packs, one-tap .ics calendar export, and streak boosts.
           </div>
         </div>
 
@@ -1577,38 +1529,7 @@
           }
         }
       </style>
-      <div>
-        <h2 style="font-size: 24px; font-weight: 600; margin: 0 0 12px; color: var(--text-bright);">Pro Unlock (A$12/year)</h2>
-        <p style="margin: 12px 0 0; color: #9CA3AF; font-size: 16px; line-height: 1.6;">
-          Unlock BreakBreath Pro for A$12/year and make it truly yours: Quiet Hours, custom intervals, extra micro-move packs (desk, commute, stretch), one-tap .ics scheduling, and streak boosts—still lightweight, no trackers, AU-hosted. Cancel anytime; your data stays on your device. Try it for a week and see if it sticks.
-        </p>
-        <p style="margin: 8px 0 0; font-size: 14px; color: var(--muted);">Prices in AUD. Cancel anytime.</p>
-        <a href="/pro" style="margin-top: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: #2563EB; padding: 12px 20px; color: white; font-weight: 500; text-decoration: none; font-size: 16px; transition: background 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563EB'">
-          Unlock Pro
-        </a>
-      </div>
-      <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; color: var(--text);">
-        <li style="display: flex; align-items: start; gap: 8px;">
-          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
-          <span>Set quiet hours</span>
-        </li>
-        <li style="display: flex; align-items: start; gap: 8px;">
-          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
-          <span>Pick custom intervals</span>
-        </li>
-        <li style="display: flex; align-items: start; gap: 8px;">
-          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
-          <span>Unlock extra packs</span>
-        </li>
-        <li style="display: flex; align-items: start; gap: 8px;">
-          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
-          <span>Download .ics schedules</span>
-        </li>
-        <li style="display: flex; align-items: start; gap: 8px;">
-          <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
-          <span>Track streaks</span>
-        </li>
-      </ul>
+      <div data-pro-block="marketing"></div>
     </div>
   </section>
 
@@ -3010,6 +2931,20 @@ function updateDailyStreakDisplay() {
 }
 
 let dailyStreak = getDailyStreak();
+
+// Pro feature configuration (single source of truth)
+const PRO_CONFIG = {
+  price: 'Unlock Pro — A$12/year',
+  note: '7-day free trial. Cancel anytime. Your data stays on your device.',
+  description: 'Unlock BreakBreath Pro for A$12/year and make it truly yours: Quiet hours, custom intervals (10–180 min), extra move packs (commute, full-stretch), one-tap .ics scheduling, and streak boosts—still lightweight, no trackers, AU-hosted.',
+  features: [
+    { key: 'quiet_hours', label: 'Quiet hours' },
+    { key: 'custom_intervals', label: 'Custom intervals (10–180 min)' },
+    { key: 'extra_packs', label: 'Extra move packs (Commute, Full-stretch)' },
+    { key: 'one_tap_ics', label: 'One-tap .ics scheduling' },
+    { key: 'streak_boosts', label: 'Streak boosts' }
+  ]
+};
 
 const $ = (id) => document.getElementById(id);
 const logEl = $("log");
@@ -4603,44 +4538,54 @@ function updateProUI() {
   }
 }
 
-const buyProBtn = $('buyProBtn');
-if (buyProBtn) {
-  buyProBtn.addEventListener('click', async () => {
-    try {
-      // Test Stripe connectivity before opening
-      const testUrl = STRIPE_PRO_LINK;
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+// Pro button handler (works with dynamically rendered buttons)
+async function handleProPurchase(placement) {
+  trackEvent('pro_cta_click', { placement });
 
-      await fetch(testUrl, {
-        method: 'HEAD',
-        signal: controller.signal,
-        mode: 'no-cors'
-      });
-      clearTimeout(timeoutId);
+  try {
+    // Test Stripe connectivity before opening
+    const testUrl = STRIPE_PRO_LINK;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-      window.open(STRIPE_PRO_LINK, '_blank');
-      showToast('Complete your purchase, then return here to activate Pro.');
+    await fetch(testUrl, {
+      method: 'HEAD',
+      signal: controller.signal,
+      mode: 'no-cors'
+    });
+    clearTimeout(timeoutId);
 
-      setTimeout(() => {
-        if (confirm('Purchase complete? Click OK to activate Pro features.')) {
-          setPro(true);
-          updateProUI();
-          showToast('Pro unlocked! Enjoy your premium features.');
-          appendLog('Pro features activated');
-        }
-      }, 5000);
-    } catch (error) {
-      showToast('Unable to reach payment system. Please try again later.', 3000);
-      console.warn('Stripe connectivity issue:', error);
-    }
-  });
+    window.open(STRIPE_PRO_LINK, '_blank');
+    showToast('Complete your purchase, then return here to activate Pro.');
+
+    setTimeout(() => {
+      if (confirm('Purchase complete? Click OK to activate Pro features.')) {
+        setPro(true);
+        updateProUI();
+        showToast('Pro unlocked! Enjoy your premium features.');
+        appendLog('Pro features activated');
+      }
+    }, 5000);
+  } catch (error) {
+    showToast('Unable to reach payment system. Please try again later.', 3000);
+    console.warn('Stripe connectivity issue:', error);
+  }
 }
 
-// Restore Pro toggle (honesty-based)
-const restoreProToggle = $('restoreProToggle');
-if (restoreProToggle) {
-  restoreProToggle.addEventListener('change', (e) => {
+// Attach Pro button listeners after render
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'buyProBtn') {
+    e.preventDefault();
+    handleProPurchase('widget');
+  } else if (e.target.id === 'heroProBtn') {
+    e.preventDefault();
+    handleProPurchase('marketing');
+  }
+});
+
+// Restore Pro toggle (event delegation, honesty-based)
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'restoreProToggle') {
     if (e.target.checked) {
       setPro(true);
       updateProUI();
@@ -4651,11 +4596,16 @@ if (restoreProToggle) {
       updateProUI();
       showToast('Pro deactivated.');
     }
-  });
+  }
+});
 
-  // Set initial state based on current Pro status
-  restoreProToggle.checked = isPro();
-}
+// Set initial Pro toggle state after render
+setTimeout(() => {
+  const restoreProToggle = $('restoreProToggle');
+  if (restoreProToggle) {
+    restoreProToggle.checked = isPro();
+  }
+}, 100);
 
 // Initialize from persisted state
 // Initialization moved after BB is defined - see after initBBCore()
@@ -4934,8 +4884,76 @@ function dismissEnvCoachmark() {
   }
 }
 
+// Render Pro blocks with consistent messaging
+function renderProBlock(element, placement) {
+  if (!element) return;
+
+  const checkIcon = '<svg style="width: 14px; height: 14px; color: #10b981; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+
+  if (placement === 'widget') {
+    // Compact widget card version
+    element.innerHTML = `
+      <div style="display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 16px;">
+        <div style="flex: 1;">
+          <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 600; color: var(--text-bright); display: flex; align-items: center; gap: 8px;">
+            <span>Unlock Pro</span>
+            <span class="pro-badge">✨ Pro</span>
+          </h3>
+          <p style="margin: 0 0 12px; font-size: 14px; color: var(--muted); line-height: 1.6;">
+            ${PRO_CONFIG.description}
+          </p>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <button id="buyProBtn" type="button" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); min-height: 44px;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'">
+          ${PRO_CONFIG.price}
+        </button>
+        <span id="proStatus" style="font-size: 13px; color: var(--muted);"></span>
+      </div>
+      <ul style="margin: 12px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+        ${PRO_CONFIG.features.map(f => `
+          <li style="display: flex; align-items: center; gap: 6px;">
+            ${checkIcon}
+            ${f.label}
+          </li>
+        `).join('')}
+      </ul>
+      <p style="margin: 8px 0 0; font-size: 12px; color: var(--muted); text-align: center;">${PRO_CONFIG.note}</p>
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--muted);">
+          <input type="checkbox" id="restoreProToggle" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary);">
+          <span>I already purchased</span>
+        </label>
+      </div>
+    `;
+  } else if (placement === 'marketing') {
+    // Hero/marketing section version
+    element.innerHTML = `
+      <div>
+        <h2 style="font-size: 24px; font-weight: 600; margin: 0 0 12px; color: var(--text-bright);">Pro Unlock (A$12/year)</h2>
+        <p style="margin: 12px 0 0; color: #9CA3AF; font-size: 16px; line-height: 1.6;">
+          ${PRO_CONFIG.description} ${PRO_CONFIG.note}
+        </p>
+        <button id="heroProBtn" type="button" style="margin-top: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: #2563EB; padding: 12px 20px; color: white; font-weight: 500; text-decoration: none; font-size: 16px; transition: background 0.2s; border: none; cursor: pointer;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563EB'">
+          ${PRO_CONFIG.price}
+        </button>
+      </div>
+      <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; color: var(--text);">
+        ${PRO_CONFIG.features.map(f => `
+          <li style="display: flex; align-items: start; gap: 8px;">
+            <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
+            <span>${f.label}</span>
+          </li>
+        `).join('')}
+      </ul>
+    `;
+  }
+}
+
 loadI18n().then(() => {
   updateUIWithTranslations();
+  renderProBlock(document.querySelector('[data-pro-block="widget"]'), 'widget');
+  renderProBlock(document.querySelector('[data-pro-block="marketing"]'), 'marketing');
   showEnvCoachmark();
 }).catch(err => {
   console.error('Failed to load i18n:', err);
@@ -6275,7 +6293,7 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
         e.preventDefault();
         e.target.checked = false;
         const feature = e.target.dataset.proFeature || 'This feature';
-        alert(`${feature} requires Pro • A$12/yr\n\nUpgrade to unlock all exercise packs.`);
+        alert(`${feature} requires Pro • ${PRO_CONFIG.price}\n\nUpgrade to unlock all exercise packs.`);
         return;
       }
       autoSaveBBSettings();
@@ -6290,7 +6308,7 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
       if (e.target.classList.contains('pro-locked')) {
         e.preventDefault();
         const feature = e.target.dataset.proFeature || 'This feature';
-        showToast(`Pro feature. ${feature} requires Pro — A$12/yr`);
+        showToast(`Pro feature. ${feature} requires ${PRO_CONFIG.price}`);
         // Revert to previous selection
         const currentInterval = localStorage.getItem('bb_interval') || '60';
         const currentRadio = document.querySelector(`input[name="bb-interval"][value="${currentInterval}"]`);
@@ -6366,7 +6384,8 @@ if (bbOpenSettings && bbSettingsModal && bbSettingsOverlay) {
   // Pro link handler
   document.getElementById('bb-pro-link')?.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('Pro features — A$12/yr\n\nUnlock:\n• 45m and 30m intervals\n• Commute exercise pack\n• Full stretch pack\n• Advanced customization');
+    const proFeatures = PRO_CONFIG.features.map(f => `• ${f.label}`).join('\n');
+    alert(`${PRO_CONFIG.price}\n\n${proFeatures}\n\n${PRO_CONFIG.note}`);
   });
 
   // Notification help link
