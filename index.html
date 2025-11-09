@@ -3030,6 +3030,8 @@ function getRecentExerciseCategories() {
 }
 
 function setSuggestion(){
+  console.log('setSuggestion called, currentEnv:', currentEnv);
+
   if (!sugEl) {
     console.error('Suggestion element not found');
     return;
@@ -3038,6 +3040,7 @@ function setSuggestion(){
   const seatedOnly = localStorage.getItem('bb_seated_only') === 'true';
 
   let pool = BANK[currentEnv];
+  console.log('Initial pool size:', pool?.length, 'Pool:', pool);
 
   // Apply BB Pro pack filtering if filterPool is available
   if (typeof filterPool === 'function') {
@@ -3050,6 +3053,7 @@ function setSuggestion(){
 
   // Apply category filters
   pool = pool.filter(key => matchesFilters(key));
+  console.log('After filter, pool size:', pool?.length, 'Pool:', pool);
 
   // Filter pool if seated-only mode is enabled
   if (seatedOnly) {
@@ -3111,12 +3115,15 @@ function setSuggestion(){
 
   const index = getPoolIndex(currentEnv);
   const exerciseKey = pool[index % pool.length];
+  console.log('Selected exercise key:', exerciseKey, 'Index:', index);
   const item = EXERCISE_LIBRARY[exerciseKey];
 
   if (!item) {
     console.error(`Exercise not found: ${exerciseKey}`);
     return;
   }
+
+  console.log('Rendering exercise:', item.title);
 
   currentExercise = item;
   currentExercise.key = exerciseKey;
