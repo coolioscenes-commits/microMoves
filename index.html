@@ -4551,6 +4551,9 @@ function updateProUI() {
     if (proFeaturesCard) proFeaturesCard.classList.add('pro-feature-disabled');
     document.documentElement.classList.remove('pro-active');
   }
+
+  // Refresh exercise suggestion after Pro status changes (filters/packs may have changed)
+  setSuggestion();
 }
 
 // Pro button handler (works with dynamically rendered buttons)
