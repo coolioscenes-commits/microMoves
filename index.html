@@ -3030,6 +3030,11 @@ function getRecentExerciseCategories() {
 }
 
 function setSuggestion(){
+  if (!sugEl) {
+    console.error('Suggestion element not found');
+    return;
+  }
+
   const seatedOnly = localStorage.getItem('bb_seated_only') === 'true';
 
   let pool = BANK[currentEnv];
