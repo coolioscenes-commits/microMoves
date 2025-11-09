@@ -2772,11 +2772,16 @@ function markTodayComplete() {
 
 function matchesFilters(exerciseKey) {
   const ex = EXERCISE_LIBRARY[exerciseKey];
-  if (!ex) return false;
+  if (!ex) {
+    console.log('Exercise not found:', exerciseKey);
+    return false;
+  }
 
   // Check if exercise category matches active filters
   const cat = ex.category;
+  console.log(`Checking ${exerciseKey}: category=${cat}, filters[${cat}]=${filters[cat]}, filters=`, filters);
   if (cat && !filters[cat]) {
+    console.log(`  ❌ Filtered out by category: ${cat} is disabled`);
     return false;
   }
 
@@ -2785,10 +2790,12 @@ function matchesFilters(exerciseKey) {
   if (filters.quiet === true) {
     // Quiet mode is ON: only show exercises with quiet alternatives
     if (!ex.quiet_alt && !ex.tags?.includes('quiet') && !ex.tags?.includes('seated')) {
+      console.log(`  ❌ Filtered out by quiet filter: no quiet alternative`);
       return false;
     }
   }
 
+  console.log(`  ✓ Passed filters`);
   return true;
 }
 
@@ -7131,31 +7138,10 @@ console.log('Widget elements initialized:', {
 });
 
 // Restore widget state on load (now that elements are initialized)
-if (localStorage.getItem('bb_widget_mode') === '1') {
-  enterWidgetMode();
-
-  // Restore position
-  const savedPos = localStorage.getItem('bb_widget_position');
-  if (savedPos && bbWidget) {
-    try {
-      const pos = JSON.parse(savedPos);
-      if (pos.left !== undefined) {
-        bbWidget.style.left = `${pos.left}px`;
-        bbWidget.style.right = 'auto';
-      } else if (pos.right !== undefined) {
-        bbWidget.style.right = `${pos.right}px`;
-        bbWidget.style.left = 'auto';
-      }
-      if (pos.top !== undefined) {
-        bbWidget.style.top = `${pos.top}px`;
-        bbWidget.style.bottom = 'auto';
-      } else if (pos.bottom !== undefined) {
-        bbWidget.style.bottom = `${pos.bottom}px`;
-        bbWidget.style.top = 'auto';
-      }
-    } catch (e) {}
-  }
-}
+// TEMPORARILY DISABLED to prevent auto-popup
+// if (localStorage.getItem('bb_widget_mode') === '1') {
+//   enterWidgetMode();
+// }
 
 // Initialize Widget button (now that HTML elements exist)
 const bbToggleWidgetBtn = document.getElementById('bb-toggle-widget');
