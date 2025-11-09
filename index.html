@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5" />
-  <meta name="theme-color" content="#2563EB" />
+  <meta name="theme-color" content="#0B1220" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="BreakBreath" />
@@ -31,7 +31,7 @@
   <meta property="og:title" content="BreakBreath — Hourly Micro-Reminders for Breathwork & Stretches" />
   <meta property="og:description" content="1-minute resets, every hour—wherever you are. Gentle breathwork and stretches for desk workers. Works offline. No account required. Privacy-first." />
   <meta property="og:image" content="https://yourdomain.com/og-image.png" />
-  <meta property="og:image:alt" content="BreakBreath app showing hourly breathing and stretching reminders" />
+  <meta property="og:image:alt" content="BreakBreath — 60-second resets, every hour" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -44,7 +44,7 @@
   <meta name="twitter:title" content="BreakBreath — Hourly Micro-Reminders for Breathwork & Stretches" />
   <meta name="twitter:description" content="1-minute resets, every hour—wherever you are. Gentle breathwork and stretches for desk workers. Works offline. No account required." />
   <meta name="twitter:image" content="https://yourdomain.com/og-image.png" />
-  <meta name="twitter:image:alt" content="BreakBreath app showing hourly breathing and stretching reminders" />
+  <meta name="twitter:image:alt" content="BreakBreath — 60-second resets, every hour" />
 
   <!-- General Meta -->
   <meta name="description" content="Hourly micro-reminders for breathwork and stretches. 1-minute resets for office, home, queue, commute, and outdoors. Improve posture, reduce stress, and boost productivity with smart movement breaks." />
@@ -1207,9 +1207,9 @@
       </span>
     </div>
     <p class="sub">Micro-breaks that fit anywhere. BreakBreath gives you 60-second moves every hour—quiet when you need it, energising when you want it.</p>
-    <div class="row" role="group" aria-label="Reminder actions" style="margin-top: 24px; gap: 12px;">
-      <button id="startBtn" type="button" tabindex="1" style="min-height: 48px; font-size: 16px; font-weight: 600; background: var(--primary); color: white; border: none; flex: 1; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(37, 99, 235, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(37, 99, 235, 0.4)'">Start nudges</button>
-      <button id="quickDemoBtn" type="button" class="secondary" tabindex="2" style="min-height: 48px; background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.7); font-weight: 500; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.color='var(--text)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.color='rgba(255, 255, 255, 0.7)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">Try a 60-sec exercise</button>
+    <div style="margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+      <button id="startBtn" type="button" tabindex="1" style="width: 100%; max-width: 320px; min-height: 52px; font-size: 17px; font-weight: 600; background: var(--primary); color: white; border: none; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(37, 99, 235, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(37, 99, 235, 0.4)'" aria-label="Start hourly nudges">Start nudges</button>
+      <button id="quickDemoBtn" type="button" class="secondary" tabindex="2" style="background: transparent; border: none; color: rgba(255, 255, 255, 0.5); font-weight: 400; font-size: 14px; padding: 8px 16px; transition: all 0.2s; text-decoration: underline; text-underline-offset: 2px;" onmouseover="this.style.color='rgba(255, 255, 255, 0.7)'" onmouseout="this.style.color='rgba(255, 255, 255, 0.5)'" aria-label="Try a sample exercise">Try a 60-sec exercise</button>
     </div>
     <ul class="day-dots" id="dayDots" aria-label="Weekly activity" style="margin-top: 24px;"></ul>
   </header>
@@ -4648,11 +4648,31 @@ document.addEventListener('change', (e) => {
   }
 });
 
+// Restore Pro link handler
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'restoreProLink') {
+    e.preventDefault();
+    if (!isPro()) {
+      setPro(true);
+      updateProUI();
+      showToast('Pro restored! Thank you for your honesty.');
+      appendLog('Pro features restored');
+    } else {
+      showToast('Pro is already active.');
+    }
+  }
+});
+
 // Set initial Pro toggle state after render
 setTimeout(() => {
   const restoreProToggle = $('restoreProToggle');
   if (restoreProToggle) {
     restoreProToggle.checked = isPro();
+  }
+  // Hide restore link if Pro is already active
+  const restoreProLink = $('restoreProLink');
+  if (restoreProLink && isPro()) {
+    restoreProLink.style.display = 'none';
   }
 }, 100);
 
@@ -4697,6 +4717,9 @@ let notificationsEnabled = localStorage.getItem('notifications_enabled') !== 'fa
 let soundEnabled = localStorage.getItem('sound_enabled') !== 'false';
 
 let stickyBarDismissed = false;
+try {
+  stickyBarDismissed = localStorage.getItem('breakbreath_help_tip_dismissed') === 'true';
+} catch (e) {}
 
 function updateStickyBarVisibility() {
   const isMobile = window.innerWidth <= 640;
@@ -4714,6 +4737,9 @@ window.addEventListener('resize', updateStickyBarVisibility);
 function closeStickyBar() {
   stickyBarDismissed = true;
   stickyBar.classList.remove('visible');
+  try {
+    localStorage.setItem('breakbreath_help_tip_dismissed', 'true');
+  } catch (e) {}
 }
 
 // Sticky footer CTA scroll behavior
@@ -4937,7 +4963,7 @@ function dismissEnvCoachmark() {
 function renderProBlock(element, placement) {
   if (!element) return;
 
-  const checkIcon = '<svg style="width: 14px; height: 14px; color: #10b981; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+  const checkIcon = '<svg style="width: 16px; height: 16px; color: #10b981; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
 
   if (placement === 'widget') {
     // Compact widget card version
@@ -4953,10 +4979,11 @@ function renderProBlock(element, placement) {
           </p>
         </div>
       </div>
-      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
         <button id="buyProBtn" type="button" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); min-height: 44px;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'">
           ${PRO_CONFIG.price}
         </button>
+        <p style="margin: 0; font-size: 12px; color: var(--muted); text-align: center;">7-day free trial. Cancel anytime.</p>
         <span id="proStatus" style="font-size: 13px; color: var(--muted);"></span>
       </div>
       <ul style="margin: 12px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
@@ -4967,12 +4994,8 @@ function renderProBlock(element, placement) {
           </li>
         `).join('')}
       </ul>
-      <p style="margin: 8px 0 0; font-size: 12px; color: var(--muted); text-align: center;">${PRO_CONFIG.note}</p>
-      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--muted);">
-          <input type="checkbox" id="restoreProToggle" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary);">
-          <span>I already purchased</span>
-        </label>
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center;">
+        <a href="#" id="restoreProLink" style="font-size: 13px; color: var(--primary); text-decoration: underline; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='var(--primary)'">Restore purchase</a>
       </div>
     `;
   } else if (placement === 'marketing') {
@@ -4986,11 +5009,12 @@ function renderProBlock(element, placement) {
         <button id="heroProBtn" type="button" style="margin-top: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: #2563EB; padding: 12px 20px; color: white; font-weight: 500; text-decoration: none; font-size: 16px; transition: background 0.2s; border: none; cursor: pointer;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563EB'">
           ${PRO_CONFIG.price}
         </button>
+        <p style="margin: 8px 0 0; font-size: 12px; color: var(--muted);">7-day free trial. Cancel anytime.</p>
       </div>
       <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; color: var(--text);">
         ${PRO_CONFIG.features.map(f => `
-          <li style="display: flex; align-items: start; gap: 8px;">
-            <span style="margin-top: 6px; height: 8px; width: 8px; border-radius: 50%; background: #2563EB; flex-shrink: 0;"></span>
+          <li style="display: flex; align-items: center; gap: 10px;">
+            ${checkIcon}
             <span>${f.label}</span>
           </li>
         `).join('')}
