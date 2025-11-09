@@ -5379,32 +5379,8 @@ if (bbWidget) {
   });
 }
 
-// Restore widget state on load
-if (localStorage.getItem('bb_widget_mode') === '1') {
-  enterWidgetMode();
-
-  // Restore position
-  const savedPos = localStorage.getItem('bb_widget_position');
-  if (savedPos && bbWidget) {
-    try {
-      const pos = JSON.parse(savedPos);
-      if (pos.left !== undefined) {
-        bbWidget.style.left = `${pos.left}px`;
-        bbWidget.style.right = 'auto';
-      } else if (pos.right !== undefined) {
-        bbWidget.style.right = `${pos.right}px`;
-        bbWidget.style.left = 'auto';
-      }
-      if (pos.top !== undefined) {
-        bbWidget.style.top = `${pos.top}px`;
-        bbWidget.style.bottom = 'auto';
-      } else if (pos.bottom !== undefined) {
-        bbWidget.style.bottom = `${pos.bottom}px`;
-        bbWidget.style.top = 'auto';
-      }
-    } catch (e) {}
-  }
-}
+// Restore widget state on load - moved to after DOM is ready
+// This will be called from the DOMContentLoaded event listener below
 
 function loadWidgetExercise() {
   if (widgetExercisePool.length === 0) {
@@ -7153,6 +7129,33 @@ console.log('Widget elements initialized:', {
   start: !!bbWidgetStart,
   timer: !!bbWidgetTimer
 });
+
+// Restore widget state on load (now that elements are initialized)
+if (localStorage.getItem('bb_widget_mode') === '1') {
+  enterWidgetMode();
+
+  // Restore position
+  const savedPos = localStorage.getItem('bb_widget_position');
+  if (savedPos && bbWidget) {
+    try {
+      const pos = JSON.parse(savedPos);
+      if (pos.left !== undefined) {
+        bbWidget.style.left = `${pos.left}px`;
+        bbWidget.style.right = 'auto';
+      } else if (pos.right !== undefined) {
+        bbWidget.style.right = `${pos.right}px`;
+        bbWidget.style.left = 'auto';
+      }
+      if (pos.top !== undefined) {
+        bbWidget.style.top = `${pos.top}px`;
+        bbWidget.style.bottom = 'auto';
+      } else if (pos.bottom !== undefined) {
+        bbWidget.style.bottom = `${pos.bottom}px`;
+        bbWidget.style.top = 'auto';
+      }
+    } catch (e) {}
+  }
+}
 
 // Initialize Widget button (now that HTML elements exist)
 const bbToggleWidgetBtn = document.getElementById('bb-toggle-widget');
