@@ -3164,6 +3164,11 @@ function setSuggestion(){
     <div id="howtoCard" class="howto-card" style="display: none; overflow: visible;" role="region" aria-labelledby="howtoTitle"></div>
   `;
 
+  console.log('✅ innerHTML set! Element:', sugEl, 'Content length:', sugEl.innerHTML.length);
+  console.log('Element display:', window.getComputedStyle(sugEl).display);
+  console.log('Element visibility:', window.getComputedStyle(sugEl).visibility);
+  console.log('Element opacity:', window.getComputedStyle(sugEl).opacity);
+
   if (autoShowHowto && getExerciseAutoShow(exerciseKey)) {
     setTimeout(() => toggleHowtoCard(true), 300);
   }
