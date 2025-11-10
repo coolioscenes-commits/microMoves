@@ -1,0 +1,310 @@
+Test ID,Category,Device,Mode,Test Scenario,Pre-Conditions,Test Steps,Expected Result,Actual Result,Status,Notes,Tester,Date
+MT-01,Core Functionality,Desktop Chrome,Online,Start Nudges - First Launch,App not used before; Clear localStorage,"1. Open app in browser
+2. Click ""Start nudges"" button
+3. Observe state changes","- Button changes to countdown display
+- LocalStorage key ""breakbreath_active"" = true
+- Countdown pill appears
+- Success toast shown",,PENDING,,,,
+MT-02,Core Functionality,Desktop Chrome,Online,Quick Demo Exercise,App loaded,"1. Click ""Try a 30-sec exercise"" button
+2. Read exercise instructions
+3. Click ""Start"" timer
+4. Wait for timer to complete","- Modal opens with exercise details
+- Timer counts down from 30s
+- Timer completes with success state
+- Exercise marked complete",,PENDING,,,,
+MT-03,Environment Selection,Desktop Chrome,Online,Select Environment Chip,App loaded; Nudges started,"1. Click ""Office"" environment chip
+2. Observe chip state
+3. Refresh page
+4. Check if selection persists","- Chip shows active state (aria-pressed=true)
+- LocalStorage ""breakbreath_env"" = ""office""
+- Selection persists after refresh
+- Suggestions update for office context",,PENDING,,,,
+MT-04,Exercise Filters,Desktop Chrome,Online,Apply Exercise Filter,App loaded; Suggestions visible,"1. Click ""🫁 Breath"" filter chip
+2. Click ""👀 Eyes"" filter chip
+3. Observe suggestion changes
+4. Click ""Suggest a move"" button","- Both chips show active state
+- Suggestions match selected filters only
+- LocalStorage ""bb_filters"" updated
+- Only breath/eyes exercises shown",,PENDING,,,,
+MT-05,Streaks,Desktop Chrome,Online,Complete Exercise - Streak Increment,App loaded; No streak yet,"1. Start and complete an exercise
+2. Observe streak counter
+3. Check LocalStorage","- Daily streak = 1
+- Total streak = 1
+- LocalStorage ""bb_daily_streak"" = 1
+- LocalStorage ""bb_streak_total"" = 1
+- Success toast shows streak",,PENDING,,,,
+MT-06,Streaks,Desktop Chrome,Online,Undo Completion (within 30s),Exercise just completed (<30s ago),"1. Look for undo option (check toast/UI)
+2. Click undo within 30 seconds
+3. Observe streak counter","- Streak decrements to 0
+- Daily streak = 0
+- Toast confirms undo
+- LastCompletionData cleared",,PENDING,,,,
+MT-07,Streaks,Desktop Chrome,Online,Undo Window Expiry (after 30s),Exercise completed >30s ago,"1. Complete exercise
+2. Wait 31 seconds
+3. Try to undo","- Undo option disabled/hidden
+- OR message: ""Undo window expired (30s limit)""
+- Streak remains unchanged",,PENDING,,,,
+MT-08,Snooze,Desktop Chrome,Online,Snooze for 30 Minutes,Nudges active,"1. Click snooze button
+2. Select ""30 minutes"" preset
+3. Observe UI changes
+4. Check LocalStorage","- Snooze badge appears in header
+- Countdown shows remaining time
+- LocalStorage ""bb_snooze_until"" set
+- No notifications during snooze",,PENDING,,,,
+MT-09,Snooze,Desktop Chrome,Online,Undo Snooze (within 30s),Snooze just set (<30s ago),"1. Set snooze
+2. Click ""Undo"" within 30 seconds
+3. Observe changes","- Snooze cancelled immediately
+- Badge removed
+- LocalStorage ""bb_snooze_until"" cleared
+- Nudges resume",,PENDING,,,,
+MT-10,Settings,Desktop Chrome,Online,Change Reminder Interval,Settings modal accessible,"1. Click settings/gear icon
+2. Select ""45 minutes"" interval (Pro locked)
+3. Try custom interval
+4. Save settings","- Free users: 60min only available
+- Pro intervals show 🔒 lock
+- Custom interval disabled for free
+- Setting persists in LocalStorage ""bb_interval""",,PENDING,,,,
+MT-11,Settings,Desktop Chrome,Online,Set Quiet Hours,Settings modal open,"1. Click settings
+2. Set quiet start: 21:00
+3. Set quiet end: 07:00
+4. Save settings
+5. Check during quiet hours","- Times saved to LocalStorage
+- ""bb_quiet_start"" = ""21:00""
+- ""bb_quiet_end"" = ""07:00""
+- Badge shows during quiet hours
+- No notifications during quiet hours",,PENDING,,,,
+MT-12,Accessibility,Desktop Chrome,Online,Seated-Only Mode,Settings accessible,"1. Open settings
+2. Toggle ""Show only seated & upper-body exercises""
+3. Suggest exercises
+4. Verify filter applied","- Toggle saves to ""bb_seated_only""
+- Only seated exercises shown
+- Toast confirms setting
+- Filter persists after refresh",,PENDING,,,,
+MT-13,Accessibility,Desktop Chrome,Online,Keyboard Navigation - Dialogs,Any modal/dialog open,"1. Open any modal (Privacy, Settings, etc)
+2. Press TAB key repeatedly
+3. Press ESCAPE key
+4. Verify focus management","- Focus cycles through modal elements only
+- Focus trap works (doesn't leave modal)
+- ESCAPE closes modal
+- Focus returns to trigger element",,PENDING,,,,
+MT-14,Accessibility,Desktop Chrome,Online,Screen Reader Labels,Screen reader enabled (optional),"1. Tab through buttons
+2. Check aria-labels present
+3. Verify status announcements","- All icon-only buttons have aria-label
+- Status changes announced (aria-live)
+- Countdown has aria-live=""polite""
+- Dialogs have role=""dialog""",,PENDING,,,,
+MT-15,Pro Features,Desktop Chrome,Online,Pro CTA Click,App loaded,"1. Click ""Unlock Pro"" button
+2. Observe modal/dialog
+3. Verify features list
+4. Check analytics (console)","- Pro modal opens
+- All 5 features listed:
+  * Quiet hours
+  * Custom intervals (10-180 min)
+  * Extra move packs (Commute, Full-stretch)
+  * One-tap .ics scheduling
+  * Streak boosts
+- Console shows: [Analytics] pro_cta_click",,PENDING,,,,
+MT-16,Calendar Export,Desktop Chrome,Online,Download .ics File,App loaded,"1. Click .ics calendar button
+2. Observe download
+3. Open .ics file in calendar app","- .ics file downloads
+- Filename includes date
+- Opens in default calendar app
+- Shows hourly recurring events
+- Console: [Analytics] cta_add_ics",,PENDING,,,,
+MT-17,Share,Desktop Chrome,Online,Share Streak,Have active streak (≥1),"1. Complete exercise (streak ≥1)
+2. Click ""Share my streak"" button
+3. Observe clipboard/share","- Share dialog or clipboard copy
+- Text includes streak count
+- Console: [Analytics] cta_share_streak {daily: X, total: Y}
+- Toast confirms share",,PENDING,,,,
+MT-18,PWA,Desktop Chrome,Online,Install as PWA,Not installed yet,"1. Look for install prompt/icon
+2. Click ""Install"" or use browser menu
+3. Install app
+4. Launch from desktop/home","- Install prompt appears
+- App installs successfully
+- Launches in standalone window
+- manifest.json loads correctly",,PENDING,,,,
+MT-19,Offline Mode,Desktop Chrome,Offline,Work Offline - Basic Functions,App loaded online first,"1. Load app while online
+2. Enable Airplane Mode or disconnect network
+3. Refresh page
+4. Try basic functions (suggest, select env)","- App loads from cache
+- Service Worker serves cached content
+- Basic UI functions work
+- Environment selection works
+- Suggestions display",,PENDING,,,,
+MT-20,Offline Mode,Desktop Chrome,Offline,Service Worker Updates,App loaded offline,"1. Go offline
+2. Refresh page multiple times
+3. Observe console
+4. Check SW status","- Service Worker active
+- Cache version correct
+- Console shows SW messages
+- No network errors for cached resources",,PENDING,,,,
+MT-21,Notifications,Desktop Chrome,Online - Notifications Allowed,Request Notification Permission,Notifications not yet allowed,"1. Start nudges
+2. Allow notifications when prompted
+3. Wait for notification
+4. Verify notification content","- Permission prompt appears
+- Browser shows ""Allowed"" status
+- Notification appears at interval
+- Contains exercise suggestion
+- Clicking notification opens app",,PENDING,,,,
+MT-22,Notifications,Desktop Chrome,Online - Notifications Denied,Handle Denied Permissions,Permission can be changed,"1. Deny notification permission
+2. Observe app behavior
+3. Check UI messaging","- App continues to work
+- No error thrown
+- UI shows ""notifications disabled"" state
+- Can use app without notifications",,PENDING,,,,
+MT-23,Reduced Motion,Desktop Chrome,Reduced Motion ON,Respect prefers-reduced-motion,OS/Browser setting available,"1. Enable Reduced Motion in OS
+2. Refresh app
+3. Interact with animations
+4. Observe transitions","- Animations disabled or minimal
+- No carousel/sliding effects
+- Fade transitions only
+- Timer still functional
+- No motion sickness triggers",,PENDING,,,,
+MT-24,Responsive,Desktop Chrome,Online,Resize Browser Window,App loaded,"1. Resize browser to mobile width (~375px)
+2. Resize to tablet width (~768px)
+3. Resize to desktop (~1440px)
+4. Check layout at each size","- Layout adjusts smoothly
+- No horizontal scroll
+- Buttons remain accessible
+- Text remains readable
+- Touch targets ≥44px on mobile",,PENDING,,,,
+MT-25,LocalStorage,Desktop Chrome,Online,Clear Data - Restore Defaults,Have customized settings,"1. Customize multiple settings
+2. Click ""Restore defaults"" (if exists)
+3. OR clear browser data
+4. Reload app","- All settings reset to defaults
+- Streaks preserved (unless cleared)
+- App loads fresh state
+- No errors in console",,PENDING,,,,
+MT-26,Error Handling,Desktop Chrome,Online,LocalStorage Full/Blocked,Can simulate quota error,"1. Disable LocalStorage (browser settings)
+2. OR fill LocalStorage quota
+3. Try to save settings
+4. Observe error handling","- App shows error toast
+- Graceful degradation
+- No app crash
+- User informed of issue",,PENDING,,,,
+MT-27,Analytics,Desktop Chrome,Online,Verify Console Events,Console open (F12),"1. Open browser console
+2. Perform actions: start nudges, complete exercise, snooze, etc
+3. Watch for [Analytics] logs","- All actions log to console
+- Format: [Analytics] event_name {data}
+- No PII in payloads
+- 20+ event types tracked",,PENDING,,,,
+MT-28,Core Functionality,iOS Safari,Online,Start Nudges - iOS Safari,iPhone (iOS 15+); Safari browser,"1. Open app in Safari
+2. Click ""Start nudges""
+3. Observe countdown","- Button works (touch target sufficient)
+- Countdown displays correctly
+- No layout issues
+- LocalStorage persists",,PENDING,,,,
+MT-29,Core Functionality,iOS Safari,Online,Complete Exercise - iOS,App loaded on iOS,"1. Try 30-sec exercise
+2. Complete timer
+3. Check streak","- Timer works on iOS
+- Audio/vibration appropriate
+- Streak increments
+- No iOS-specific bugs",,PENDING,,,,
+MT-30,PWA,iOS Safari,Online,Add to Home Screen - iOS,Not installed yet,"1. Tap Share button
+2. Tap ""Add to Home Screen""
+3. Install app
+4. Launch from home screen","- Option appears in share sheet
+- Icon installs on home screen
+- Launches in standalone mode
+- Status bar styled correctly",,PENDING,,,,
+MT-31,Notifications,iOS Safari,Online - Notifications,iOS Notification Permission,iOS 16.4+ required,"1. Start nudges
+2. Allow notifications
+3. Wait for notification
+4. Test notification click","- Permission prompt (iOS 16.4+)
+- OR feature disabled on older iOS
+- Notification appears if supported
+- Opens app when tapped",,PENDING,,,,
+MT-32,Offline Mode,iOS Safari,Offline,Work Offline - iOS,App loaded; go offline,"1. Load app online
+2. Enable Airplane Mode
+3. Refresh Safari
+4. Test functions","- App loads from cache
+- Service Worker active
+- Basic functions work
+- No network errors",,PENDING,,,,
+MT-33,Touch Gestures,iOS Safari,Online,Touch Interactions - iOS,iPhone with touch,"1. Tap all buttons
+2. Swipe if applicable
+3. Pinch to zoom (should be limited)
+4. Test scrolling","- All taps register (≥44px targets)
+- Scrolling smooth
+- Zoom limited by viewport meta
+- No ghost clicks",,PENDING,,,,
+MT-34,iOS Quirks,iOS Safari,Online,Safari-Specific Issues,iOS Safari,"1. Test date inputs (quiet hours)
+2. Test time inputs
+3. Check fixed positioning
+4. Test 100vh layouts","- Date/time pickers work
+- Fixed elements don't jump
+- Bottom bars don't obscure content
+- Viewport units correct",,PENDING,,,,
+MT-35,Reduced Motion,iOS Safari,Reduced Motion ON,iOS Reduced Motion,iOS Settings > Accessibility,"1. Enable Reduce Motion in iOS
+2. Launch app
+3. Test animations","- Respects iOS setting
+- prefers-reduced-motion applied
+- Smooth non-motion transitions",,PENDING,,,,
+MT-36,Core Functionality,Android Chrome,Online,Start Nudges - Android,Android 10+ phone; Chrome,"1. Open app in Chrome
+2. Tap ""Start nudges""
+3. Observe countdown","- Button works (touch target sufficient)
+- Countdown displays correctly
+- No layout issues
+- LocalStorage persists",,PENDING,,,,
+MT-37,Core Functionality,Android Chrome,Online,Complete Exercise - Android,App loaded on Android,"1. Try 30-sec exercise
+2. Complete timer
+3. Check streak","- Timer works on Android
+- Audio/vibration appropriate
+- Streak increments
+- No Android-specific bugs",,PENDING,,,,
+MT-38,PWA,Android Chrome,Online,Install PWA - Android,Not installed yet,"1. Wait for install prompt OR
+2. Use Chrome menu > ""Add to Home Screen""
+3. Install app
+4. Launch from home screen","- Install banner appears automatically
+- OR menu option available
+- Icon installs on home screen
+- Launches in standalone mode
+- Splash screen shows",,PENDING,,,,
+MT-39,Notifications,Android Chrome,Online - Notifications,Android notification permission,"1. Start nudges
+2. Allow notifications
+3. Wait for notification
+4. Test notification actions","- Permission prompt appears
+- Notification appears at interval
+- Shows in notification shade
+- Click opens app
+- Can dismiss",,PENDING,,,,
+MT-40,Offline Mode,Android Chrome,Offline,Work Offline - Android,App loaded; go offline,"1. Load app online
+2. Enable Airplane Mode
+3. Refresh Chrome
+4. Test functions","- App loads from cache
+- Service Worker active
+- Basic functions work
+- No network errors",,PENDING,,,,
+MT-41,Touch Gestures,Android Chrome,Online,Touch Interactions - Android,Android phone with touch,"1. Tap all buttons
+2. Test scrolling
+3. Test pinch zoom
+4. Check overscroll behavior","- All taps register (≥48dp targets)
+- Scrolling smooth
+- Zoom limited appropriately
+- No bounce/overscroll issues",,PENDING,,,,
+MT-42,Android Quirks,Android Chrome,Online,Chrome-Specific Issues,Android Chrome,"1. Test address bar hiding/showing
+2. Check viewport height changes
+3. Test form inputs
+4. Check back button","- Content adjusts to address bar
+- No layout shift issues
+- Inputs don't zoom page
+- Back button works correctly",,PENDING,,,,
+MT-43,Background Sync,Android Chrome,Online,Background Behavior,PWA installed on Android,"1. Install PWA
+2. Go to background
+3. Wait (test if nudges continue)
+4. Return to foreground","- App state preserved
+- Timer state correct
+- LocalStorage intact
+- No unexpected resets",,PENDING,,,,
+MT-44,Reduced Motion,Android Chrome,Reduced Motion ON,Android Reduced Motion,Settings > Accessibility,"1. Enable Remove animations
+2. Launch app
+3. Test animations","- Respects Android setting
+- prefers-reduced-motion applied
+- Smooth non-motion transitions",,PENDING,,,,
+MT-45,Cross-Device,All Devices,Online,Consistent Experience,Test on all 3 devices,"1. Complete same test on Desktop, iOS, Android
+2. Compare behavior
+3. Note differences","- Core functions identical
+- Platform-specific features noted
+- No major inconsistencies
+- Data format compatible",,PENDING,,,,
