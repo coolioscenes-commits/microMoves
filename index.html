@@ -3149,7 +3149,6 @@ function setSuggestion(){
   const isBeginnerFriendly = duration <= 30 || (item.tags && item.tags.includes('seated'));
 
   sugEl.innerHTML = `
-    <div style="font-size: 0.75em; color: var(--muted); font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Next Micro Reset</div>
     <div>
       <span class="env-badge">${getEnvIcon(currentEnv)}${currentEnv}</span> ${item.title}
       <button class="help-chip" onclick="toggleHowtoCard()" type="button" aria-expanded="false" aria-controls="howtoCard" aria-label="Show exercise instructions" tabindex="0" id="helpChipBtn">?</button>
