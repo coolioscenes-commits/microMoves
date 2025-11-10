@@ -3142,6 +3142,11 @@ function setSuggestion(){
   currentExercise = item;
   currentExercise.key = exerciseKey;
 
+  // Close quiet info popover when suggestion changes
+  if (quietInfoPopoverState && quietInfoPopoverState.isOpen && quietInfoPopoverState.closeOnNextSuggestion) {
+    closeQuietInfoPopover();
+  }
+
   // Increment for next time (round-robin)
   setPoolIndex(currentEnv, (index + 1) % pool.length);
 
@@ -3154,7 +3159,7 @@ function setSuggestion(){
       <button class="help-chip" onclick="toggleHowtoCard()" type="button" aria-expanded="false" aria-controls="howtoCard" aria-label="Show exercise instructions" tabindex="0" id="helpChipBtn">?</button>
     </div>
     <div style="font-size: 0.85em; color: var(--muted); margin-top: 6px;">${duration > 0 ? `0:${duration.toString().padStart(2, '0')}` : '1:00'} • ${isBeginnerFriendly ? 'Beginner-friendly' : 'All levels'}</div>
-    ${item.quiet_alt ? `<div style="font-size: 0.85em; color: #666; margin-top: 4px;"><strong>Quiet alternative:</strong> ${item.quiet_alt} <button class="info-dot" type="button" aria-label="About quiet alternatives" aria-describedby="quietTooltip" tabindex="0" style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 50%; color: #818cf8; font-size: 9px; font-weight: 700; cursor: help; transition: all 0.2s; vertical-align: middle; margin-left: 4px;" onmouseover="this.style.background='rgba(99, 102, 241, 0.3)'; this.style.borderColor='rgba(99, 102, 241, 0.5)'" onmouseout="this.style.background='rgba(99, 102, 241, 0.2)'; this.style.borderColor='rgba(99, 102, 241, 0.3)'">i</button><span id="quietTooltip" role="tooltip" style="position: absolute; opacity: 0; pointer-events: none; font-size: 12px; background: rgba(17, 24, 39, 0.95); color: white; padding: 6px 10px; border-radius: 6px; white-space: nowrap; z-index: 1000;">Discreet options for public spaces</span></div>` : ''}
+    ${item.quiet_alt ? `<div style="font-size: 0.85em; color: #666; margin-top: 4px; position: relative;"><strong>Quiet alternative:</strong> ${item.quiet_alt} <button class="info-dot" type="button" role="button" aria-expanded="false" aria-controls="quietInfoPopover" aria-label="Learn about quiet alternatives" tabindex="0" onclick="toggleQuietInfoPopover(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleQuietInfoPopover(event);}" style="display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; width: 14px; height: 14px; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 50%; color: #818cf8; font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.2s; vertical-align: middle; margin-left: 4px; padding: 0;" onmouseover="this.style.background='rgba(99, 102, 241, 0.3)'; this.style.borderColor='rgba(99, 102, 241, 0.5)'" onmouseout="this.style.background='rgba(99, 102, 241, 0.2)'; this.style.borderColor='rgba(99, 102, 241, 0.3)'">i</button></div>` : ''}
     <button class="why-link" onclick="toggleWhyExplanation(event)" type="button">
       <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
@@ -4170,6 +4175,228 @@ function toggleWhyExplanation(event) {
     `;
   }
 }
+
+// Quiet Info Popover Management
+let quietInfoPopoverState = {
+  isOpen: false,
+  triggerButton: null,
+  currentExercise: null,
+  closeOnNextSuggestion: false
+};
+
+function toggleQuietInfoPopover(event) {
+  // Check if user has hidden this tip
+  const hideQuietInfo = localStorage.getItem('bb_hide_quiet_info') === 'true';
+  if (hideQuietInfo && !quietInfoPopoverState.isOpen) {
+    return;
+  }
+
+  const button = event.currentTarget;
+  const popover = document.getElementById('quietInfoPopover');
+
+  if (quietInfoPopoverState.isOpen) {
+    closeQuietInfoPopover();
+  } else {
+    openQuietInfoPopover(button);
+  }
+}
+
+function openQuietInfoPopover(button) {
+  const popover = document.getElementById('quietInfoPopover');
+  const examplesDiv = document.getElementById('quietInfoExamples');
+
+  // Get current exercise data
+  const suggestion = getFilteredExercises()[0];
+  if (!suggestion || !suggestion.quiet_alt) return;
+
+  quietInfoPopoverState.currentExercise = suggestion;
+  quietInfoPopoverState.triggerButton = button;
+  quietInfoPopoverState.isOpen = true;
+  quietInfoPopoverState.closeOnNextSuggestion = true;
+
+  // Update examples with current exercise's quiet alternative
+  examplesDiv.textContent = suggestion.quiet_alt;
+
+  // Show popover
+  popover.style.display = 'block';
+
+  // Position popover near the button
+  positionQuietInfoPopover(button, popover);
+
+  // Update button aria-expanded
+  button.setAttribute('aria-expanded', 'true');
+
+  // Focus management
+  setTimeout(() => {
+    const closeBtn = document.getElementById('quietInfoCloseBtn');
+    if (closeBtn) closeBtn.focus();
+  }, 100);
+
+  // Track analytics
+  if (typeof trackEvent === 'function') {
+    trackEvent('quiet_info_opened', { exercise: suggestion.title });
+  }
+}
+
+function closeQuietInfoPopover() {
+  const popover = document.getElementById('quietInfoPopover');
+  popover.style.display = 'none';
+
+  // Return focus to trigger button
+  if (quietInfoPopoverState.triggerButton) {
+    quietInfoPopoverState.triggerButton.setAttribute('aria-expanded', 'false');
+    quietInfoPopoverState.triggerButton.focus();
+  }
+
+  quietInfoPopoverState.isOpen = false;
+  quietInfoPopoverState.triggerButton = null;
+}
+
+function positionQuietInfoPopover(button, popover) {
+  const buttonRect = button.getBoundingClientRect();
+  const popoverRect = popover.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  const viewportWidth = window.innerWidth;
+
+  // Default: position above the button
+  let top = buttonRect.top - popoverRect.height - 8;
+  let left = buttonRect.left + (buttonRect.width / 2) - (popoverRect.width / 2);
+
+  // If too close to top, position below
+  if (top < 16) {
+    top = buttonRect.bottom + 8;
+  }
+
+  // Keep within horizontal bounds
+  if (left < 16) {
+    left = 16;
+  } else if (left + popoverRect.width > viewportWidth - 16) {
+    left = viewportWidth - popoverRect.width - 16;
+  }
+
+  // Keep within vertical bounds
+  if (top + popoverRect.height > viewportHeight - 16) {
+    top = viewportHeight - popoverRect.height - 16;
+  }
+
+  popover.style.top = `${top}px`;
+  popover.style.left = `${left}px`;
+}
+
+// Initialize popover event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  const closeBtn = document.getElementById('quietInfoCloseBtn');
+  const showFilterBtn = document.getElementById('quietInfoShowFilter');
+  const copyStepsBtn = document.getElementById('quietInfoCopySteps');
+  const hideCheckbox = document.getElementById('quietInfoHideCheckbox');
+  const popover = document.getElementById('quietInfoPopover');
+
+  // Close button
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeQuietInfoPopover);
+  }
+
+  // Show quiet-only moves
+  if (showFilterBtn) {
+    showFilterBtn.addEventListener('click', () => {
+      // Enable only the quiet filter
+      Object.keys(filters).forEach(key => {
+        filters[key] = key === 'quiet';
+      });
+      saveFilters(filters);
+      renderFiltersUI();
+      setSuggestion();
+      closeQuietInfoPopover();
+
+      if (typeof trackEvent === 'function') {
+        trackEvent('quiet_filter_from_popover');
+      }
+    });
+  }
+
+  // Copy quiet steps
+  if (copyStepsBtn) {
+    copyStepsBtn.addEventListener('click', async () => {
+      if (!quietInfoPopoverState.currentExercise) return;
+
+      const quietText = quietInfoPopoverState.currentExercise.quiet_alt;
+
+      try {
+        await navigator.clipboard.writeText(quietText);
+        copyStepsBtn.textContent = '✓ Copied!';
+        copyStepsBtn.style.background = '#d1fae5';
+        copyStepsBtn.style.color = '#065f46';
+        copyStepsBtn.style.borderColor = '#10b981';
+
+        setTimeout(() => {
+          copyStepsBtn.textContent = 'Copy quiet steps';
+          copyStepsBtn.style.background = 'white';
+          copyStepsBtn.style.color = '#374151';
+          copyStepsBtn.style.borderColor = '#d1d5db';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    });
+  }
+
+  // Don't show again checkbox
+  if (hideCheckbox) {
+    hideCheckbox.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        localStorage.setItem('bb_hide_quiet_info', 'true');
+      } else {
+        localStorage.removeItem('bb_hide_quiet_info');
+      }
+    });
+  }
+
+  // Escape key to close and focus trap
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && quietInfoPopoverState.isOpen) {
+      closeQuietInfoPopover();
+      return;
+    }
+
+    // Focus trap: keep tab inside popover when open
+    if (e.key === 'Tab' && quietInfoPopoverState.isOpen && popover) {
+      const focusableElements = popover.querySelectorAll(
+        'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      const firstFocusable = focusableElements[0];
+      const lastFocusable = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable.focus();
+        }
+      } else {
+        if (document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable.focus();
+        }
+      }
+    }
+  });
+
+  // Click outside to close
+  document.addEventListener('click', (e) => {
+    if (quietInfoPopoverState.isOpen && popover && !popover.contains(e.target)) {
+      // Check if click is on the trigger button
+      if (quietInfoPopoverState.triggerButton && !quietInfoPopoverState.triggerButton.contains(e.target)) {
+        closeQuietInfoPopover();
+      }
+    }
+  });
+
+  // Reposition on window resize
+  window.addEventListener('resize', () => {
+    if (quietInfoPopoverState.isOpen && quietInfoPopoverState.triggerButton) {
+      positionQuietInfoPopover(quietInfoPopoverState.triggerButton, popover);
+    }
+  });
+});
 
 document.querySelectorAll('.faq-question').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -7260,6 +7487,38 @@ console.log('  BreakBreathDebug.getShareLine()     - Get share text');
 console.log('  BreakBreathDebug.testYesterday()    - Set last active to yesterday');
 console.log('  BreakBreathDebug.testThreeDaysAgo() - Set last active to 3 days ago');
 </script>
+
+<!-- Quiet Info Popover -->
+<div id="quietInfoPopover" role="dialog" aria-labelledby="quietInfoTitle" aria-modal="false" style="display: none; position: fixed; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05); padding: 20px; max-width: 320px; width: calc(100vw - 32px); z-index: 10000;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+    <h3 id="quietInfoTitle" style="margin: 0; font-size: 16px; font-weight: 600; color: #111827;">Quiet alternative</h3>
+    <button id="quietInfoCloseBtn" type="button" aria-label="Close" style="background: none; border: none; color: #6b7280; cursor: pointer; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
+      <svg style="width: 18px; height: 18px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6; color: #374151;">This move has a silent variant you can do without drawing attention. It avoids big arm/leg motions and keeps breathing natural.</p>
+
+  <div id="quietInfoExamples" style="margin: 0 0 16px; padding: 12px; background: #f9fafb; border-radius: 8px; font-size: 13px; line-height: 1.5; color: #4b5563;"></div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <button id="quietInfoShowFilter" type="button" style="width: 100%; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; border: none; border-radius: 8px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(99, 102, 241, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(99, 102, 241, 0.2)'">
+      Show quiet-only moves
+    </button>
+    <button id="quietInfoCopySteps" type="button" style="width: 100%; background: white; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#f9fafb'; this.style.borderColor='#9ca3af'" onmouseout="this.style.background='white'; this.style.borderColor='#d1d5db'">
+      Copy quiet steps
+    </button>
+  </div>
+
+  <div id="quietInfoDontShow" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+    <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6b7280; cursor: pointer;">
+      <input type="checkbox" id="quietInfoHideCheckbox" style="width: 16px; height: 16px; cursor: pointer;">
+      <span>Don't show this tip again</span>
+    </label>
+  </div>
+</div>
 
 </body>
 </html>
