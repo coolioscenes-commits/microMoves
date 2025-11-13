@@ -182,7 +182,7 @@
     @media (min-width: 1400px) {
       main { max-width: 900px; }
     }
-    h1 { font-size: 32px; font-weight: 600; margin: 0; color: var(--text-bright); letter-spacing: -0.04em; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    h1 { font-size: 32px; font-weight: 600; margin: 0; color: var(--text-bright); letter-spacing: -0.04em; display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
     @media (min-width: 640px) {
       h1 { font-size: 48px; }
     }
@@ -521,7 +521,7 @@
       background: #3b82f6;
       color: white;
       font-weight: 600;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8), 0 2px 8px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8), 0 2px 8px rgba(37, 99, 235, 0.3), inset 0 -2px 0 0 rgba(255, 255, 255, 0.4);
       position: relative;
     }
     .chip[aria-pressed="true"]::after {
@@ -1339,10 +1339,18 @@
           <input type="checkbox" id="seatedOnlyToggle" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
           <div style="flex: 1;">
             <div style="font-weight: 500; color: var(--text-bright);">Show only seated & upper-body exercises</div>
-            <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">Filters out exercises that require standing or full mobility</div>
+            <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">
+              Filters out exercises that require standing or full mobility
+              <button type="button" onclick="toggleSeatedInfoPopover(event)" style="display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; width: 14px; height: 14px; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 50%; color: #818cf8; font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.2s; vertical-align: middle; margin-left: 4px; padding: 0;" onmouseover="this.style.background='rgba(99, 102, 241, 0.3)'; this.style.borderColor='rgba(99, 102, 241, 0.5)'" onmouseout="this.style.background='rgba(99, 102, 241, 0.2)'; this.style.borderColor='rgba(99, 102, 241, 0.3)'" aria-label="What counts as seated?" title="What counts as seated?">?</button>
+            </div>
           </div>
         </label>
       </div>
+    </div>
+
+    <div id="seatedInfoPopover" style="display: none; position: fixed; z-index: 10000; background: rgba(17, 24, 39, 0.98); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 8px; padding: 12px; max-width: 280px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);" role="dialog" aria-labelledby="seatedInfoTitle">
+      <div id="seatedInfoTitle" style="font-weight: 600; color: var(--text-bright); margin-bottom: 8px; font-size: 13px;">What counts as seated?</div>
+      <div style="font-size: 12px; color: var(--muted); line-height: 1.5;">Seated exercises can be done while sitting at a desk or in a chair. Examples: shoulder rolls, neck stretches, wrist circles, seated twists.</div>
     </div>
 
     <div class="card pro-feature-disabled" id="proFeaturesCard">
@@ -1428,6 +1436,10 @@
           </svg>
         </span>
         Daily streak & activity
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 8px;">
+        <div id="dailySummary" style="flex: 1; font-size: 13px; color: var(--muted); padding: 8px 12px; background: rgba(17, 24, 39, 0.4); border-radius: 6px; border: 1px solid rgba(55, 65, 81, 0.3);"></div>
+        <button id="undoLastBtn" onclick="handleUndoLast()" style="display: none; padding: 8px 12px; font-size: 12px; font-weight: 500; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.25)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'" aria-label="Undo last completion">Undo last</button>
       </div>
       <div id="log" class="log" aria-live="polite"></div>
     </div>
@@ -1608,7 +1620,7 @@
           <a href="/support" onclick="trackEvent('tip_clicked_custom')" style="display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 14px; color: rgba(255, 255, 255, 0.6); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='rgba(255, 255, 255, 0.6)'">Custom amount</a>
         </div>
       </div>
-      <p style="margin: 8px 0 0; font-size: 14px; color: var(--muted);">Funds hosting & new micro-moves.</p>
+      <p style="margin: 8px 0 0; font-size: 15px; color: #94a3b8; font-weight: 500;">💚 Funds hosting + new micro-moves.</p>
     </div>
   </section>
 
@@ -1628,7 +1640,14 @@
           <p style="margin: 12px 0 0; color: #9CA3AF; font-size: 16px; line-height: 1.6;">
             Bring healthy micro-breaks to your workplace with BreakBreath Teams—AU-hosted, privacy-first. Set company-wide break times, share a team .ics calendar, add simple branding, and view lightweight adoption stats (no personal tracking). Perfect for remote, hybrid, or office teams who want to encourage movement without intrusive wellness platforms. Pricing starts at A$99/year for small teams.
           </p>
-          <a href="/teams" onclick="trackEvent('teams_learn_more_clicked')" style="margin-top: 24px; display: inline-flex; align-items: center; gap: 8px; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">
+          <div style="margin-top: 16px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2);">
+            <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #94a3b8; line-height: 1.8;">
+              <li>✓ Privacy-first (no personal tracking)</li>
+              <li>✓ Company-wide .ics calendar sync</li>
+              <li>✓ Light adoption stats (team-level only)</li>
+            </ul>
+          </div>
+          <a href="/teams" onclick="trackEvent('teams_learn_more_clicked')" style="margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; justify-content: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 20px; font-weight: 500; text-decoration: none; font-size: 16px; color: var(--text); transition: all 0.2s; background: transparent;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">
             <span>Learn more about Teams</span>
             <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
           </a>
@@ -1638,7 +1657,7 @@
   </section>
 
   <footer style="text-align: center; padding: 40px 20px 20px; color: var(--muted); font-size: 13px; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 0; background: rgba(11, 18, 32, 0.5);">
-    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+    <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
       <button type="button" tabindex="0" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 6px 12px; color: var(--text); font-size: 12px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;" title="All data stays on your device. No cloud storage." onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'" aria-describedby="trustChip1">
         📴 Works offline
       </button>
@@ -3521,9 +3540,58 @@ function appendLog(msg, exerciseKey = null, duration = null) {
   });
 }
 
+function updateDailySummary() {
+  const summaryEl = document.getElementById('dailySummary');
+  if (!summaryEl) return;
+
+  const logData = loadLog();
+  const today = new Date().toDateString();
+  const todayCount = logData.filter(entry => {
+    const entryDate = new Date(entry.ts || new Date(entry.timeISO).getTime()).toDateString();
+    return entryDate === today;
+  }).length;
+
+  const goal = getGoal();
+  summaryEl.innerHTML = `<strong>Today:</strong> ${todayCount} / <strong>Goal:</strong> ${goal}`;
+
+  if (todayCount >= goal) {
+    summaryEl.style.color = '#10b981';
+  } else {
+    summaryEl.style.color = 'var(--muted)';
+  }
+
+  // Show/hide undo button based on lastCompletionData
+  const undoBtn = document.getElementById('undoLastBtn');
+  if (undoBtn) {
+    if (lastCompletionData) {
+      const elapsed = Date.now() - lastCompletionData.timestamp;
+      if (elapsed <= 30000) {
+        undoBtn.style.display = 'block';
+      } else {
+        undoBtn.style.display = 'none';
+      }
+    } else {
+      undoBtn.style.display = 'none';
+    }
+  }
+}
+
+function handleUndoLast() {
+  const result = undoLastCompletion();
+  if (result.success) {
+    showToast('Last completion undone');
+    renderLog();
+    updateDailyStreakDisplay();
+  } else {
+    showToast(result.reason || 'Cannot undo');
+  }
+}
+
 function renderLog() {
   const logData = loadLog();
   logEl.innerHTML = '';
+
+  updateDailySummary();
 
   if (logData.length === 0) {
     const emptyState = document.createElement('div');
@@ -4069,7 +4137,7 @@ function handleCardKeydown(event) {
     const startBtn = document.getElementById('howtoStartBtn');
     const resetBtn = document.getElementById('howtoResetBtn');
     if (startBtn && startBtn.style.display !== 'none') {
-      startHowtoTimer();
+      toggleHowtoTimer();
     } else if (resetBtn && resetBtn.style.display !== 'none') {
       resetHowtoTimer();
     }
@@ -4097,7 +4165,7 @@ function renderHowtoCard() {
 
     <div class="howto-timer">
       <div class="howto-timer-display" id="howtoTimerDisplay" role="timer" aria-live="polite">${formatTime(howtoTimeRemaining)}</div>
-      <button id="howtoStartBtn" onclick="startHowtoTimer()" aria-label="Start exercise timer">Start</button>
+      <button id="howtoStartBtn" onclick="toggleHowtoTimer()" aria-label="Start exercise timer">Start ${formatTime(howtoTimeRemaining)}</button>
       <button id="howtoResetBtn" onclick="resetHowtoTimer()" style="display: none;" aria-label="Reset exercise timer">Reset</button>
     </div>
 
@@ -4243,11 +4311,38 @@ function renderHowtoCard() {
   }
 }
 
+function toggleHowtoTimer() {
+  if (howtoTimerInterval) {
+    pauseHowtoTimer();
+  } else {
+    startHowtoTimer();
+  }
+}
+
+function pauseHowtoTimer() {
+  if (howtoTimerInterval) {
+    clearInterval(howtoTimerInterval);
+    howtoTimerInterval = null;
+  }
+
+  const startBtn = document.getElementById('howtoStartBtn');
+  const resetBtn = document.getElementById('howtoResetBtn');
+
+  if (startBtn) {
+    startBtn.textContent = `Start ${formatTime(howtoTimeRemaining)}`;
+    startBtn.setAttribute('aria-label', 'Start exercise timer');
+  }
+  if (resetBtn) resetBtn.style.display = 'inline-block';
+}
+
 function startHowtoTimer() {
   const startBtn = document.getElementById('howtoStartBtn');
   const resetBtn = document.getElementById('howtoResetBtn');
 
-  if (startBtn) startBtn.style.display = 'none';
+  if (startBtn) {
+    startBtn.textContent = 'Pause';
+    startBtn.setAttribute('aria-label', 'Pause exercise timer');
+  }
   if (resetBtn) resetBtn.style.display = 'inline-block';
 
   if (howtoTimerInterval) clearInterval(howtoTimerInterval);
@@ -4322,7 +4417,11 @@ function resetHowtoTimer() {
   const startBtn = document.getElementById('howtoStartBtn');
   const resetBtn = document.getElementById('howtoResetBtn');
 
-  if (startBtn) startBtn.style.display = 'inline-block';
+  if (startBtn) {
+    startBtn.style.display = 'inline-block';
+    startBtn.textContent = `Start ${formatTime(howtoTimeRemaining)}`;
+    startBtn.setAttribute('aria-label', 'Start exercise timer');
+  }
   if (resetBtn) resetBtn.style.display = 'none';
 }
 
@@ -4473,6 +4572,89 @@ function positionQuietInfoPopover(button, popover) {
 
   popover.style.top = `${top}px`;
   popover.style.left = `${left}px`;
+}
+
+// Seated Info Popover
+let seatedInfoPopoverState = {
+  isOpen: false,
+  triggerButton: null
+};
+
+function toggleSeatedInfoPopover(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const popover = document.getElementById('seatedInfoPopover');
+  const button = event.currentTarget;
+
+  if (seatedInfoPopoverState.isOpen) {
+    closeSeatedInfoPopover();
+  } else {
+    popover.style.display = 'block';
+    positionSeatedInfoPopover(button, popover);
+    seatedInfoPopoverState.isOpen = true;
+    seatedInfoPopoverState.triggerButton = button;
+    button.setAttribute('aria-expanded', 'true');
+
+    setTimeout(() => {
+      document.addEventListener('click', handleSeatedInfoOutsideClick);
+      document.addEventListener('keydown', handleSeatedInfoEscape);
+    }, 0);
+  }
+}
+
+function closeSeatedInfoPopover() {
+  const popover = document.getElementById('seatedInfoPopover');
+  if (popover) {
+    popover.style.display = 'none';
+  }
+
+  document.removeEventListener('click', handleSeatedInfoOutsideClick);
+  document.removeEventListener('keydown', handleSeatedInfoEscape);
+
+  if (seatedInfoPopoverState.triggerButton) {
+    seatedInfoPopoverState.triggerButton.setAttribute('aria-expanded', 'false');
+    seatedInfoPopoverState.triggerButton.focus();
+  }
+
+  seatedInfoPopoverState.isOpen = false;
+  seatedInfoPopoverState.triggerButton = null;
+}
+
+function positionSeatedInfoPopover(button, popover) {
+  const buttonRect = button.getBoundingClientRect();
+  const popoverRect = popover.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  const viewportWidth = window.innerWidth;
+
+  let top = buttonRect.top - popoverRect.height - 8;
+  let left = buttonRect.left + (buttonRect.width / 2) - (popoverRect.width / 2);
+
+  if (top < 16) {
+    top = buttonRect.bottom + 8;
+  }
+
+  if (left < 16) {
+    left = 16;
+  } else if (left + popoverRect.width > viewportWidth - 16) {
+    left = viewportWidth - popoverRect.width - 16;
+  }
+
+  popover.style.top = `${top}px`;
+  popover.style.left = `${left}px`;
+}
+
+function handleSeatedInfoOutsideClick(event) {
+  const popover = document.getElementById('seatedInfoPopover');
+  if (seatedInfoPopoverState.isOpen && popover && !popover.contains(event.target) && event.target !== seatedInfoPopoverState.triggerButton) {
+    closeSeatedInfoPopover();
+  }
+}
+
+function handleSeatedInfoEscape(event) {
+  if (event.key === 'Escape' && seatedInfoPopoverState.isOpen) {
+    closeSeatedInfoPopover();
+  }
 }
 
 // Initialize popover event listeners
@@ -4733,7 +4915,7 @@ document.addEventListener('keydown', (e) => {
     const startBtn = document.getElementById('howtoStartBtn');
     const resetBtn = document.getElementById('howtoResetBtn');
     if (startBtn && startBtn.style.display !== 'none') {
-      startHowtoTimer();
+      toggleHowtoTimer();
     } else if (resetBtn && resetBtn.style.display !== 'none') {
       resetHowtoTimer();
     }
