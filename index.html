@@ -187,16 +187,26 @@
       h1 { font-size: 48px; }
     }
     .streak-chip {
-      font-size: 13px;
-      font-weight: 500;
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(34, 197, 94, 0.15) 100%);
-      color: var(--text-bright);
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(37, 99, 235, 0.3);
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      background: rgba(30, 41, 59, 0.7);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .streak-chip .streak-number {
+      color: var(--text-bright);
+      font-variant-numeric: tabular-nums;
+    }
+    .streak-chip .streak-label {
+      color: rgba(148, 163, 184, 1);
+      font-weight: 500;
+    }
+    .streak-chip .streak-emoji {
+      color: #fbbf24;
     }
     .privacy-badge {
       display: flex;
@@ -1190,7 +1200,7 @@
   <header style="position: relative; z-index: 1;">
     <h1>
       <span>BreakBreath</span>
-      <span id="streakChip" class="streak-chip" style="display: none;"></span>
+      <div id="streakChips" style="display: none; display: inline-flex; gap: 8px;"></div>
     </h1>
     <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; justify-content: center;">
       <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 20px; font-size: 13px; color: #86efac; font-weight: 500;">
@@ -3034,26 +3044,39 @@ function updateDailyStreak() {
 
 function updateDailyStreakDisplay() {
   const { daily, total, best } = getStreakState();
-  const chip = $("streakChip");
+  const container = $("streakChips");
 
   if (daily > 0 || total > 0) {
-    if (daily > 0 && total > 0) {
-      chip.textContent = `🔥 ${daily} day${daily !== 1 ? 's' : ''} • ${total} total`;
-    } else if (total > 0) {
-      chip.textContent = `🔥 ${total} total`;
-    } else {
-      chip.textContent = `🔥 ${daily} day${daily !== 1 ? 's' : ''}`;
-    }
-    chip.style.display = "inline-flex";
+    let html = '';
 
-    // Show best streak in tooltip if higher than current
-    if (best > daily && best > 0) {
-      chip.title = `Daily streak: ${daily} consecutive day${daily !== 1 ? 's' : ''}\nTotal completions: ${total}\nBest streak: ${best} day${best !== 1 ? 's' : ''}`;
-    } else {
-      chip.title = `Daily streak: ${daily} consecutive day${daily !== 1 ? 's' : ''}\nTotal completions: ${total}`;
+    if (daily > 0) {
+      const streakLabel = daily === 1 ? '1d' : `${daily}d`;
+      const ariaLabel = `Daily streak: ${daily} day${daily !== 1 ? 's' : ''}`;
+      const tooltip = best > daily && best > 0
+        ? `Daily streak: ${daily} consecutive day${daily !== 1 ? 's' : ''}\nBest streak: ${best} day${best !== 1 ? 's' : ''}`
+        : `Daily streak: ${daily} consecutive day${daily !== 1 ? 's' : ''}`;
+
+      html += `<span class="streak-chip" aria-label="${ariaLabel}" title="${tooltip}">`;
+      html += `<span class="streak-emoji">🔥</span>`;
+      html += `<span class="streak-number">${streakLabel}</span>`;
+      html += `<span class="streak-label">streak</span>`;
+      html += `</span>`;
     }
+
+    if (total > 0) {
+      const ariaLabel = `Total micro-resets: ${total}`;
+      const tooltip = `Total completions: ${total}`;
+
+      html += `<span class="streak-chip" aria-label="${ariaLabel}" title="${tooltip}">`;
+      html += `<span class="streak-label">total</span>`;
+      html += `<span class="streak-number">${total}</span>`;
+      html += `</span>`;
+    }
+
+    container.innerHTML = html;
+    container.style.display = "inline-flex";
   } else {
-    chip.style.display = "none";
+    container.style.display = "none";
   }
 }
 
