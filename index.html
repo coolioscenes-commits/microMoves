@@ -669,18 +669,19 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 20px;
+      min-width: 20px;
       height: 20px;
       color: rgba(255, 255, 255, 0.5);
       background: rgba(59, 130, 246, 0.15);
       border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 50%;
+      border-radius: 12px;
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      padding: 0;
+      padding: 0 6px;
       transition: all 0.2s;
       margin-left: 8px;
+      white-space: nowrap;
     }
     .why-link:hover {
       color: #60a5fa;
@@ -4345,11 +4346,12 @@ function toggleWhyExplanation(event) {
   if (explanation.style.display === 'none') {
     explanation.style.display = 'block';
     button.innerHTML = `
-      <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+      <svg style="width: 12px; height: 12px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
       </svg>
-      Hide explanation
     `;
+    button.setAttribute('aria-label', 'Hide explanation');
+    button.setAttribute('title', 'Hide explanation');
 
     // Auto-scroll to keep the card header visible
     setTimeout(() => {
@@ -4360,12 +4362,9 @@ function toggleWhyExplanation(event) {
     }, 100);
   } else {
     explanation.style.display = 'none';
-    button.innerHTML = `
-      <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-      </svg>
-      Why this works
-    `;
+    button.textContent = 'i';
+    button.setAttribute('aria-label', 'Why this works');
+    button.setAttribute('title', 'Why this works');
   }
 }
 
