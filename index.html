@@ -188,7 +188,7 @@
     }
     .streak-chip {
       display: inline-flex;
-      align-items: center;
+      align-items: baseline;
       gap: 6px;
       background: rgba(30, 41, 59, 0.7);
       padding: 4px 10px;
@@ -196,17 +196,36 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       font-size: 13px;
       font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .streak-chip:hover {
+      background: rgba(30, 41, 59, 0.85);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .streak-chip:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.6);
     }
     .streak-chip .streak-number {
       color: var(--text-bright);
       font-variant-numeric: tabular-nums;
+      line-height: 1;
     }
     .streak-chip .streak-label {
       color: rgba(148, 163, 184, 1);
       font-weight: 500;
+      line-height: 1;
     }
     .streak-chip .streak-emoji {
       color: #fbbf24;
+      font-size: 13px;
+      line-height: 1;
+    }
+    @media (max-width: 640px) {
+      .streak-chip .streak-label {
+        display: none;
+      }
     }
     .privacy-badge {
       display: flex;
@@ -1698,6 +1717,42 @@
     </div>
   </div>
 
+  <div id="streakModal" class="howto-overlay" style="display: none;" onclick="if(event.target === this) closeStreakModal()">
+    <div class="howto-card" style="max-width: 420px;" role="dialog" aria-labelledby="streakModalTitle" aria-modal="true">
+      <button type="button" onclick="closeStreakModal()" aria-label="Close streak details" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 24px; line-height: 1; padding: 4px 8px; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">&times;</button>
+
+      <h3 id="streakModalTitle" style="margin-top: 0; display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 24px;">🔥</span>
+        Streak Details
+      </h3>
+
+      <div class="howto-section" style="display: grid; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; padding: 12px; background: rgba(37, 99, 235, 0.08); border-radius: 8px;">
+          <span style="color: var(--muted);">Daily streak</span>
+          <span id="streakModalDaily" style="font-weight: 600; color: var(--text-bright);">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 12px; background: rgba(37, 99, 235, 0.08); border-radius: 8px;">
+          <span style="color: var(--muted);">Total completions</span>
+          <span id="streakModalTotal" style="font-weight: 600; color: var(--text-bright);">-</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 12px; background: rgba(37, 99, 235, 0.08); border-radius: 8px;">
+          <span style="color: var(--muted);">Best streak</span>
+          <span id="streakModalBest" style="font-weight: 600; color: var(--text-bright);">-</span>
+        </div>
+        <div id="streakModalLastReset" style="display: none; padding: 12px; background: rgba(34, 197, 94, 0.08); border-radius: 8px; font-size: 13px; color: var(--muted);">
+          <div style="margin-bottom: 4px; font-weight: 500; color: var(--text);">Last micro-reset</div>
+          <div id="streakModalLastResetTime">-</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 16px; padding: 12px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; font-size: 13px; line-height: 1.5; color: rgba(255, 255, 255, 0.8);">
+        <strong>💡 Tip:</strong> Made a mistake? You can undo your last completion from Settings.
+      </div>
+
+      <button type="button" onclick="closeStreakModal()" aria-label="Close" style="margin-top: 20px; width: 100%; padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Close</button>
+    </div>
+  </div>
+
   <div id="safetyModal" class="howto-overlay" style="display: none;" onclick="if(event.target === this) closeSafetyModal()">
     <div class="howto-card" style="max-width: 520px;" role="dialog" aria-labelledby="safetyTitle" aria-modal="true">
       <button type="button" onclick="closeSafetyModal()" aria-label="Close safety information" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 24px; line-height: 1; padding: 4px 8px; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">&times;</button>
@@ -3069,7 +3124,7 @@ function updateDailyStreakDisplay() {
         ? `Daily streak: ${daily} consecutive day${daily !== 1 ? 's' : ''}\nBest streak: ${best} day${best !== 1 ? 's' : ''}`
         : `Daily streak: ${daily} consecutive day${daily !== 1 ? 's' : ''}`;
 
-      html += `<span class="streak-chip" aria-label="${ariaLabel}" title="${tooltip}">`;
+      html += `<span class="streak-chip" tabindex="0" role="status" aria-label="${ariaLabel}" title="${tooltip}" onclick="openStreakModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStreakModal();}">`;
       html += `<span class="streak-emoji">🔥</span>`;
       html += `<span class="streak-number">${streakLabel}</span>`;
       html += `<span class="streak-label">streak</span>`;
@@ -3080,7 +3135,7 @@ function updateDailyStreakDisplay() {
       const ariaLabel = `Total micro-resets: ${total}`;
       const tooltip = `Total completions: ${total}`;
 
-      html += `<span class="streak-chip" aria-label="${ariaLabel}" title="${tooltip}">`;
+      html += `<span class="streak-chip" tabindex="0" role="status" aria-label="${ariaLabel}" title="${tooltip}" onclick="openStreakModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStreakModal();}">`;
       html += `<span class="streak-label">total</span>`;
       html += `<span class="streak-number">${total}</span>`;
       html += `</span>`;
@@ -4556,7 +4611,59 @@ document.querySelectorAll('.faq-question').forEach(btn => {
   });
 });
 
-// Safety modal functions
+// Helper function for relative time formatting
+function getRelativeTime(timestamp) {
+  const now = Date.now();
+  const diff = Math.floor((now - timestamp) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+// Streak modal functions
+function openStreakModal() {
+  const { daily, total, best } = getStreakState();
+
+  document.getElementById('streakModalDaily').textContent = daily > 0 ? `${daily} day${daily !== 1 ? 's' : ''}` : '0 days';
+  document.getElementById('streakModalTotal').textContent = total > 0 ? total : '0';
+  document.getElementById('streakModalBest').textContent = best > 0 ? `${best} day${best !== 1 ? 's' : ''}` : '0 days';
+
+  const lastCompletionData = localStorage.getItem('bb_last_completion_local');
+  if (lastCompletionData) {
+    try {
+      const data = JSON.parse(lastCompletionData);
+      if (data.timestamp) {
+        const timeAgo = getRelativeTime(data.timestamp);
+        document.getElementById('streakModalLastResetTime').textContent = timeAgo;
+        document.getElementById('streakModalLastReset').style.display = 'block';
+      }
+    } catch (e) {
+      document.getElementById('streakModalLastReset').style.display = 'none';
+    }
+  } else {
+    document.getElementById('streakModalLastReset').style.display = 'none';
+  }
+
+  const modal = document.getElementById('streakModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    const closeBtn = modal.querySelector('button[aria-label="Close"]');
+    if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
+  }
+
+  trackEvent('streak_modal_opened', { daily, total, best });
+}
+
+function closeStreakModal() {
+  const modal = document.getElementById('streakModal');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
 function openSafetyModal() {
   const modal = document.getElementById('safetyModal');
   if (modal) {
