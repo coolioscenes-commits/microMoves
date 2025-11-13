@@ -5939,7 +5939,7 @@ function logCompletion(exerciseKey){
   BB.lsSet('bb_log', log.slice(-1000));
 }
 
-function maybeNotify(title="Time for a micro-move", body="60 seconds, gentle reset"){
+function maybeNotify(title="Time for a micro-reset", body="1-minute gentle reset"){
   const ok = BB.lsGet('bb_notifications_enabled', false);
   if (!ok) return;
   try{ new Notification(title, {body}) }catch(_){}
