@@ -502,7 +502,14 @@
       background: #3b82f6;
       color: white;
       font-weight: 600;
-      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5), 0 2px 8px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8), 0 2px 8px rgba(37, 99, 235, 0.3);
+      position: relative;
+    }
+    .chip[aria-pressed="true"]::after {
+      content: '✓';
+      margin-left: 4px;
+      font-weight: 700;
+      font-size: 12px;
     }
     .chip:focus-visible {
       outline: 2px solid var(--primary);
@@ -642,19 +649,25 @@
     .why-link {
       display: inline-flex;
       align-items: center;
-      margin-top: 8px;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
       color: rgba(255, 255, 255, 0.5);
-      background: transparent;
-      border: none;
-      font-size: 13px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 0;
       transition: all 0.2s;
+      margin-left: 8px;
     }
     .why-link:hover {
-      color: #2563EB;
-      background: rgba(37, 99, 235, 0.12);
+      color: #60a5fa;
+      background: rgba(37, 99, 235, 0.3);
+      border-color: rgba(37, 99, 235, 0.5);
+      transform: scale(1.1);
     }
     .why-link:focus-visible {
       outline: 3px solid #2563EB;
@@ -1219,7 +1232,7 @@
     <p class="sub">Micro-breaks that fit anywhere. BreakBreath gives you 1-minute resets every hour—quiet when you need it, energising when you want it.</p>
     <div style="margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
       <button id="startBtn" type="button" tabindex="1" style="width: 100%; max-width: 320px; min-height: 52px; font-size: 17px; font-weight: 600; background: var(--primary); color: white; border: none; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(37, 99, 235, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(37, 99, 235, 0.4)'" aria-label="Start hourly nudges">Start nudges</button>
-      <button id="quickDemoBtn" type="button" class="secondary" tabindex="2" style="background: transparent; border: none; color: rgba(255, 255, 255, 0.5); font-weight: 400; font-size: 14px; padding: 8px 16px; transition: all 0.2s; text-decoration: underline; text-underline-offset: 2px;" onmouseover="this.style.color='rgba(255, 255, 255, 0.7)'" onmouseout="this.style.color='rgba(255, 255, 255, 0.5)'" aria-label="Try a sample exercise">Try a 30-sec exercise</button>
+      <button id="quickDemoBtn" type="button" class="secondary" tabindex="2" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.15); color: rgba(255, 255, 255, 0.7); font-weight: 500; font-size: 15px; padding: 12px 24px; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(255, 255, 255, 0.25)'; this.style.color='rgba(255, 255, 255, 0.9)'" onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.15)'; this.style.color='rgba(255, 255, 255, 0.7)'" aria-label="Try a sample exercise">Try a 30-sec exercise</button>
     </div>
     <ul class="day-dots" id="dayDots" aria-label="Weekly activity" style="margin-top: 24px;"></ul>
   </header>
@@ -1281,7 +1294,7 @@
         <button class="chip" type="button" data-filter="upper" aria-pressed="true" title="Upper body exercises">💪 Upper</button>
         <button class="chip" type="button" data-filter="lower" aria-pressed="true" title="Lower body exercises">🦵 Lower</button>
         <button class="chip" type="button" data-filter="posture" aria-pressed="true" title="Posture exercises">🧘 Posture</button>
-        <button class="chip" type="button" data-filter="quiet" aria-pressed="true" title="Show exercises with quiet alternatives">🤫 Quiet</button>
+        <button class="chip" type="button" data-filter="quiet" aria-pressed="true" title="Show exercises with no-noise options">🤫 Quiet</button>
       </div>
       <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; gap: 8px; flex-wrap: wrap;">
         <button id="filterOnlyThis" type="button" class="chip secondary" style="font-size: 12px; padding: 4px 10px;" title="Enable only the last clicked category">Only this</button>
@@ -1408,7 +1421,7 @@
         </span>
         Share your progress
       </div>
-      <button id="shareBtn" type="button" class="share-btn">
+      <button id="shareBtn" type="button" class="share-btn" title="Copies a shareable link with your streak count (no personal info)">
         <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
         </svg>
@@ -1679,8 +1692,8 @@
       <button onclick="document.getElementById('startBtn').click(); trackEvent('cta_start_nudges', {location: 'sticky_footer'})" style="background: #2563EB; border: none; border-radius: 6px; padding: 10px 18px; color: white; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 14px;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563EB'" aria-label="Start nudges">
         Start nudges
       </button>
-      <button onclick="downloadICS(60); trackEvent('cta_add_ics', {location: 'sticky_footer'})" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 10px 18px; color: var(--text); font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 14px;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.25)'" aria-label="Add .ics calendar file">
-        Add .ics
+      <button onclick="document.getElementById('quickDemoBtn').click(); trackEvent('cta_try_exercise', {location: 'sticky_footer'})" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 10px 18px; color: var(--text); font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 14px;" onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255, 255, 255, 0.25)'" aria-label="Try a sample exercise">
+        Try a 30-sec exercise
       </button>
     </div>
   </div>
@@ -1706,7 +1719,7 @@
 
       <div class="howto-section">
         <h4>Inclusivity</h4>
-        <p style="line-height: 1.6; margin: 0;">Every exercise includes a quiet alternative for discreet practice. Use the settings to show only seated or upper-body options if standing exercises aren't suitable for you.</p>
+        <p style="line-height: 1.6; margin: 0;">Every exercise includes a no-noise option for discreet practice. Use the settings to show only seated or upper-body options if standing exercises aren't suitable for you.</p>
       </div>
 
       <div class="howto-section">
@@ -3278,18 +3291,18 @@ function setSuggestion(){
   const isBeginnerFriendly = duration <= 30 || (item.tags && item.tags.includes('seated'));
 
   sugEl.innerHTML = `
-    <div>
-      <span class="env-badge">${getEnvIcon(currentEnv)}${currentEnv}</span> ${item.title}
-      <button class="help-chip" onclick="toggleHowtoCard()" type="button" aria-expanded="false" aria-controls="howtoCard" aria-label="Show exercise instructions" tabindex="0" id="helpChipBtn">?</button>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+        <span class="env-badge">${getEnvIcon(currentEnv)}${currentEnv}</span>
+        <span>${item.title}</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <button class="why-link" onclick="toggleWhyExplanation(event)" type="button" aria-label="Why this works" title="Why this works">i</button>
+        <button class="help-chip" onclick="toggleHowtoCard()" type="button" aria-expanded="false" aria-controls="howtoCard" aria-label="Show exercise instructions" tabindex="0" id="helpChipBtn">?</button>
+      </div>
     </div>
     <div style="font-size: 0.85em; color: var(--muted); margin-top: 6px;">${duration > 0 ? `0:${duration.toString().padStart(2, '0')}` : '1:00'} • ${isBeginnerFriendly ? 'Beginner-friendly' : 'All levels'}</div>
-    ${item.quiet_alt ? `<div style="font-size: 0.85em; color: #666; margin-top: 4px; position: relative;"><strong>Quiet alternative:</strong> ${item.quiet_alt} <button class="info-dot" type="button" role="button" aria-expanded="false" aria-controls="quietInfoPopover" aria-label="Learn about quiet alternatives" tabindex="0" onclick="toggleQuietInfoPopover(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleQuietInfoPopover(event);}" style="display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; width: 14px; height: 14px; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 50%; color: #818cf8; font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.2s; vertical-align: middle; margin-left: 4px; padding: 0;" onmouseover="this.style.background='rgba(99, 102, 241, 0.3)'; this.style.borderColor='rgba(99, 102, 241, 0.5)'" onmouseout="this.style.background='rgba(99, 102, 241, 0.2)'; this.style.borderColor='rgba(99, 102, 241, 0.3)'">i</button></div>` : ''}
-    <button class="why-link" onclick="toggleWhyExplanation(event)" type="button">
-      <svg style="width: 12px; height: 12px; margin-right: 4px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-      </svg>
-      Why this works
-    </button>
+    ${item.quiet_alt ? `<div style="font-size: 0.85em; color: #666; margin-top: 4px; position: relative;"><strong>No-noise option:</strong> ${item.quiet_alt} <button class="info-dot" type="button" role="button" aria-expanded="false" aria-controls="quietInfoPopover" aria-label="Learn about no-noise options" tabindex="0" onclick="toggleQuietInfoPopover(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleQuietInfoPopover(event);}" style="display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; width: 14px; height: 14px; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 50%; color: #818cf8; font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.2s; vertical-align: middle; margin-left: 4px; padding: 0;" onmouseover="this.style.background='rgba(99, 102, 241, 0.3)'; this.style.borderColor='rgba(99, 102, 241, 0.5)'" onmouseout="this.style.background='rgba(99, 102, 241, 0.2)'; this.style.borderColor='rgba(99, 102, 241, 0.3)'">i</button></div>` : ''}
     <div class="why-explanation" style="display: none;">${item.why}</div>
     <div id="howtoCard" class="howto-card" style="display: none; overflow: visible;" role="region" aria-labelledby="howtoTitle"></div>
   `;
@@ -4220,6 +4233,7 @@ function startHowtoTimer() {
         trackEvent('exercise_completed', {
           exercise: exerciseKey,
           duration,
+          environment: currentEnv,
           daily_streak: streakResult.daily,
           total_streak: streakResult.total
         });
