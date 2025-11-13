@@ -3193,7 +3193,7 @@ function setPoolIndex(env, index) {
 
 function stamp(){ return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
 
-function showToast(message, duration = 1600) {
+function showToast(message, duration = 3000) {
   const n = document.createElement('div');
   n.className = 'fixed bottom-4 right-4 rounded-md bg-zinc-900/90 text-zinc-100 px-3 py-2 text-sm shadow-lg';
   n.style.cssText = 'position: fixed; bottom: 16px; right: 16px; border-radius: 6px; background: rgba(24, 24, 27, 0.9); color: #F4F4F5; padding: 8px 12px; font-size: 13px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); z-index: 9999;';
