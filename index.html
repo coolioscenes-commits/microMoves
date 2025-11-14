@@ -3057,51 +3057,64 @@ function undoLastCompletion() {
     return { success: false, reason: 'Undo window expired (30s limit)' };
   }
 
-  // Only roll back if it was the first completion of the day
-  if (lastCompletionData.wasFirstOfDay) {
-    localStorage.setItem('bb_streak_total', String(lastCompletionData.prevTotal));
-    localStorage.setItem('bb_daily_streak', String(lastCompletionData.prevDaily));
+  // Get the log to find what we're removing
+  let log = [];
+  try {
+    log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
+  } catch { /* no-op */ }
 
-    if (lastCompletionData.prevLast) {
-      localStorage.setItem('bb_last_completion_local', lastCompletionData.prevLast);
-    } else {
-      localStorage.removeItem('bb_last_completion_local');
+  // Remove the last log entry (the one we're undoing)
+  let removedEntry = null;
+  if (log.length > 0) {
+    removedEntry = log.shift();
+    localStorage.setItem('breakbreath_log', JSON.stringify(log));
+  }
+
+  // Decrement total completions
+  const currentTotal = parseInt(localStorage.getItem('bb_streak_total') || '0', 10);
+  const newTotal = Math.max(0, currentTotal - 1);
+  localStorage.setItem('bb_streak_total', String(newTotal));
+  streakCount = newTotal;
+
+  // Recompute daily streak based on remaining log entries
+  const todayKey = todayLocalISO();
+  const removedDateKey = removedEntry ? removedEntry.day : lastCompletionData.currentDay;
+
+  // Count how many completions remain for the removed date
+  const remainingCountForDate = log.filter(entry => entry.day === removedDateKey).length;
+
+  // Get current streak state
+  let currentDaily = parseInt(localStorage.getItem('bb_daily_streak') || '0', 10);
+  const currentLastActive = localStorage.getItem('bb_last_completion_local');
+
+  // If we removed the only completion for that date, the streak needs recalculation
+  if (remainingCountForDate === 0) {
+    // Find the previous date that still has completions
+    let prevActiveDate = null;
+    for (const entry of log) {
+      if (!prevActiveDate || entry.day > prevActiveDate) {
+        prevActiveDate = entry.day;
+      }
     }
 
-    streakCount = lastCompletionData.prevTotal;
+    if (removedDateKey === currentLastActive) {
+      // The removed completion was the most recent - decrement streak
+      const newDaily = Math.max(0, currentDaily - 1);
+      localStorage.setItem('bb_daily_streak', String(newDaily));
 
-    // Remove last log entry
-    try {
-      const log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
-      if (log.length > 0 && log[0].day === lastCompletionData.currentDay) {
-        log.shift();
-        localStorage.setItem('breakbreath_log', JSON.stringify(log));
+      if (prevActiveDate) {
+        localStorage.setItem('bb_last_completion_local', prevActiveDate);
+      } else {
+        localStorage.removeItem('bb_last_completion_local');
       }
-    } catch { /* no-op */ }
-
-    updateDailyStreakDisplay();
-    lastCompletionData = null;
-
-    return { success: true, rolled_back: true };
-  } else {
-    // Not first of day, still decrement total but not daily
-    localStorage.setItem('bb_streak_total', String(lastCompletionData.prevTotal));
-    streakCount = lastCompletionData.prevTotal;
-
-    // Remove last log entry
-    try {
-      const log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
-      if (log.length > 0) {
-        log.shift();
-        localStorage.setItem('breakbreath_log', JSON.stringify(log));
-      }
-    } catch { /* no-op */ }
-
-    updateDailyStreakDisplay();
-    lastCompletionData = null;
-
-    return { success: true, rolled_back: false };
+    }
   }
+  // If completions remain for that date, streak stays the same
+
+  updateDailyStreakDisplay();
+  lastCompletionData = null;
+
+  return { success: true, removedDate: removedDateKey, remainingCount: remainingCountForDate };
 }
 
 function getShareLine() {
@@ -3587,7 +3600,7 @@ function updateDailySummary() {
 function handleUndoLast() {
   const result = undoLastCompletion();
   if (result.success) {
-    showToast('Last completion undone');
+    showToast('Undone. Streak recalculated.');
     renderLog();
     updateDailyStreakDisplay();
   } else {
@@ -4873,7 +4886,7 @@ function handleStreakModalUndo() {
       stopNudges();
     }
 
-    showToast('Last completion undone');
+    showToast('Undone. Streak recalculated.');
     renderLog();
     updateDailyStreakDisplay();
 
