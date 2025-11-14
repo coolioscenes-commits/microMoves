@@ -3617,12 +3617,27 @@ function updateDailySummary() {
   // Show/hide undo button based on lastCompletionData
   const undoBtn = document.getElementById('undoLastBtn');
   if (undoBtn) {
+    // Try to load from localStorage if not in memory
+    if (!lastCompletionData) {
+      try {
+        const stored = localStorage.getItem('bb_last_completion_data');
+        if (stored) {
+          lastCompletionData = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.error('[Display] Error loading lastCompletionData:', e);
+      }
+    }
+
     if (lastCompletionData) {
       const elapsed = Date.now() - lastCompletionData.timestamp;
       if (elapsed <= 30000) {
         undoBtn.style.display = 'block';
       } else {
         undoBtn.style.display = 'none';
+        // Clean up expired data
+        localStorage.removeItem('bb_last_completion_data');
+        lastCompletionData = null;
       }
     } else {
       undoBtn.style.display = 'none';
@@ -3631,30 +3646,47 @@ function updateDailySummary() {
 }
 
 function handleUndoLast() {
-  console.log('[Undo] handleUndoLast called, lastCompletionData:', lastCompletionData);
-  const result = undoLastCompletion();
-  console.log('[Undo] handleUndoLast result:', result);
+  try {
+    console.log('[Undo] ===== handleUndoLast START =====');
+    console.log('[Undo] lastCompletionData:', lastCompletionData);
+    console.log('[Undo] localStorage bb_last_completion_data:', localStorage.getItem('bb_last_completion_data'));
+    console.log('[Undo] isActive (timer running):', isActive);
+    console.log('[Undo] currentExercise:', currentExercise);
 
-  if (result.success) {
-    // Stop the timer if one is running
-    if (isActive) {
-      console.log('[Undo] Stopping active timer');
-      stopNudges();
+    const result = undoLastCompletion();
+    console.log('[Undo] undoLastCompletion returned:', result);
+
+    if (result.success) {
+      console.log('[Undo] Undo was successful, cleaning up...');
+
+      // Stop the timer if one is running
+      if (isActive) {
+        console.log('[Undo] Stopping active timer');
+        stopNudges();
+      }
+
+      // Stop and hide the exercise timer
+      console.log('[Undo] Resetting howto timer and hiding card');
+      resetHowtoTimer();
+      const howtoCard = document.getElementById('howtoCard');
+      if (howtoCard) {
+        howtoCard.style.display = 'none';
+      }
+      currentExercise = null;
+
+      console.log('[Undo] Showing toast and updating UI');
+      showToast('Undone. Streak recalculated.');
+      renderLog();
+      updateDailyStreakDisplay();
+      console.log('[Undo] ===== handleUndoLast SUCCESS =====');
+    } else {
+      console.log('[Undo] Undo failed:', result.reason);
+      showToast(result.reason || 'Cannot undo');
+      console.log('[Undo] ===== handleUndoLast FAILED =====');
     }
-
-    // Stop and hide the exercise timer
-    resetHowtoTimer();
-    const howtoCard = document.getElementById('howtoCard');
-    if (howtoCard) {
-      howtoCard.style.display = 'none';
-    }
-    currentExercise = null;
-
-    showToast('Undone. Streak recalculated.');
-    renderLog();
-    updateDailyStreakDisplay();
-  } else {
-    showToast(result.reason || 'Cannot undo');
+  } catch (error) {
+    console.error('[Undo] ===== handleUndoLast ERROR =====', error);
+    showToast('Error during undo: ' + error.message);
   }
 }
 
