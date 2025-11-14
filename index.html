@@ -3013,7 +3013,7 @@ function recordMicroMoveCompleted(activity = '') {
   localStorage.setItem('bb_best_streak', String(nextBest));
   localStorage.setItem('bb_last_completion_local', today);
 
-  // Store undo data (30s window)
+  // Store undo data (30s window) - both in memory and localStorage
   lastCompletionData = {
     timestamp: Date.now(),
     wasFirstOfDay: isFirstOfDay,
@@ -3023,10 +3023,14 @@ function recordMicroMoveCompleted(activity = '') {
     currentDay: today
   };
 
+  // Persist to localStorage so it survives page refresh
+  localStorage.setItem('bb_last_completion_data', JSON.stringify(lastCompletionData));
+
   // Clear undo after 30 seconds
   setTimeout(() => {
     if (lastCompletionData && Date.now() - lastCompletionData.timestamp >= 30000) {
       lastCompletionData = null;
+      localStorage.removeItem('bb_last_completion_data');
     }
   }, 30000);
 
@@ -3052,15 +3056,34 @@ function recordMicroMoveCompleted(activity = '') {
 }
 
 function undoLastCompletion() {
+  console.log('[Undo] undoLastCompletion called, in-memory lastCompletionData:', lastCompletionData);
+
+  // Try to load from localStorage if not in memory
   if (!lastCompletionData) {
+    try {
+      const stored = localStorage.getItem('bb_last_completion_data');
+      if (stored) {
+        lastCompletionData = JSON.parse(stored);
+        console.log('[Undo] Loaded from localStorage:', lastCompletionData);
+      }
+    } catch (e) {
+      console.error('[Undo] Error loading from localStorage:', e);
+    }
+  }
+
+  if (!lastCompletionData) {
+    console.log('[Undo] No lastCompletionData available');
     return { success: false, reason: 'No recent completion to undo (30s window expired)' };
   }
 
   const now = Date.now();
   const elapsed = now - lastCompletionData.timestamp;
+  console.log('[Undo] Time elapsed since completion:', elapsed, 'ms');
 
   if (elapsed > 30000) {
     lastCompletionData = null;
+    localStorage.removeItem('bb_last_completion_data');
+    console.log('[Undo] Undo window expired');
     return { success: false, reason: 'Undo window expired (30s limit)' };
   }
 
@@ -3120,6 +3143,8 @@ function undoLastCompletion() {
 
   updateDailyStreakDisplay();
   lastCompletionData = null;
+  localStorage.removeItem('bb_last_completion_data');
+  console.log('[Undo] Undo successful, cleared lastCompletionData');
 
   return { success: true, removedDate: removedDateKey, remainingCount: remainingCountForDate };
 }
@@ -3134,6 +3159,7 @@ function resetStreaks() {
   localStorage.removeItem('bb_daily_streak');
   localStorage.removeItem('bb_best_streak');
   localStorage.removeItem('bb_last_completion_local');
+  localStorage.removeItem('bb_last_completion_data');
   localStorage.removeItem('breakbreath_log');
   // Clear legacy keys
   localStorage.removeItem('bb_streak');
@@ -4884,11 +4910,24 @@ function openStreakModal() {
     window.__undoTick = null;
   }
 
+  // Try to load lastCompletionData from localStorage if not in memory
+  if (!lastCompletionData) {
+    try {
+      const stored = localStorage.getItem('bb_last_completion_data');
+      if (stored) {
+        lastCompletionData = JSON.parse(stored);
+        console.log('[Modal] Loaded lastCompletionData from localStorage:', lastCompletionData);
+      }
+    } catch (e) {
+      console.error('[Modal] Error loading lastCompletionData:', e);
+    }
+  }
+
   const WINDOW_MS = 30000; // 30 seconds
 
   if (lastCompletionData) {
     try {
-      const data = JSON.parse(lastCompletionData);
+      const data = lastCompletionData;
       if (data && typeof data.timestamp === 'number') {
         const now = Date.now();
         let msLeft = WINDOW_MS - (now - data.timestamp);
