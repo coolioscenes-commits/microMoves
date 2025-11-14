@@ -3032,9 +3032,11 @@ function recordMicroMoveCompleted(activity = '') {
     // Optional log for UI "Share my streak" (capped to last 10)
     const log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
     log.unshift({
-      at: new Date().toISOString(),
-      day: today,
-      msg: activity || 'Micro-move completed',
+      ts: Date.now(),
+      label: activity || 'Micro-move completed',
+      category: null,
+      duration: null,
+      day: today
     });
     while (log.length > 10) log.pop();
     localStorage.setItem('breakbreath_log', JSON.stringify(log));
@@ -3598,8 +3600,17 @@ function updateDailySummary() {
 }
 
 function handleUndoLast() {
+  console.log('[Undo] handleUndoLast called, lastCompletionData:', lastCompletionData);
   const result = undoLastCompletion();
+  console.log('[Undo] handleUndoLast result:', result);
+
   if (result.success) {
+    // Stop the timer if one is running
+    if (isActive) {
+      console.log('[Undo] Stopping active timer');
+      stopNudges();
+    }
+
     showToast('Undone. Streak recalculated.');
     renderLog();
     updateDailyStreakDisplay();
@@ -3636,10 +3647,21 @@ function renderLog() {
       el.classList.add('most-recent');
     }
 
-    const timestamp = entry.ts || new Date(entry.timeISO).getTime();
+    // Handle multiple timestamp formats: ts (number), timeISO (string), at (ISO string)
+    let timestamp;
+    if (entry.ts) {
+      timestamp = entry.ts;
+    } else if (entry.at) {
+      timestamp = new Date(entry.at).getTime();
+    } else if (entry.timeISO) {
+      timestamp = new Date(entry.timeISO).getTime();
+    } else {
+      timestamp = Date.now();
+    }
+
     const time = new Date(timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
-    const label = entry.label || entry.title || '';
+    const label = entry.label || entry.msg || entry.title || '';
     const category = entry.category || (entry.exerciseKey ? EXERCISE_LIBRARY[entry.exerciseKey]?.category : null);
 
     const emoji = category ? getCategoryEmoji(category) : '✓';
