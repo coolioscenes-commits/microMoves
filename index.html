@@ -1765,12 +1765,17 @@
         </div>
       </div>
 
-      <div style="margin-top: 16px; padding: 12px; background: rgba(251, 191, 36, 0.1); border-radius: 8px; font-size: 13px; line-height: 1.5; color: rgba(255, 255, 255, 0.8);">
-        <strong>💡 Tip:</strong> Made a mistake? You can undo your last completion from Settings.
+      <div style="margin-top: 16px; padding: 12px; background: rgba(39, 39, 42, 0.7); border-radius: 8px; font-size: 13px; line-height: 1.5; color: rgba(255, 255, 255, 0.8);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+          <span><strong>💡 Tip:</strong> You can undo your last completion for <strong>30s</strong> after it's logged.</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" id="streakModalUndoBtn" aria-label="Undo last completion" aria-live="polite" disabled style="padding: 6px 16px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s;" onmouseover="if(!this.disabled) this.style.background='rgba(239, 68, 68, 0.25)'" onmouseout="if(!this.disabled) this.style.background='rgba(239, 68, 68, 0.15)'">Undo</button>
+            <span id="undoCountdown" style="font-size: 12px; color: rgba(255, 255, 255, 0.5); white-space: nowrap;"></span>
+          </div>
+        </div>
       </div>
 
       <div style="display: flex; gap: 8px; margin-top: 20px;">
-        <button type="button" id="streakModalUndoBtn" onclick="handleStreakModalUndo()" aria-label="Undo last completion" style="display: none; flex: 1; padding: 10px 24px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.25)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'">Undo</button>
         <button type="button" onclick="closeStreakModal()" aria-label="Close" style="flex: 1; padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Close</button>
       </div>
     </div>
@@ -4869,14 +4874,115 @@ function openStreakModal() {
     document.getElementById('streakModalLastReset').style.display = 'none';
   }
 
-  // Show/hide undo button based on whether there's a recent completion
+  // Setup undo button with countdown logic
   const undoBtn = document.getElementById('streakModalUndoBtn');
-  if (undoBtn && lastCompletionData) {
-    const elapsed = Date.now() - lastCompletionData.timestamp;
-    undoBtn.style.display = elapsed <= 30000 ? 'block' : 'none';
-  } else if (undoBtn) {
-    undoBtn.style.display = 'none';
+  const undoCd = document.getElementById('undoCountdown');
+
+  // Clean up any prior countdown interval
+  if (window.__undoTick) {
+    clearInterval(window.__undoTick);
+    window.__undoTick = null;
   }
+
+  const WINDOW_MS = 30000; // 30 seconds
+
+  if (lastCompletionData) {
+    try {
+      const data = JSON.parse(lastCompletionData);
+      if (data && typeof data.timestamp === 'number') {
+        const now = Date.now();
+        let msLeft = WINDOW_MS - (now - data.timestamp);
+
+        if (msLeft > 0) {
+          // Eligible: enable + show countdown
+          undoBtn.disabled = false;
+          undoBtn.style.opacity = '1';
+          undoBtn.style.cursor = 'pointer';
+          undoCd.textContent = `(${Math.ceil(msLeft / 1000)}s left)`;
+
+          window.__undoTick = setInterval(() => {
+            msLeft -= 1000;
+            if (msLeft <= 0) {
+              clearInterval(window.__undoTick);
+              window.__undoTick = null;
+              undoBtn.disabled = true;
+              undoBtn.style.opacity = '0.5';
+              undoBtn.style.cursor = 'not-allowed';
+              undoCd.textContent = '(expired)';
+            } else {
+              undoCd.textContent = `(${Math.ceil(msLeft / 1000)}s left)`;
+            }
+          }, 1000);
+        } else {
+          // Window expired
+          undoBtn.disabled = true;
+          undoBtn.style.opacity = '0.5';
+          undoBtn.style.cursor = 'not-allowed';
+          undoCd.textContent = '(expired)';
+        }
+      } else {
+        // Invalid data
+        undoBtn.disabled = true;
+        undoBtn.style.opacity = '0.5';
+        undoBtn.style.cursor = 'not-allowed';
+        undoCd.textContent = '(no recent completion)';
+      }
+    } catch (e) {
+      undoBtn.disabled = true;
+      undoBtn.style.opacity = '0.5';
+      undoBtn.style.cursor = 'not-allowed';
+      undoCd.textContent = '(no recent completion)';
+    }
+  } else {
+    // No last completion
+    undoBtn.disabled = true;
+    undoBtn.style.opacity = '0.5';
+    undoBtn.style.cursor = 'not-allowed';
+    undoCd.textContent = '(no recent completion)';
+  }
+
+  // Wire up the undo action
+  undoBtn.onclick = () => {
+    if (undoBtn.disabled) return;
+    console.log('[Undo] Modal undo button clicked');
+
+    const result = undoLastCompletion();
+    console.log('[Undo] Modal undo result:', result);
+
+    if (result.success) {
+      // Stop the timer if one is running
+      if (isActive) {
+        console.log('[Undo] Stopping active timer');
+        stopNudges();
+      }
+
+      // Immediately expire the UI
+      undoBtn.disabled = true;
+      undoBtn.style.opacity = '0.5';
+      undoBtn.style.cursor = 'not-allowed';
+      undoCd.textContent = '(undone)';
+
+      if (window.__undoTick) {
+        clearInterval(window.__undoTick);
+        window.__undoTick = null;
+      }
+
+      showToast('Undone. Streak recalculated.');
+      renderLog();
+      updateDailyStreakDisplay();
+
+      // Refresh modal stats
+      const { daily, total, best } = getStreakState();
+      document.getElementById('streakModalDaily').textContent = daily > 0 ? `${daily} day${daily !== 1 ? 's' : ''}` : '0 days';
+      document.getElementById('streakModalTotal').textContent = total > 0 ? total : '0';
+      document.getElementById('streakModalBest').textContent = best > 0 ? `${best} day${best !== 1 ? 's' : ''}` : '0 days';
+
+      trackEvent('undo_from_streak_modal', { success: true, rolled_back: result.rolled_back });
+    } else {
+      showToast(result.reason || 'Cannot undo');
+      trackEvent('undo_from_streak_modal', { success: false, reason: result.reason });
+    }
+  };
 
   const modal = document.getElementById('streakModal');
   if (modal) {
@@ -4890,42 +4996,16 @@ function openStreakModal() {
 }
 
 function closeStreakModal() {
+  // Clean up countdown interval when closing modal
+  if (window.__undoTick) {
+    clearInterval(window.__undoTick);
+    window.__undoTick = null;
+  }
+
   const modal = document.getElementById('streakModal');
   if (modal) {
     modal.style.display = 'none';
     document.body.style.overflow = '';
-  }
-}
-
-function handleStreakModalUndo() {
-  console.log('[Undo] Button clicked, lastCompletionData:', lastCompletionData);
-  const result = undoLastCompletion();
-  console.log('[Undo] Result:', result);
-
-  if (result.success) {
-    // Stop the timer if one is running
-    if (isActive) {
-      stopNudges();
-    }
-
-    showToast('Undone. Streak recalculated.');
-    renderLog();
-    updateDailyStreakDisplay();
-
-    // Update modal display
-    const { daily, total, best } = getStreakState();
-    document.getElementById('streakModalDaily').textContent = daily > 0 ? `${daily} day${daily !== 1 ? 's' : ''}` : '0 days';
-    document.getElementById('streakModalTotal').textContent = total > 0 ? total : '0';
-    document.getElementById('streakModalBest').textContent = best > 0 ? `${best} day${best !== 1 ? 's' : ''}` : '0 days';
-
-    // Hide the undo button
-    const undoBtn = document.getElementById('streakModalUndoBtn');
-    if (undoBtn) undoBtn.style.display = 'none';
-
-    trackEvent('undo_from_streak_modal', { success: true, rolled_back: result.rolled_back });
-  } else {
-    showToast(result.reason || 'Cannot undo');
-    trackEvent('undo_from_streak_modal', { success: false, reason: result.reason });
   }
 }
 
