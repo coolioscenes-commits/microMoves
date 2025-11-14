@@ -4863,7 +4863,10 @@ function closeStreakModal() {
 }
 
 function handleStreakModalUndo() {
+  console.log('[Undo] Button clicked, lastCompletionData:', lastCompletionData);
   const result = undoLastCompletion();
+  console.log('[Undo] Result:', result);
+
   if (result.success) {
     // Stop the timer if one is running
     if (isActive) {
@@ -4884,7 +4887,7 @@ function handleStreakModalUndo() {
     const undoBtn = document.getElementById('streakModalUndoBtn');
     if (undoBtn) undoBtn.style.display = 'none';
 
-    trackEvent('undo_from_streak_modal', { success: true });
+    trackEvent('undo_from_streak_modal', { success: true, rolled_back: result.rolled_back });
   } else {
     showToast(result.reason || 'Cannot undo');
     trackEvent('undo_from_streak_modal', { success: false, reason: result.reason });
