@@ -2969,9 +2969,17 @@ function getStreakState() {
 
 let lastCompletionData = null; // For undo window
 
-function recordMicroMoveCompleted(activity = '') {
+function recordMicroMoveCompleted(activity = '', exerciseKey = '') {
   const state = getStreakState();
   const today = todayLocalISO();
+
+  // Take snapshot BEFORE making changes
+  const preSnapshot = {
+    total: state.total,
+    daily: state.daily,
+    best: state.best,
+    last: state.last
+  };
 
   let nextTotal = state.total + 1;
   let nextDaily = state.daily;
@@ -3009,20 +3017,39 @@ function recordMicroMoveCompleted(activity = '') {
   // Update best streak
   const nextBest = Math.max(state.best, nextDaily);
 
-  // Save state
+  // Save new state
   localStorage.setItem('bb_streak_total', String(nextTotal));
   localStorage.setItem('bb_daily_streak', String(nextDaily));
   localStorage.setItem('bb_best_streak', String(nextBest));
   localStorage.setItem('bb_last_completion_local', today);
 
-  // Store undo data (30s window) - both in memory and localStorage
+  // Update in-memory
+  streakCount = nextTotal;
+
+  // Add to activity log with unique ID
+  const entryId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  try {
+    const log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
+    log.unshift({
+      id: entryId,
+      ts: Date.now(),
+      label: activity || 'Micro-move completed',
+      key: exerciseKey,
+      category: null,
+      duration: null,
+      day: today
+    });
+    while (log.length > 200) log.pop();
+    localStorage.setItem('breakbreath_log', JSON.stringify(log));
+  } catch (e) {
+    console.error('[Record] Error updating log:', e);
+  }
+
+  // Store undo snapshot (30s window)
   lastCompletionData = {
     timestamp: Date.now(),
-    wasFirstOfDay: isFirstOfDay,
-    prevTotal: state.total,
-    prevDaily: state.daily,
-    prevLast: state.last,
-    currentDay: today
+    entryId: entryId,
+    prevState: preSnapshot
   };
 
   // Persist to localStorage so it survives page refresh
@@ -3036,29 +3063,12 @@ function recordMicroMoveCompleted(activity = '') {
     }
   }, 30000);
 
-  // Update in-memory
-  streakCount = nextTotal;
-
-  try {
-    // Optional log for UI "Share my streak" (capped to last 10)
-    const log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
-    log.unshift({
-      ts: Date.now(),
-      label: activity || 'Micro-move completed',
-      category: null,
-      duration: null,
-      day: today
-    });
-    while (log.length > 10) log.pop();
-    localStorage.setItem('breakbreath_log', JSON.stringify(log));
-  } catch { /* no-op */ }
-
   updateDailyStreakDisplay();
   return { total: nextTotal, daily: nextDaily, best: nextBest, last: today };
 }
 
 function undoLastCompletion() {
-  console.log('[Undo] undoLastCompletion called, in-memory lastCompletionData:', lastCompletionData);
+  console.log('[Undo] ===== undoLastCompletion START =====');
 
   // Try to load from localStorage if not in memory
   if (!lastCompletionData) {
@@ -3066,110 +3076,88 @@ function undoLastCompletion() {
       const stored = localStorage.getItem('bb_last_completion_data');
       if (stored) {
         lastCompletionData = JSON.parse(stored);
-        console.log('[Undo] Loaded from localStorage:', lastCompletionData);
+        console.log('[Undo] Loaded snapshot from localStorage');
       }
     } catch (e) {
-      console.error('[Undo] Error loading from localStorage:', e);
+      console.error('[Undo] Error loading snapshot:', e);
     }
   }
 
   if (!lastCompletionData) {
-    console.log('[Undo] No lastCompletionData available');
-    return { success: false, reason: 'No recent completion to undo (30s window expired)' };
+    console.log('[Undo] No completion to undo');
+    return { success: false, reason: 'Nothing to undo' };
   }
 
-  const now = Date.now();
-  const elapsed = now - lastCompletionData.timestamp;
-  console.log('[Undo] Time elapsed since completion:', elapsed, 'ms');
+  const elapsed = Date.now() - lastCompletionData.timestamp;
+  console.log('[Undo] Time elapsed:', elapsed, 'ms');
 
   if (elapsed > 30000) {
     lastCompletionData = null;
     localStorage.removeItem('bb_last_completion_data');
-    console.log('[Undo] Undo window expired');
-    return { success: false, reason: 'Undo window expired (30s limit)' };
+    console.log('[Undo] Window expired');
+    return { success: false, reason: 'Undo window expired (30s)' };
   }
 
-  // Get the log to find what we're removing
-  let log = [];
+  // Remove the exact entry from breakbreath_log by ID
   try {
-    log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
-    console.log('[Undo] Current breakbreath_log before removal:', log.length, 'entries');
-    console.log('[Undo] First entry (to be removed):', log[0]);
-  } catch { /* no-op */ }
+    const log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
+    console.log('[Undo] Log has', log.length, 'entries');
+    console.log('[Undo] Looking for entry ID:', lastCompletionData.entryId);
 
-  // Remove the last log entry (the one we're undoing)
-  let removedEntry = null;
-  if (log.length > 0) {
-    removedEntry = log.shift();
-    localStorage.setItem('breakbreath_log', JSON.stringify(log));
-    console.log('[Undo] Removed entry from breakbreath_log:', removedEntry);
-    console.log('[Undo] breakbreath_log after removal:', log.length, 'entries');
-  } else {
-    console.log('[Undo] No breakbreath_log entries to remove!');
+    const idx = log.findIndex(e => e.id === lastCompletionData.entryId);
+    if (idx !== -1) {
+      log.splice(idx, 1);
+      localStorage.setItem('breakbreath_log', JSON.stringify(log));
+      console.log('[Undo] Removed entry at index', idx);
+    } else {
+      console.warn('[Undo] Entry ID not found in log');
+    }
+  } catch (e) {
+    console.error('[Undo] Error removing from breakbreath_log:', e);
   }
 
-  // ALSO remove from bb_log (the other logging system)
+  // Also remove from bb_log (the legacy log system)
   try {
     const bbLog = BB.lsGet('bb_log', []);
-    console.log('[Undo] Current bb_log before removal:', bbLog.length, 'entries');
     if (bbLog.length > 0) {
-      // Remove the most recent entry (last in array)
-      const removedBBEntry = bbLog.pop();
+      bbLog.pop();
       BB.lsSet('bb_log', bbLog);
-      console.log('[Undo] Removed entry from bb_log:', removedBBEntry);
-      console.log('[Undo] bb_log after removal:', bbLog.length, 'entries');
+      console.log('[Undo] Removed from bb_log');
     }
   } catch (e) {
     console.error('[Undo] Error removing from bb_log:', e);
   }
 
-  // Decrement total completions
-  const currentTotal = parseInt(localStorage.getItem('bb_streak_total') || '0', 10);
-  const newTotal = Math.max(0, currentTotal - 1);
-  localStorage.setItem('bb_streak_total', String(newTotal));
-  streakCount = newTotal;
+  // Restore counters from snapshot (best never decreases)
+  const prev = lastCompletionData.prevState;
+  localStorage.setItem('bb_streak_total', String(prev.total));
+  localStorage.setItem('bb_daily_streak', String(prev.daily));
+  localStorage.setItem('bb_best_streak', String(Math.max(prev.best, parseInt(localStorage.getItem('bb_best_streak') || '0', 10))));
 
-  // Recompute daily streak based on remaining log entries
-  const todayKey = todayLocalISO();
-  const removedDateKey = removedEntry ? removedEntry.day : lastCompletionData.currentDay;
-
-  // Count how many completions remain for the removed date
-  const remainingCountForDate = log.filter(entry => entry.day === removedDateKey).length;
-
-  // Get current streak state
-  let currentDaily = parseInt(localStorage.getItem('bb_daily_streak') || '0', 10);
-  const currentLastActive = localStorage.getItem('bb_last_completion_local');
-
-  // If we removed the only completion for that date, the streak needs recalculation
-  if (remainingCountForDate === 0) {
-    // Find the previous date that still has completions
-    let prevActiveDate = null;
-    for (const entry of log) {
-      if (!prevActiveDate || entry.day > prevActiveDate) {
-        prevActiveDate = entry.day;
-      }
-    }
-
-    if (removedDateKey === currentLastActive) {
-      // The removed completion was the most recent - decrement streak
-      const newDaily = Math.max(0, currentDaily - 1);
-      localStorage.setItem('bb_daily_streak', String(newDaily));
-
-      if (prevActiveDate) {
-        localStorage.setItem('bb_last_completion_local', prevActiveDate);
-      } else {
-        localStorage.removeItem('bb_last_completion_local');
-      }
-    }
+  if (prev.last) {
+    localStorage.setItem('bb_last_completion_local', prev.last);
+  } else {
+    localStorage.removeItem('bb_last_completion_local');
   }
-  // If completions remain for that date, streak stays the same
 
-  updateDailyStreakDisplay();
+  streakCount = prev.total;
+  console.log('[Undo] Restored state:', prev);
+
+  // Clear the snapshot
   lastCompletionData = null;
   localStorage.removeItem('bb_last_completion_data');
-  console.log('[Undo] Undo successful, cleared lastCompletionData');
 
-  return { success: true, removedDate: removedDateKey, remainingCount: remainingCountForDate };
+  // Track analytics
+  try {
+    if (typeof trackEvent === 'function') {
+      trackEvent('exercise_undone', {});
+    }
+  } catch (e) {
+    console.error('[Undo] Error tracking event:', e);
+  }
+
+  console.log('[Undo] ===== undoLastCompletion SUCCESS =====');
+  return { success: true };
 }
 
 function getShareLine() {
@@ -3717,7 +3705,7 @@ function handleUndoLast() {
       currentExercise = null;
 
       console.log('[Undo] Showing toast and updating UI');
-      showToast('Undone. Streak recalculated.');
+      showToast('Last completion undone');
       renderLog();
       updateDailyStreakDisplay();
       console.log('[Undo] ===== handleUndoLast SUCCESS =====');
@@ -4538,7 +4526,7 @@ function startHowtoTimer() {
         }
 
         // Record streak
-        const streakResult = recordMicroMoveCompleted(currentExercise.title);
+        const streakResult = recordMicroMoveCompleted(currentExercise.title, exerciseKey);
         trackEvent('exercise_completed', {
           exercise: exerciseKey,
           duration,
