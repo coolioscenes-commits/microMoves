@@ -1439,7 +1439,9 @@
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 8px;">
         <div id="dailySummary" style="flex: 1; font-size: 13px; color: var(--muted); padding: 8px 12px; background: rgba(17, 24, 39, 0.4); border-radius: 6px; border: 1px solid rgba(55, 65, 81, 0.3);"></div>
-        <button id="undoLastBtn" onclick="handleUndoLast()" style="display: none; padding: 8px 12px; font-size: 12px; font-weight: 500; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.25)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'" aria-label="Undo last completion">Undo last</button>
+        <button id="undoLastBtn" onclick="handleUndoLast()" style="display: none; padding: 8px 12px; font-size: 12px; font-weight: 500; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s;" aria-label="Undo last completion">
+          <span id="undoLastBtnText">Undo last</span>
+        </button>
       </div>
       <div id="log" class="log" aria-live="polite"></div>
     </div>
@@ -3091,7 +3093,7 @@ function undoLastCompletion() {
   let log = [];
   try {
     log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
-    console.log('[Undo] Current log before removal:', log.length, 'entries');
+    console.log('[Undo] Current breakbreath_log before removal:', log.length, 'entries');
     console.log('[Undo] First entry (to be removed):', log[0]);
   } catch { /* no-op */ }
 
@@ -3100,10 +3102,25 @@ function undoLastCompletion() {
   if (log.length > 0) {
     removedEntry = log.shift();
     localStorage.setItem('breakbreath_log', JSON.stringify(log));
-    console.log('[Undo] Removed entry:', removedEntry);
-    console.log('[Undo] Log after removal:', log.length, 'entries');
+    console.log('[Undo] Removed entry from breakbreath_log:', removedEntry);
+    console.log('[Undo] breakbreath_log after removal:', log.length, 'entries');
   } else {
-    console.log('[Undo] No log entries to remove!');
+    console.log('[Undo] No breakbreath_log entries to remove!');
+  }
+
+  // ALSO remove from bb_log (the other logging system)
+  try {
+    const bbLog = BB.lsGet('bb_log', []);
+    console.log('[Undo] Current bb_log before removal:', bbLog.length, 'entries');
+    if (bbLog.length > 0) {
+      // Remove the most recent entry (last in array)
+      const removedBBEntry = bbLog.pop();
+      BB.lsSet('bb_log', bbLog);
+      console.log('[Undo] Removed entry from bb_log:', removedBBEntry);
+      console.log('[Undo] bb_log after removal:', bbLog.length, 'entries');
+    }
+  } catch (e) {
+    console.error('[Undo] Error removing from bb_log:', e);
   }
 
   // Decrement total completions
@@ -3622,6 +3639,7 @@ function updateDailySummary() {
 
   // Show/hide undo button based on lastCompletionData
   const undoBtn = document.getElementById('undoLastBtn');
+  const undoTextEl = document.getElementById('undoLastBtnText');
   if (undoBtn) {
     // Try to load from localStorage if not in memory
     if (!lastCompletionData) {
@@ -3637,13 +3655,31 @@ function updateDailySummary() {
 
     if (lastCompletionData) {
       const elapsed = Date.now() - lastCompletionData.timestamp;
+      undoBtn.style.display = 'block';
+
       if (elapsed <= 30000) {
-        undoBtn.style.display = 'block';
+        // Active undo window
+        undoBtn.disabled = false;
+        undoBtn.style.opacity = '1';
+        undoBtn.style.cursor = 'pointer';
+        undoBtn.style.background = 'rgba(239, 68, 68, 0.15)';
+        undoBtn.setAttribute('aria-label', 'Undo last completion');
+        if (undoTextEl) undoTextEl.textContent = 'Undo last';
       } else {
-        undoBtn.style.display = 'none';
-        // Clean up expired data
-        localStorage.removeItem('bb_last_completion_data');
-        lastCompletionData = null;
+        // Expired undo window
+        undoBtn.disabled = true;
+        undoBtn.style.opacity = '0.5';
+        undoBtn.style.cursor = 'not-allowed';
+        undoBtn.style.background = 'rgba(107, 114, 128, 0.15)';
+        undoBtn.setAttribute('aria-label', 'Undo window expired (30s limit)');
+        if (undoTextEl) undoTextEl.textContent = 'Expired';
+
+        // Clean up expired data after showing for a moment
+        setTimeout(() => {
+          localStorage.removeItem('bb_last_completion_data');
+          lastCompletionData = null;
+          undoBtn.style.display = 'none';
+        }, 5000);
       }
     } else {
       undoBtn.style.display = 'none';
