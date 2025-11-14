@@ -3642,6 +3642,14 @@ function handleUndoLast() {
       stopNudges();
     }
 
+    // Stop and hide the exercise timer
+    resetHowtoTimer();
+    const howtoCard = document.getElementById('howtoCard');
+    if (howtoCard) {
+      howtoCard.style.display = 'none';
+    }
+    currentExercise = null;
+
     showToast('Undone. Streak recalculated.');
     renderLog();
     updateDailyStreakDisplay();
@@ -4994,6 +5002,14 @@ function openStreakModal() {
         console.log('[Undo] Stopping active timer');
         stopNudges();
       }
+
+      // Stop and hide the exercise timer
+      resetHowtoTimer();
+      const howtoCard = document.getElementById('howtoCard');
+      if (howtoCard) {
+        howtoCard.style.display = 'none';
+      }
+      currentExercise = null;
 
       // Immediately expire the UI
       undoBtn.disabled = true;
