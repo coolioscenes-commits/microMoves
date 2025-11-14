@@ -3091,6 +3091,8 @@ function undoLastCompletion() {
   let log = [];
   try {
     log = JSON.parse(localStorage.getItem('breakbreath_log') || '[]');
+    console.log('[Undo] Current log before removal:', log.length, 'entries');
+    console.log('[Undo] First entry (to be removed):', log[0]);
   } catch { /* no-op */ }
 
   // Remove the last log entry (the one we're undoing)
@@ -3098,6 +3100,10 @@ function undoLastCompletion() {
   if (log.length > 0) {
     removedEntry = log.shift();
     localStorage.setItem('breakbreath_log', JSON.stringify(log));
+    console.log('[Undo] Removed entry:', removedEntry);
+    console.log('[Undo] Log after removal:', log.length, 'entries');
+  } else {
+    console.log('[Undo] No log entries to remove!');
   }
 
   // Decrement total completions
@@ -3692,6 +3698,8 @@ function handleUndoLast() {
 
 function renderLog() {
   const logData = loadLog();
+  console.log('[RenderLog] Rendering', logData.length, 'entries');
+  console.log('[RenderLog] Entries:', logData);
   logEl.innerHTML = '';
 
   updateDailySummary();
