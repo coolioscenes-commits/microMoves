@@ -1769,7 +1769,10 @@
         <strong>💡 Tip:</strong> Made a mistake? You can undo your last completion from Settings.
       </div>
 
-      <button type="button" onclick="closeStreakModal()" aria-label="Close" style="margin-top: 20px; width: 100%; padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Close</button>
+      <div style="display: flex; gap: 8px; margin-top: 20px;">
+        <button type="button" id="streakModalUndoBtn" onclick="handleStreakModalUndo()" aria-label="Undo last completion" style="display: none; flex: 1; padding: 10px 24px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.25)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'">Undo</button>
+        <button type="button" onclick="closeStreakModal()" aria-label="Close" style="flex: 1; padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Close</button>
+      </div>
     </div>
   </div>
 
@@ -4831,6 +4834,15 @@ function openStreakModal() {
     document.getElementById('streakModalLastReset').style.display = 'none';
   }
 
+  // Show/hide undo button based on whether there's a recent completion
+  const undoBtn = document.getElementById('streakModalUndoBtn');
+  if (undoBtn && lastCompletionData) {
+    const elapsed = Date.now() - lastCompletionData.timestamp;
+    undoBtn.style.display = elapsed <= 30000 ? 'block' : 'none';
+  } else if (undoBtn) {
+    undoBtn.style.display = 'none';
+  }
+
   const modal = document.getElementById('streakModal');
   if (modal) {
     modal.style.display = 'flex';
@@ -4847,6 +4859,35 @@ function closeStreakModal() {
   if (modal) {
     modal.style.display = 'none';
     document.body.style.overflow = '';
+  }
+}
+
+function handleStreakModalUndo() {
+  const result = undoLastCompletion();
+  if (result.success) {
+    // Stop the timer if one is running
+    if (isActive) {
+      stopNudges();
+    }
+
+    showToast('Last completion undone');
+    renderLog();
+    updateDailyStreakDisplay();
+
+    // Update modal display
+    const { daily, total, best } = getStreakState();
+    document.getElementById('streakModalDaily').textContent = daily > 0 ? `${daily} day${daily !== 1 ? 's' : ''}` : '0 days';
+    document.getElementById('streakModalTotal').textContent = total > 0 ? total : '0';
+    document.getElementById('streakModalBest').textContent = best > 0 ? `${best} day${best !== 1 ? 's' : ''}` : '0 days';
+
+    // Hide the undo button
+    const undoBtn = document.getElementById('streakModalUndoBtn');
+    if (undoBtn) undoBtn.style.display = 'none';
+
+    trackEvent('undo_from_streak_modal', { success: true });
+  } else {
+    showToast(result.reason || 'Cannot undo');
+    trackEvent('undo_from_streak_modal', { success: false, reason: result.reason });
   }
 }
 
