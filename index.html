@@ -3540,6 +3540,11 @@ function appendLog(msg, exerciseKey = null, duration = null) {
   });
 }
 
+function getGoal() {
+  const goal = localStorage.getItem('bb_daily_goal');
+  return goal ? parseInt(goal, 10) : 6;
+}
+
 function updateDailySummary() {
   const summaryEl = document.getElementById('dailySummary');
   if (!summaryEl) return;
