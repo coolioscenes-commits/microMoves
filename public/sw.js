@@ -1,12 +1,10 @@
-const CACHE_NAME = 'breakbreath-v1';
-const RUNTIME_CACHE = 'breakbreath-runtime';
+const CACHE_NAME = 'breakbreath-v2';
+const RUNTIME_CACHE = 'breakbreath-runtime-v2';
 
 const PRECACHE_URLS = [
   '/',
   '/index.html',
-  '/manifest.json',
-  '/i18n/en.json',
-  '/i18n/es.json'
+  '/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
