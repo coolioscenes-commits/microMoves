@@ -1,25 +1,31 @@
 {
-  "name": "BreakBreath",
-  "short_name": "BreakBreath",
-  "description": "Micro-movement breaks for desk workers",
+  "name": "MicroReset",
+  "short_name": "MicroReset",
+  "description": "Tiny 30–60 second micro-exercises that reset your body and mind anywhere.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#111827",
-  "background_color": "#0a0a0a",
+  "theme_color": "#0E1223",
+  "background_color": "#0E1223",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/icons/microreset-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icons/microreset-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/microreset-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
