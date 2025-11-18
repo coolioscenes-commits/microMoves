@@ -1,15 +1,18 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background with safe zone padding -->
+  <!-- Full-bleed background (required for maskable icons) -->
   <rect width="512" height="512" fill="#0E1223"/>
 
-  <!-- Reset Arc (scaled down for safe zone) -->
-  <path d="M256 140
-           A116 116 0 1 1 165 204"
-        stroke="#33F5C9"
-        stroke-width="28"
-        stroke-linecap="round"
-        fill="none"/>
+  <!-- Group with safe padding -->
+  <g transform="translate(56, 56) scale(0.80)">
+    <!-- Reset Arc -->
+    <path d="M256 120
+             A136 136 0 1 1 150 194"
+          stroke="#33F5C9"
+          stroke-width="32"
+          stroke-linecap="round"
+          fill="none"/>
 
-  <!-- Calm Dot -->
-  <circle cx="165" cy="204" r="18" fill="#33F5C9"/>
+    <!-- Calm Dot -->
+    <circle cx="150" cy="194" r="20" fill="#33F5C9"/>
+  </g>
 </svg>
