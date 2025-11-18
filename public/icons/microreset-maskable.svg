@@ -1,0 +1,15 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with safe zone padding -->
+  <rect width="512" height="512" fill="#0E1223"/>
+
+  <!-- Reset Arc (scaled down for safe zone) -->
+  <path d="M256 140
+           A116 116 0 1 1 165 204"
+        stroke="#33F5C9"
+        stroke-width="28"
+        stroke-linecap="round"
+        fill="none"/>
+
+  <!-- Calm Dot -->
+  <circle cx="165" cy="204" r="18" fill="#33F5C9"/>
+</svg>

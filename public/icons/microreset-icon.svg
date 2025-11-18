@@ -1,0 +1,15 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="#0E1223"/>
+
+  <!-- Reset Arc -->
+  <path d="M256 120
+           A136 136 0 1 1 150 194"
+        stroke="#33F5C9"
+        stroke-width="32"
+        stroke-linecap="round"
+        fill="none"/>
+
+  <!-- Calm Dot -->
+  <circle cx="150" cy="194" r="20" fill="#33F5C9"/>
+</svg>
